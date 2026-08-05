@@ -9,8 +9,11 @@ const links = [
   { href: "/admin/news", label: "News" },
   { href: "/admin/jobs", label: "Jobs" },
   { href: "/admin/events", label: "Events" },
+  { href: "/admin/announcements", label: "Announcements" },
+  { href: "/admin/learn", label: "Learn" },
   { href: "/admin/applications", label: "Applications" },
   { href: "/admin/messages", label: "Messages" },
+  { href: "/admin/team", label: "Team" },
 ];
 
 export default function AdminSidebar() {

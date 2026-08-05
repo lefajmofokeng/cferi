@@ -6,7 +6,7 @@ export default async function EventsPage() {
 
   const { data: events, error } = await supabase
     .from("events")
-    .select("id, title, slug, location, starts_at")
+    .select("id, title, slug, location, starts_at, cover_image_url")
     .eq("status", "published")
     .order("starts_at", { ascending: true });
 
@@ -28,6 +28,13 @@ export default async function EventsPage() {
         <ul className="space-y-6">
           {events.map((event) => (
             <li key={event.id} className="border-b border-gray-200 pb-6">
+              {event.cover_image_url && (
+                <img
+                  src={event.cover_image_url}
+                  alt={event.title}
+                  className="w-full h-48 object-cover rounded mb-3"
+                />
+              )}
               <Link href={`/events/${event.slug}`} className="text-xl font-medium hover:underline">
                 {event.title}
               </Link>

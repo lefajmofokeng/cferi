@@ -15,7 +15,8 @@ export default function NewEventPage() {
   const [status, setStatus] = useState("draft");
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
-
+  const [coverImage, setCoverImage] = useState<File | null>(null);
+  
   function slugify(value: string) {
     return value
       .toLowerCase()
@@ -25,29 +26,50 @@ export default function NewEventPage() {
   }
 
   async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setSaving(true);
-    setError("");
+  e.preventDefault();
+  setSaving(true);
+  setError("");
 
-    const supabase = createClient();
-    const { error } = await supabase.from("events").insert({
-      title,
-      slug: slug || slugify(title),
-      description,
-      location,
-      starts_at: startsAt ? new Date(startsAt).toISOString() : null,
-      ends_at: endsAt ? new Date(endsAt).toISOString() : null,
-      status,
-    });
+  const supabase = createClient();
+  let coverImageUrl: string | null = null;
 
-    if (error) {
-      setError(error.message);
+  if (coverImage) {
+    const filePath = `${Date.now()}-${coverImage.name}`;
+    const { error: uploadError } = await supabase.storage
+      .from("cover-images")
+      .upload(filePath, coverImage);
+
+    if (uploadError) {
+      setError(`Image upload failed: ${uploadError.message}`);
       setSaving(false);
-    } else {
-      router.push("/admin/events");
-      router.refresh();
+      return;
     }
+
+    const { data: publicUrlData } = supabase.storage
+      .from("cover-images")
+      .getPublicUrl(filePath);
+    coverImageUrl = publicUrlData.publicUrl;
   }
+
+  const { error } = await supabase.from("events").insert({
+    title,
+    slug: slug || slugify(title),
+    description,
+    location,
+    starts_at: startsAt ? new Date(startsAt).toISOString() : null,
+    ends_at: endsAt ? new Date(endsAt).toISOString() : null,
+    status,
+    cover_image_url: coverImageUrl,
+  });
+
+  if (error) {
+    setError(error.message);
+    setSaving(false);
+  } else {
+    router.push("/admin/events");
+    router.refresh();
+  }
+}
 
   return (
     <main className="px-8 py-8 max-w-2xl">
@@ -85,6 +107,18 @@ export default function NewEventPage() {
             rows={6}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
+            className="w-full border border-gray-300 rounded px-3 py-2"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-1">
+            Cover Image (optional)
+          </label>
+          <input
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            onChange={(e) => setCoverImage(e.target.files?.[0] ?? null)}
             className="w-full border border-gray-300 rounded px-3 py-2"
           />
         </div>

@@ -29,13 +29,15 @@ export default function EditEventPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-
-  useEffect(() => {
+  const [coverImage, setCoverImage] = useState<File | null>(null);
+  const [coverImageUrl, setCoverImageUrl] = useState<string | null>(null);
+  
+useEffect(() => {
     async function loadEvent() {
       const supabase = createClient();
       const { data, error } = await supabase
         .from("events")
-        .select("title, slug, description, location, starts_at, ends_at, status")
+        .select("title, slug, description, location, starts_at, ends_at, status, cover_image_url")
         .eq("id", params.id)
         .single();
 
@@ -49,6 +51,7 @@ export default function EditEventPage() {
         setStartsAt(toLocalInputValue(data.starts_at));
         setEndsAt(toLocalInputValue(data.ends_at));
         setStatus(data.status);
+        setCoverImageUrl(data.cover_image_url);
       }
       setLoading(false);
     }
@@ -56,32 +59,53 @@ export default function EditEventPage() {
   }, [params.id]);
 
   async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setSaving(true);
-    setError("");
+  e.preventDefault();
+  setSaving(true);
+  setError("");
 
-    const supabase = createClient();
-    const { error } = await supabase
-      .from("events")
-      .update({
-        title,
-        slug,
-        description,
-        location,
-        starts_at: startsAt ? new Date(startsAt).toISOString() : null,
-        ends_at: endsAt ? new Date(endsAt).toISOString() : null,
-        status,
-      })
-      .eq("id", params.id);
+  const supabase = createClient();
+  let finalCoverImageUrl = coverImageUrl;
 
-    if (error) {
-      setError(error.message);
+  if (coverImage) {
+    const filePath = `${Date.now()}-${coverImage.name}`;
+    const { error: uploadError } = await supabase.storage
+      .from("cover-images")
+      .upload(filePath, coverImage);
+
+    if (uploadError) {
+      setError(`Image upload failed: ${uploadError.message}`);
       setSaving(false);
-    } else {
-      router.push("/admin/events");
-      router.refresh();
+      return;
     }
+
+    const { data: publicUrlData } = supabase.storage
+      .from("cover-images")
+      .getPublicUrl(filePath);
+    finalCoverImageUrl = publicUrlData.publicUrl;
   }
+
+  const { error } = await supabase
+    .from("events")
+    .update({
+      title,
+      slug,
+      description,
+      location,
+      starts_at: startsAt ? new Date(startsAt).toISOString() : null,
+      ends_at: endsAt ? new Date(endsAt).toISOString() : null,
+      status,
+      cover_image_url: finalCoverImageUrl,
+    })
+    .eq("id", params.id);
+
+  if (error) {
+    setError(error.message);
+    setSaving(false);
+  } else {
+    router.push("/admin/events");
+    router.refresh();
+  }
+}
 
   async function handleDelete() {
     const supabase = createClient();
@@ -133,6 +157,23 @@ export default function EditEventPage() {
             rows={6}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
+            className="w-full border border-gray-300 rounded px-3 py-2"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-1">Cover Image</label>
+          {coverImageUrl && !coverImage && (
+            <img
+              src={coverImageUrl}
+              alt="Current cover"
+              className="w-48 h-32 object-cover rounded mb-2 border border-gray-200"
+            />
+          )}
+          <input
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            onChange={(e) => setCoverImage(e.target.files?.[0] ?? null)}
             className="w-full border border-gray-300 rounded px-3 py-2"
           />
         </div>

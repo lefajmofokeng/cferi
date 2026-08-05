@@ -4,27 +4,29 @@ import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import ConfirmDialog from "@/components/admin/ConfirmDialog";
-export default function EditNewsPostPage() {
+
+export default function EditLearnArticlePage() {
   const router = useRouter();
   const params = useParams<{ id: string }>();
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
-  const [excerpt, setExcerpt] = useState("");
+  const [description, setDescription] = useState("");
+  const [author, setAuthor] = useState("");
   const [content, setContent] = useState("");
+  const [coverImage, setCoverImage] = useState<File | null>(null);
+  const [coverImageUrl, setCoverImageUrl] = useState<string | null>(null);
   const [status, setStatus] = useState("draft");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [coverImage, setCoverImage] = useState<File | null>(null);
-  const [coverImageUrl, setCoverImageUrl] = useState<string | null>(null);
 
   useEffect(() => {
-    async function loadPost() {
+    async function loadArticle() {
       const supabase = createClient();
       const { data, error } = await supabase
-        .from("news_posts")
-        .select("title, slug, excerpt, content, status, cover_image_url")
+        .from("learn_articles")
+        .select("title, slug, description, author, content, cover_image_url, status")
         .eq("id", params.id)
         .single();
 
@@ -33,75 +35,77 @@ export default function EditNewsPostPage() {
       } else if (data) {
         setTitle(data.title);
         setSlug(data.slug);
-        setExcerpt(data.excerpt ?? "");
+        setDescription(data.description ?? "");
+        setAuthor(data.author);
         setContent(data.content);
-        setStatus(data.status);
         setCoverImageUrl(data.cover_image_url);
+        setStatus(data.status);
       }
       setLoading(false);
     }
-    loadPost();
+    loadArticle();
   }, [params.id]);
 
   async function handleSubmit(e: React.FormEvent) {
-  e.preventDefault();
-  setSaving(true);
-  setError("");
+    e.preventDefault();
+    setSaving(true);
+    setError("");
 
-  const supabase = createClient();
-  let finalCoverImageUrl = coverImageUrl;
+    const supabase = createClient();
+    let finalCoverImageUrl = coverImageUrl;
 
-  if (coverImage) {
-    const filePath = `${Date.now()}-${coverImage.name}`;
-    const { error: uploadError } = await supabase.storage
-      .from("cover-images")
-      .upload(filePath, coverImage);
+    if (coverImage) {
+      const filePath = `${Date.now()}-${coverImage.name}`;
+      const { error: uploadError } = await supabase.storage
+        .from("cover-images")
+        .upload(filePath, coverImage);
 
-    if (uploadError) {
-      setError(`Image upload failed: ${uploadError.message}`);
-      setSaving(false);
-      return;
+      if (uploadError) {
+        setError(`Image upload failed: ${uploadError.message}`);
+        setSaving(false);
+        return;
+      }
+
+      const { data: publicUrlData } = supabase.storage
+        .from("cover-images")
+        .getPublicUrl(filePath);
+      finalCoverImageUrl = publicUrlData.publicUrl;
     }
 
-    const { data: publicUrlData } = supabase.storage
-      .from("cover-images")
-      .getPublicUrl(filePath);
-    finalCoverImageUrl = publicUrlData.publicUrl;
-  }
+    const { error } = await supabase
+      .from("learn_articles")
+      .update({
+        title,
+        slug,
+        description,
+        author,
+        content,
+        cover_image_url: finalCoverImageUrl,
+        status,
+        published_at: status === "published" ? new Date().toISOString() : null,
+      })
+      .eq("id", params.id);
 
-  const { error } = await supabase
-    .from("news_posts")
-    .update({
-      title,
-      slug,
-      excerpt,
-      content,
-      status,
-      cover_image_url: finalCoverImageUrl,
-      published_at: status === "published" ? new Date().toISOString() : null,
-    })
-    .eq("id", params.id);
-
-  if (error) {
-    setError(error.message);
-    setSaving(false);
-  } else {
-    router.push("/admin/news");
-    router.refresh();
+    if (error) {
+      setError(error.message);
+      setSaving(false);
+    } else {
+      router.push("/admin/learn");
+      router.refresh();
+    }
   }
-}
 
   async function handleDelete() {
-  const supabase = createClient();
-  const { error } = await supabase.from("news_posts").delete().eq("id", params.id);
+    const supabase = createClient();
+    const { error } = await supabase.from("learn_articles").delete().eq("id", params.id);
 
-  if (error) {
-    setError(error.message);
-  } else {
-    router.push("/admin/news");
-    router.refresh();
+    if (error) {
+      setError(error.message);
+    } else {
+      router.push("/admin/learn");
+      router.refresh();
+    }
   }
-}
 
   if (loading) {
     return <main className="px-8 py-8">Loading...</main>;
@@ -109,7 +113,7 @@ export default function EditNewsPostPage() {
 
   return (
     <main className="px-8 py-8 max-w-2xl">
-      <h1 className="text-2xl font-semibold mb-6">Edit News Post</h1>
+      <h1 className="text-2xl font-semibold mb-6">Edit Learn Article</h1>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
@@ -135,11 +139,22 @@ export default function EditNewsPostPage() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">Excerpt</label>
+          <label className="block text-sm font-medium mb-1">Description</label>
           <textarea
             rows={2}
-            value={excerpt}
-            onChange={(e) => setExcerpt(e.target.value)}
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            className="w-full border border-gray-300 rounded px-3 py-2"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-1">Author</label>
+          <input
+            type="text"
+            required
+            value={author}
+            onChange={(e) => setAuthor(e.target.value)}
             className="w-full border border-gray-300 rounded px-3 py-2"
           />
         </div>
@@ -196,21 +211,22 @@ export default function EditNewsPostPage() {
             type="button"
             onClick={() => setShowDeleteConfirm(true)}
             className="text-red-600 px-6 py-3 rounded border border-red-200 hover:bg-red-50"
-            >
-            Delete Post
+          >
+            Delete Article
           </button>
         </div>
 
         {error && <p className="text-red-600 text-sm">{error}</p>}
       </form>
+
       <ConfirmDialog
         open={showDeleteConfirm}
-        title="Delete this post?"
+        title="Delete this article?"
         description="This can't be undone."
         confirmLabel="Delete"
         onConfirm={handleDelete}
         onCancel={() => setShowDeleteConfirm(false)}
-        />
+      />
     </main>
   );
 }

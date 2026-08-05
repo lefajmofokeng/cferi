@@ -11,7 +11,7 @@ export default async function EventDetailPage({
 
   const { data: event, error } = await supabase
     .from("events")
-    .select("title, description, location, starts_at, ends_at")
+    .select("title, description, location, starts_at, ends_at, cover_image_url")
     .eq("slug", slug)
     .eq("status", "published")
     .single();
@@ -24,7 +24,15 @@ export default async function EventDetailPage({
     <main className="mx-auto max-w-3xl px-6 py-12">
       <h1 className="text-3xl font-semibold mb-2">{event.title}</h1>
 
-      <p className="text-gray-600 mb-1">
+        {event.cover_image_url && (
+          <img
+            src={event.cover_image_url}
+            alt={event.title}
+            className="w-full max-h-96 object-cover rounded mb-6"
+          />
+        )}
+
+        <p className="text-gray-600 mb-1">
         {new Date(event.starts_at).toLocaleString(undefined, {
           dateStyle: "full",
           timeStyle: "short",

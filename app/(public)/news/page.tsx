@@ -6,7 +6,7 @@ export default async function NewsPage() {
 
   const { data: posts, error } = await supabase
     .from("news_posts")
-    .select("id, title, slug, excerpt, published_at")
+    .select("id, title, slug, excerpt, published_at, cover_image_url")
     .eq("status", "published")
     .order("published_at", { ascending: false });
 
@@ -28,6 +28,13 @@ export default async function NewsPage() {
         <ul className="space-y-6">
           {posts.map((post) => (
             <li key={post.id} className="border-b border-gray-200 pb-6">
+              {post.cover_image_url && (
+                <img
+                  src={post.cover_image_url}
+                  alt={post.title}
+                  className="w-full h-48 object-cover rounded mb-3"
+                />
+              )}
               <Link href={`/news/${post.slug}`} className="text-xl font-medium hover:underline">
                 {post.title}
               </Link>

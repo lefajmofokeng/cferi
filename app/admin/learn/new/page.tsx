@@ -4,16 +4,17 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
-export default function NewNewsPostPage() {
+export default function NewLearnArticlePage() {
   const router = useRouter();
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
-  const [excerpt, setExcerpt] = useState("");
+  const [description, setDescription] = useState("");
+  const [author, setAuthor] = useState("");
   const [content, setContent] = useState("");
+  const [coverImage, setCoverImage] = useState<File | null>(null);
   const [status, setStatus] = useState("draft");
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
-  const [coverImage, setCoverImage] = useState<File | null>(null);
 
   function slugify(value: string) {
     return value
@@ -24,53 +25,54 @@ export default function NewNewsPostPage() {
   }
 
   async function handleSubmit(e: React.FormEvent) {
-  e.preventDefault();
-  setSaving(true);
-  setError("");
+    e.preventDefault();
+    setSaving(true);
+    setError("");
 
-  const supabase = createClient();
-  let coverImageUrl: string | null = null;
+    const supabase = createClient();
+    let coverImageUrl: string | null = null;
 
-  if (coverImage) {
-    const filePath = `${Date.now()}-${coverImage.name}`;
-    const { error: uploadError } = await supabase.storage
-      .from("cover-images")
-      .upload(filePath, coverImage);
+    if (coverImage) {
+      const filePath = `${Date.now()}-${coverImage.name}`;
+      const { error: uploadError } = await supabase.storage
+        .from("cover-images")
+        .upload(filePath, coverImage);
 
-    if (uploadError) {
-      setError(`Image upload failed: ${uploadError.message}`);
-      setSaving(false);
-      return;
+      if (uploadError) {
+        setError(`Image upload failed: ${uploadError.message}`);
+        setSaving(false);
+        return;
+      }
+
+      const { data: publicUrlData } = supabase.storage
+        .from("cover-images")
+        .getPublicUrl(filePath);
+      coverImageUrl = publicUrlData.publicUrl;
     }
 
-    const { data: publicUrlData } = supabase.storage
-      .from("cover-images")
-      .getPublicUrl(filePath);
-    coverImageUrl = publicUrlData.publicUrl;
-  }
+    const { error } = await supabase.from("learn_articles").insert({
+      title,
+      slug: slug || slugify(title),
+      description,
+      author,
+      content,
+      cover_image_url: coverImageUrl,
+      status,
+      published_at: status === "published" ? new Date().toISOString() : null,
+    });
 
-  const { error } = await supabase.from("news_posts").insert({
-    title,
-    slug: slug || slugify(title),
-    excerpt,
-    content,
-    status,
-    cover_image_url: coverImageUrl,
-    published_at: status === "published" ? new Date().toISOString() : null,
-  });
-
-  if (error) {
-    setError(error.message);
-    setSaving(false);
-  } else {
-    router.push("/admin/news");
-    router.refresh();
+    if (error) {
+      setError(error.message);
+      setSaving(false);
+    } else {
+      router.push("/admin/learn");
+      router.refresh();
+    }
   }
-}
 
   return (
     <main className="px-8 py-8 max-w-2xl">
-      <h1 className="text-2xl font-semibold mb-6">New News Post</h1>
+      <h1 className="text-2xl font-semibold mb-6">New Learn Article</h1>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
@@ -98,11 +100,22 @@ export default function NewNewsPostPage() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">Excerpt</label>
+          <label className="block text-sm font-medium mb-1">Description</label>
           <textarea
             rows={2}
-            value={excerpt}
-            onChange={(e) => setExcerpt(e.target.value)}
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            className="w-full border border-gray-300 rounded px-3 py-2"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-1">Author</label>
+          <input
+            type="text"
+            required
+            value={author}
+            onChange={(e) => setAuthor(e.target.value)}
             className="w-full border border-gray-300 rounded px-3 py-2"
           />
         </div>
@@ -142,15 +155,13 @@ export default function NewNewsPostPage() {
           </select>
         </div>
 
-        <div className="flex gap-3">
-          <button
-            type="submit"
-            disabled={saving}
-            className="bg-black text-white px-6 py-3 rounded hover:opacity-90 disabled:opacity-50"
-          >
-            {saving ? "Saving..." : "Save Post"}
-          </button>
-        </div>
+        <button
+          type="submit"
+          disabled={saving}
+          className="bg-black text-white px-6 py-3 rounded hover:opacity-90 disabled:opacity-50"
+        >
+          {saving ? "Saving..." : "Save Article"}
+        </button>
 
         {error && <p className="text-red-600 text-sm">{error}</p>}
       </form>
