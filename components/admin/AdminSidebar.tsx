@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { useEffect, useState } from "react";
 
 const links = [
   { href: "/admin", label: "Overview" },
@@ -14,11 +15,29 @@ const links = [
   { href: "/admin/applications", label: "Applications" },
   { href: "/admin/messages", label: "Messages" },
   { href: "/admin/team", label: "Team" },
+  { href: "/admin/chat", label: "Chat" },
 ];
 
 export default function AdminSidebar() {
   const pathname = usePathname();
   const router = useRouter();
+  const [userName, setUserName] = useState("");
+
+useEffect(() => {
+  async function loadUser() {
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      const { data } = await supabase
+        .from("admin_users")
+        .select("full_name")
+        .eq("id", user.id)
+        .single();
+      if (data) setUserName(data.full_name);
+    }
+  }
+  loadUser();
+}, []);
 
   // Don't show the sidebar on the login page itself.
   if (pathname === "/admin/login") return null;
@@ -32,7 +51,8 @@ export default function AdminSidebar() {
 
   return (
     <aside className="w-56 shrink-0 border-r border-gray-200 min-h-screen px-4 py-6">
-      <p className="font-semibold mb-6">Admin</p>
+      <p className="font-semibold mb-1">{userName || "Admin"}</p>
+<p className="text-xs text-gray-400 mb-6">Signed in</p>
       <nav className="space-y-1">
         {links.map((link) => (
           <Link
