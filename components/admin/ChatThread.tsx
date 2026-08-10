@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import ConfirmDialog from "@/components/admin/ConfirmDialog";
 
 type Message = {
   id: string;
@@ -14,6 +15,10 @@ type Message = {
 
 type SenderMap = Record<string, string>;
 
+function isImageFile(fileName: string | null): boolean {
+  if (!fileName) return false;
+  return /\.(png|jpe?g|gif|webp|svg)$/i.test(fileName);
+}
 export default function ChatThread({
   conversationId,
   currentUserId,
@@ -26,6 +31,8 @@ export default function ChatThread({
   const [text, setText] = useState("");
   const [sending, setSending] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const [file, setFile] = useState<File | null>(null);
+  const [showClearConfirm, setShowClearConfirm] = useState(false);
 
   useEffect(() => {
     const supabase = createClient();
@@ -107,20 +114,61 @@ export default function ChatThread({
   }, [messages]);
 
   async function handleSend(e: React.FormEvent) {
-    e.preventDefault();
-    if (!text.trim()) return;
-    setSending(true);
+  e.preventDefault();
+  if (!text.trim() && !file) return;
+  setSending(true);
 
-    const supabase = createClient();
-    const { error } = await supabase.from("chat_messages").insert({
-      conversation_id: conversationId,
-      sender_id: currentUserId,
-      content: text.trim(),
-    });
+  const supabase = createClient();
+  let fileUrl: string | null = null;
+  let fileName: string | null = null;
 
-    if (!error) setText("");
-    setSending(false);
+  if (file) {
+    const filePath = `${Date.now()}-${file.name}`;
+    const { error: uploadError } = await supabase.storage
+      .from("chat-files")
+      .upload(filePath, file);
+
+    if (uploadError) {
+      setSending(false);
+      return;
+    }
+
+    // Private bucket — generate a signed URL (valid 7 days) so it's viewable.
+    const { data: signedData } = await supabase.storage
+      .from("chat-files")
+      .createSignedUrl(filePath, 60 * 60 * 24 * 7);
+
+    fileUrl = signedData?.signedUrl ?? null;
+    fileName = file.name;
   }
+
+  const { error } = await supabase.from("chat_messages").insert({
+    conversation_id: conversationId,
+    sender_id: currentUserId,
+    content: text.trim() || null,
+    file_url: fileUrl,
+    file_name: fileName,
+  });
+
+  if (!error) {
+    setText("");
+    setFile(null);
+  }
+  setSending(false);
+}
+
+async function handleClearConversation() {
+    const supabase = createClient();
+    const { error } = await supabase
+        .from("chat_messages")
+        .delete()
+        .eq("conversation_id", conversationId);
+
+    if (!error) {
+        setMessages([]);
+    }
+    setShowClearConfirm(false);
+}
 
   return (
     <div className="flex flex-col h-full">
@@ -140,17 +188,26 @@ export default function ChatThread({
                   </p>
                 )}
                 {msg.content && <p className="whitespace-pre-wrap">{msg.content}</p>}
-                {msg.file_url && (
-                  <a
+                {msg.file_url && isImageFile(msg.file_name) && (
+                <a href={msg.file_url} target="_blank" rel="noopener noreferrer" className="block mt-1">
+                    <img
+                    src={msg.file_url}
+                    alt={msg.file_name ?? "Attached image"}
+                    className="max-w-[220px] max-h-[220px] rounded object-cover"
+                    />
+                </a>
+                )}
+                {msg.file_url && !isImageFile(msg.file_name) && (
+                <a
                     href={msg.file_url}
                     target="_blank"
                     rel="noopener noreferrer"
                     className={`block mt-1 text-xs underline ${
-                      isMe ? "text-white" : "text-blue-600"
+                    isMe ? "text-white" : "text-blue-600"
                     }`}
-                  >
+                >
                     📎 {msg.file_name ?? "Attached file"}
-                  </a>
+                </a>
                 )}
                 <p className={`text-[10px] mt-1 ${isMe ? "text-gray-300" : "text-gray-400"}`}>
                   {new Date(msg.created_at).toLocaleTimeString([], {
@@ -165,22 +222,44 @@ export default function ChatThread({
         <div ref={bottomRef} />
       </div>
 
-      <form onSubmit={handleSend} className="border-t border-gray-200 p-4 flex gap-2">
-        <input
-          type="text"
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          placeholder="Type a message..."
-          className="flex-1 border border-gray-300 rounded px-3 py-2 text-sm"
-        />
-        <button
-          type="submit"
-          disabled={sending}
-          className="bg-black text-white px-4 py-2 rounded text-sm hover:opacity-90 disabled:opacity-50"
-        >
-          Send
-        </button>
-      </form>
+      <form onSubmit={handleSend} className="border-t border-gray-200 p-4 space-y-2">
+  {file && (
+    <div className="flex items-center justify-between text-xs bg-gray-50 border border-gray-200 rounded px-3 py-1.5">
+      <span className="truncate">📎 {file.name}</span>
+      <button
+        type="button"
+        onClick={() => setFile(null)}
+        className="text-gray-400 hover:text-gray-700 ml-2"
+      >
+        ✕
+      </button>
+    </div>
+  )}
+  <div className="flex gap-2">
+    <label className="border border-gray-300 rounded px-3 py-2 text-sm cursor-pointer hover:bg-gray-50">
+      📎
+      <input
+        type="file"
+        onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+        className="hidden"
+      />
+    </label>
+    <input
+      type="text"
+      value={text}
+      onChange={(e) => setText(e.target.value)}
+      placeholder="Type a message..."
+      className="flex-1 border border-gray-300 rounded px-3 py-2 text-sm"
+    />
+    <button
+      type="submit"
+      disabled={sending}
+      className="bg-black text-white px-4 py-2 rounded text-sm hover:opacity-90 disabled:opacity-50"
+    >
+      Send
+    </button>
+  </div>
+</form>
     </div>
   );
 }

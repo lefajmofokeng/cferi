@@ -47,17 +47,12 @@ export default function AdminLoginPage() {
 
           {/* Card Headline */}
           <div className="relative z-10 text-center pt-4">
-            <h2 className="text-3xl lg:text-4xl font-extrabold tracking-tight drop-shadow-md">
-              Look first <span className="text-slate-300 font-normal">/</span> Then leap.
+            <h2 className="text-1xl lg:text-4xl font-medium tracking-tight drop-shadow-md">
+              Look first, then leap.
             </h2>
           </div>
 
-          {/* Footer Label */}
-          <div className="relative z-10 text-center pb-2">
-            <p className="text-xs text-slate-300 font-semibold tracking-widest uppercase drop-shadow">
-              ADMIN CONTROL PANEL
-            </p>
-          </div>
+          
         </div>
 
         {/* RIGHT COLUMN: FORM SECTION */}
@@ -77,7 +72,7 @@ export default function AdminLoginPage() {
                 <h1 className="text-2xl font-bold tracking-tight text-slate-900">
                   Almost there
                 </h1>
-                <p className="text-xs text-slate-500 font-medium">
+                <p className="text-small text-slate-500 font-medium">
                   Sign in to your administrative account
                 </p>
               </div>
@@ -86,7 +81,7 @@ export default function AdminLoginPage() {
             {/* Form */}
             <form onSubmit={handleSubmit} className="space-y-5">
               <div>
-                <label className="block text-xs font-semibold text-slate-500 mb-1.5">
+                <label className="block text-[15px] font-semibold text-slate-700 mb-1.5">
                   Email
                 </label>
                 <input
@@ -95,12 +90,12 @@ export default function AdminLoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="admin@domain.com"
-                  className="w-full border border-slate-200 rounded-lg px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-slate-400 transition-colors shadow-sm placeholder:text-slate-300"
+                  className="w-full border border-slate-400 rounded-lg px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-slate-400 transition-colors shadow-sm placeholder:text-slate-400"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-500 mb-1.5">
+                <label className="block text-xs font-semibold text-slate-700 mb-1.5">
                   Password
                 </label>
                 <input
@@ -109,9 +104,9 @@ export default function AdminLoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full border border-slate-200 rounded-lg px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-slate-400 transition-colors shadow-sm placeholder:text-slate-300"
+                  className="w-full border border-slate-400 rounded-lg px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-slate-400 transition-colors shadow-sm placeholder:text-slate-400"
                 />
-                <p className="text-[11px] text-slate-400 mt-1.5">
+                <p className="text-[13px] text-slate-400 mt-2">
                   Enter your assigned administrator credentials
                 </p>
               </div>
