@@ -10,16 +10,16 @@ export default async function Navbar() {
     .select("id, title, slug, cover_image_url")
     .eq("status", "published")
     .order("published_at", { ascending: false })
-    .limit(3);
+    .limit(2);
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4 relative">
+    <header className="sticky top-0 z-50 w-full border-b border-gray-100 bg-white shadow-sm">
+      <div className="mx-auto flex max-w-[1200px] items-center justify-between px-6 py-4 relative">
         <Link 
           href="/" 
-          className="text-lg font-bold tracking-tight text-white flex items-center gap-2 hover:opacity-90 transition-opacity"
+          className="text-xl font-bold tracking-tight text-slate-900 flex items-center gap-2 hover:opacity-90 transition-opacity"
         >
-          <span className="w-2.5 h-2.5 rounded-full bg-blue-500 inline-block"></span>
+          <span className="w-3 h-3 rounded-full bg-blue-600 inline-block"></span>
           Maluti Incubation Center
         </Link>
         

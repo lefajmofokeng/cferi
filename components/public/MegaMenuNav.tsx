@@ -95,7 +95,6 @@ export default function MegaMenuNav({ learnArticles }: { learnArticles: LearnArt
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  // Hover delays prevent accidental closure when moving mouse across gaps
   const handleMouseEnter = (key: MenuKey) => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
     setOpenMenu(key);
@@ -111,7 +110,7 @@ export default function MegaMenuNav({ learnArticles }: { learnArticles: LearnArt
     <>
       {/* DESKTOP NAVBAR */}
       <div className="flex items-center gap-8" onMouseLeave={handleMouseLeave}>
-        <nav className="hidden lg:flex items-center gap-1">
+        <nav className="hidden lg:flex items-center gap-2">
           {(Object.keys(menus) as MenuKey[]).map((key) => {
             const isOpen = openMenu === key;
             return (
@@ -119,17 +118,17 @@ export default function MegaMenuNav({ learnArticles }: { learnArticles: LearnArt
                 <button
                   type="button"
                   onClick={() => setOpenMenu(isOpen ? null : key)}
-                  className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-md text-sm font-semibold transition-colors ${
                     isOpen
-                      ? "text-white bg-slate-800/80"
-                      : "text-slate-300 hover:text-white hover:bg-slate-900/60"
+                      ? "text-blue-600 bg-slate-100/80"
+                      : "text-slate-700 hover:text-blue-600 hover:bg-slate-50"
                   }`}
                   aria-expanded={isOpen}
                 >
                   {menus[key].label}
                   <svg
-                    className={`w-4 h-4 transition-transform duration-200 text-slate-400 ${
-                      isOpen ? "rotate-180 text-blue-400" : ""
+                    className={`w-4 h-4 transition-transform duration-200 ${
+                      isOpen ? "rotate-180 text-blue-600" : "text-slate-400"
                     }`}
                     fill="none"
                     stroke="currentColor"
@@ -147,13 +146,13 @@ export default function MegaMenuNav({ learnArticles }: { learnArticles: LearnArt
         <div className="hidden lg:flex items-center gap-3">
           <Link
             href="/contact"
-            className="text-sm font-medium text-slate-300 hover:text-white px-4 py-2 rounded-lg border border-slate-800 hover:border-slate-700 bg-slate-900/50 transition-all"
+            className="text-sm font-semibold text-slate-700 hover:text-blue-600 px-4 py-2 transition-colors"
           >
             Contact Us
           </Link>
           <Link
             href="/apply"
-            className="text-sm font-semibold text-white px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 shadow-md shadow-blue-600/20 hover:shadow-blue-500/30 transition-all hover:-translate-y-0.5"
+            className="text-sm font-semibold text-white px-5 py-2.5 rounded-full bg-blue-600 hover:bg-blue-700 shadow-sm transition-all"
           >
             Apply for Incubation
           </Link>
@@ -163,7 +162,7 @@ export default function MegaMenuNav({ learnArticles }: { learnArticles: LearnArt
         <button
           type="button"
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="lg:hidden p-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/60 focus:outline-none"
+          className="lg:hidden p-2 rounded-lg text-slate-700 hover:bg-slate-100 focus:outline-none"
           aria-label="Toggle navigation menu"
         >
           {mobileOpen ? (
@@ -178,43 +177,54 @@ export default function MegaMenuNav({ learnArticles }: { learnArticles: LearnArt
         </button>
       </div>
 
-      {/* DESKTOP MEGA MENU DROPDOWN PANEL */}
+      {/* FULL-WIDTH MEGA MENU DROPDOWN PANEL */}
       {openMenu && (
         <div
           onMouseEnter={() => handleMouseEnter(openMenu)}
           onMouseLeave={handleMouseLeave}
-          className="hidden lg:block absolute left-0 right-0 top-full mt-2 w-full bg-slate-900/95 border border-slate-800 rounded-2xl shadow-2xl backdrop-blur-xl z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200"
+          className="hidden lg:block fixed left-0 right-0 top-[65px] w-full bg-white border-b border-slate-200/80 shadow-2xl z-50 animate-in fade-in duration-150"
         >
-          <div className="mx-auto max-w-6xl p-8 grid grid-cols-12 gap-8">
-            {/* Columns Section */}
+          <div className="mx-auto max-w-[1200px] px-6 grid grid-cols-12">
+            {/* Left Column Section */}
             <div
-              className={`${
+              className={`py-8 pr-8 border-r border-slate-100 ${
                 openMenu === "resources" && learnArticles.length > 0
-                  ? "col-span-7 grid grid-cols-2 gap-8"
+                  ? "col-span-5 space-y-6"
                   : "col-span-12 grid grid-cols-3 gap-8"
               }`}
             >
               {menus[openMenu].columns.map((column, i) => (
-                <div key={i} className="space-y-4">
+                <div key={i} className="space-y-6">
                   {column.heading && (
-                    <p className="text-xs font-semibold uppercase tracking-wider text-blue-400/90">
+                    <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
                       {column.heading}
                     </p>
                   )}
-                  <ul className="space-y-1">
+                  <ul className="space-y-5">
                     {column.links.map((link) => (
                       <li key={link.href}>
                         <Link
                           href={link.href}
                           onClick={() => setOpenMenu(null)}
-                          className="group block p-2.5 rounded-xl hover:bg-slate-800/70 transition-colors"
+                          className="group flex items-start gap-4 transition-colors"
                         >
-                          <div className="text-sm font-medium text-slate-100 group-hover:text-blue-400 transition-colors">
-                            {link.label}
+                          {/* Square Thumbnail Image / Placeholder */}
+                          <div className="w-14 h-14 rounded-lg bg-slate-900 border border-slate-200 overflow-hidden shrink-0 flex items-center justify-center">
+                            <span className="text-xs font-bold text-white uppercase tracking-wider">
+                              {link.label.slice(0, 2)}
+                            </span>
                           </div>
-                          {"desc" in link && (
-                            <p className="text-xs text-slate-400 mt-0.5 line-clamp-1">{link.desc}</p>
-                          )}
+
+                          <div className="space-y-1">
+                            <div className="text-base font-bold text-slate-900 group-hover:text-emerald-500 transition-colors">
+                              {link.label}
+                            </div>
+                            {"desc" in link && (
+                              <p className="text-xs text-slate-500 leading-relaxed group-hover:text-emerald-600 transition-colors line-clamp-2">
+                                {link.desc}
+                              </p>
+                            )}
+                          </div>
                         </Link>
                       </li>
                     ))}
@@ -223,44 +233,60 @@ export default function MegaMenuNav({ learnArticles }: { learnArticles: LearnArt
               ))}
             </div>
 
-            {/* Featured Section for Resources */}
+            {/* Right Featured Section (Full-bleed images) */}
             {openMenu === "resources" && learnArticles.length > 0 && (
-              <div className="col-span-5 border-l border-slate-800/80 pl-8 space-y-4">
+              <div className="col-span-7 py-8 pl-8 space-y-6">
                 <div className="flex items-center justify-between">
-                  <p className="text-xs font-semibold uppercase tracking-wider text-blue-400/90">
-                    Latest from Learn
+                  <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                    Featured Articles
                   </p>
                   <Link
                     href="/learn"
                     onClick={() => setOpenMenu(null)}
-                    className="text-xs text-slate-400 hover:text-white transition-colors"
+                    className="text-xs font-bold text-slate-900 hover:text-blue-600 tracking-wider uppercase transition-colors"
                   >
-                    View all &rarr;
+                    View All &rarr;
                   </Link>
                 </div>
 
-                <div className="space-y-3">
+                <div className="grid grid-cols-2 gap-6">
                   {learnArticles.map((article) => (
                     <Link
                       key={article.id}
                       href={`/learn/${article.slug}`}
                       onClick={() => setOpenMenu(null)}
-                      className="flex items-center gap-3.5 p-2 rounded-xl hover:bg-slate-800/70 group transition-all"
+                      className="group flex flex-col justify-between space-y-4"
                     >
-                      {article.cover_image_url ? (
-                        <img
-                          src={article.cover_image_url}
-                          alt={article.title}
-                          className="w-12 h-12 rounded-lg object-cover bg-slate-800 shrink-0 border border-slate-800"
-                        />
-                      ) : (
-                        <div className="w-12 h-12 rounded-lg bg-slate-800 border border-slate-700/60 flex items-center justify-center text-xs text-slate-500 shrink-0">
-                          Article
-                        </div>
-                      )}
-                      <span className="text-sm font-medium text-slate-200 group-hover:text-blue-400 line-clamp-2 transition-colors">
-                        {article.title}
-                      </span>
+                      {/* Full-bleed cover image (no padding/margin) */}
+                      <div className="aspect-[16/9] w-full rounded-lg bg-slate-100 overflow-hidden border border-slate-200/80">
+                        {article.cover_image_url ? (
+                          <img
+                            src={article.cover_image_url}
+                            alt={article.title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-slate-900 flex items-center justify-center">
+                            <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+                              Maluti Center
+                            </span>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="space-y-2 flex-grow">
+                        <h3 className="text-base font-bold text-slate-900 leading-snug group-hover:text-blue-600 transition-colors line-clamp-2">
+                          {article.title}
+                        </h3>
+                        <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">
+                          Explore our latest article on incubation strategy and modern development.
+                        </p>
+                      </div>
+
+                      <div className="text-xs font-extrabold uppercase tracking-wider text-slate-900 flex items-center gap-1 group-hover:text-blue-600 transition-colors pt-2">
+                        <span>Read More</span>
+                        <span>&gt;</span>
+                      </div>
                     </Link>
                   ))}
                 </div>
@@ -272,21 +298,21 @@ export default function MegaMenuNav({ learnArticles }: { learnArticles: LearnArt
 
       {/* MOBILE DRAWER */}
       {mobileOpen && (
-        <div className="lg:hidden fixed inset-x-0 top-[73px] bottom-0 bg-slate-950/95 backdrop-blur-2xl z-50 overflow-y-auto border-t border-slate-800/80 p-6 flex flex-col justify-between animate-in fade-in duration-200">
+        <div className="lg:hidden fixed inset-x-0 top-[65px] bottom-0 bg-white z-50 overflow-y-auto border-t border-slate-200 p-6 flex flex-col justify-between">
           <div className="space-y-4">
             {(Object.keys(menus) as MenuKey[]).map((key) => {
               const isAccordionOpen = activeAccordion === key;
               return (
-                <div key={key} className="border-b border-slate-800/60 pb-3">
+                <div key={key} className="border-b border-slate-100 pb-3">
                   <button
                     type="button"
                     onClick={() => setActiveAccordion(isAccordionOpen ? null : key)}
-                    className="w-full flex items-center justify-between py-2 text-base font-medium text-slate-100"
+                    className="w-full flex items-center justify-between py-2 text-base font-bold text-slate-900"
                   >
                     {menus[key].label}
                     <svg
                       className={`w-5 h-5 text-slate-400 transition-transform ${
-                        isAccordionOpen ? "rotate-180 text-blue-400" : ""
+                        isAccordionOpen ? "rotate-180 text-blue-600" : ""
                       }`}
                       fill="none"
                       stroke="currentColor"
@@ -299,17 +325,17 @@ export default function MegaMenuNav({ learnArticles }: { learnArticles: LearnArt
                   {isAccordionOpen && (
                     <div className="pt-2 pl-2 space-y-4">
                       {menus[key].columns.map((column, cIdx) => (
-                        <div key={cIdx} className="space-y-2">
+                        <div key={cIdx} className="space-y-3">
                           {column.heading && (
-                            <p className="text-xs font-semibold uppercase text-blue-400/80">{column.heading}</p>
+                            <p className="text-xs font-bold uppercase text-slate-400">{column.heading}</p>
                           )}
-                          <div className="space-y-1">
+                          <div className="space-y-2">
                             {column.links.map((link) => (
                               <Link
                                 key={link.href}
                                 href={link.href}
                                 onClick={() => setMobileOpen(false)}
-                                className="block py-1.5 text-sm text-slate-300 hover:text-white"
+                                className="block py-1.5 text-sm font-semibold text-slate-700 hover:text-blue-600"
                               >
                                 {link.label}
                               </Link>
@@ -329,14 +355,14 @@ export default function MegaMenuNav({ learnArticles }: { learnArticles: LearnArt
             <Link
               href="/contact"
               onClick={() => setMobileOpen(false)}
-              className="block w-full text-center py-3 rounded-xl border border-slate-800 bg-slate-900 text-slate-200 font-medium text-sm"
+              className="block w-full text-center py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 font-bold text-sm"
             >
               Contact Us
             </Link>
             <Link
               href="/apply"
               onClick={() => setMobileOpen(false)}
-              className="block w-full text-center py-3 rounded-xl bg-blue-600 text-white font-semibold text-sm shadow-lg shadow-blue-600/30"
+              className="block w-full text-center py-3 rounded-xl bg-blue-600 text-white font-bold text-sm shadow-md"
             >
               Apply for Incubation
             </Link>

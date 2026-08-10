@@ -12,42 +12,47 @@ export default async function EventsPage() {
 
   if (error) {
     return (
-      <main className="mx-auto max-w-3xl px-6 py-12">
+      <main className="mx-auto w-full max-w-[1200px] px-6 py-16">
         <p className="text-red-600">Failed to load events: {error.message}</p>
       </main>
     );
   }
 
   return (
-    <main className="mx-auto max-w-3xl px-6 py-12">
-      <h1 className="text-3xl font-semibold mb-8">Events</h1>
+    <main className="mx-auto w-full max-w-[1200px] px-6 py-16">
+      <h1 className="text-4xl font-bold text-gray-900 mb-10">Events</h1>
 
       {events.length === 0 ? (
         <p className="text-gray-500">No events yet.</p>
       ) : (
-        <ul className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {events.map((event) => (
-            <li key={event.id} className="border-b border-gray-200 pb-6">
+            <Link key={event.id} href={`/events/${event.slug}`} className="group flex flex-col">
               {event.cover_image_url && (
-                <img
-                  src={event.cover_image_url}
-                  alt={event.title}
-                  className="w-full h-48 object-cover rounded mb-3"
-                />
+                <div className="overflow-hidden rounded-xl mb-4 aspect-[16/10] bg-gray-100">
+                  <img
+                    src={event.cover_image_url}
+                    alt={event.title}
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
+                </div>
               )}
-              <Link href={`/events/${event.slug}`} className="text-xl font-medium hover:underline">
+              <h2 className="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors leading-snug mb-2">
                 {event.title}
-              </Link>
-              <p className="text-gray-600 mt-1">
+              </h2>
+              <p className="text-sm text-gray-600 line-clamp-2 mb-4 flex-grow">
                 {new Date(event.starts_at).toLocaleString(undefined, {
                   dateStyle: "medium",
                   timeStyle: "short",
                 })}
                 {event.location && ` — ${event.location}`}
               </p>
-            </li>
+              <span className="text-blue-600 font-medium text-sm flex items-center gap-1 mt-auto group-hover:underline">
+                Learn more →
+              </span>
+            </Link>
           ))}
-        </ul>
+        </div>
       )}
     </main>
   );

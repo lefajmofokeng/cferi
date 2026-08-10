@@ -21,15 +21,15 @@ export default async function NewsDetailPage({
   }
 
   return (
-    <main className="mx-auto max-w-3xl px-6 py-12">
+    <main className="mx-auto w-full max-w-[1200px] px-6 py-12">
       <h1 className="text-3xl font-semibold mb-2">{post.title}</h1>
-        {post.cover_image_url && (
-          <img
-            src={post.cover_image_url}
-            alt={post.title}
-            className="w-full max-h-96 object-cover rounded mb-6"
-          />
-        )}
+      {post.cover_image_url && (
+        <img
+          src={post.cover_image_url}
+          alt={post.title}
+          className="w-full max-h-150 object-cover rounded mb-6"
+        />
+      )}
       {post.published_at && (
         <p className="text-sm text-gray-500 mb-8">
           {new Date(post.published_at).toLocaleDateString()}

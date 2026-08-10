@@ -21,34 +21,60 @@ export default async function EventDetailPage({
   }
 
   return (
-    <main className="mx-auto max-w-3xl px-6 py-12">
-      <h1 className="text-3xl font-semibold mb-2">{event.title}</h1>
+    <main className="mx-auto w-full max-w-[1200px] px-6 py-12">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+        {/* Main Details Section */}
+        <div className="lg:col-span-2">
+          <h1 className="text-3xl font-semibold mb-4 text-gray-900">{event.title}</h1>
 
-        {event.cover_image_url && (
-          <img
-            src={event.cover_image_url}
-            alt={event.title}
-            className="w-full max-h-96 object-cover rounded mb-6"
-          />
-        )}
+          {event.cover_image_url && (
+            <div className="overflow-hidden rounded-xl mb-6 bg-gray-100">
+              <img
+                src={event.cover_image_url}
+                alt={event.title}
+                className="w-full max-h-[420px] object-cover"
+              />
+            </div>
+          )}
 
-        <p className="text-gray-600 mb-1">
-        {new Date(event.starts_at).toLocaleString(undefined, {
-          dateStyle: "full",
-          timeStyle: "short",
-        })}
-        {event.ends_at &&
-          ` – ${new Date(event.ends_at).toLocaleString(undefined, {
-            timeStyle: "short",
-          })}`}
-      </p>
+          <div className="text-gray-700 leading-relaxed whitespace-pre-wrap">
+            {event.description}
+          </div>
+        </div>
 
-      {event.location && (
-        <p className="text-gray-500 mb-8">{event.location}</p>
-      )}
+        {/* Event Meta Sidebar */}
+        <div className="lg:col-span-1">
+          <div className="bg-gray-50 border border-gray-200/80 rounded-xl p-6 space-y-4 sticky top-8">
+            <h2 className="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-3">
+              Event Details
+            </h2>
 
-      <div className="text-gray-700 leading-relaxed whitespace-pre-wrap">
-        {event.description}
+            <div>
+              <span className="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">
+                Date & Time
+              </span>
+              <p className="text-sm text-gray-700">
+                {new Date(event.starts_at).toLocaleString(undefined, {
+                  dateStyle: "full",
+                  timeStyle: "short",
+                })}
+                {event.ends_at &&
+                  ` – ${new Date(event.ends_at).toLocaleString(undefined, {
+                    timeStyle: "short",
+                  })}`}
+              </p>
+            </div>
+
+            {event.location && (
+              <div>
+                <span className="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">
+                  Location
+                </span>
+                <p className="text-sm text-gray-700">{event.location}</p>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </main>
   );

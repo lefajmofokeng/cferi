@@ -1,17 +1,10 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
+import { Google_Sans_Flex } from "next/font/google";
 import "./globals.css";
 
-const sodoSans = localFont({
-  src: [
-    { path: "./fonts/SoDoSans-Thin.woff2", weight: "100", style: "normal" },
-    { path: "./fonts/SoDoSans-Light.woff2", weight: "300", style: "normal" },
-    { path: "./fonts/SoDoSans-Regular.woff2", weight: "400", style: "normal" },
-    { path: "./fonts/SoDoSans-SemiBold.woff2", weight: "600", style: "normal" },
-    { path: "./fonts/SoDoSans-Bold.woff2", weight: "700", style: "normal" },
-    { path: "./fonts/SoDoSans-Black.woff2", weight: "900", style: "normal" },
-  ],
-  variable: "--font-sodo-sans",
+const googleSans = Google_Sans_Flex({
+  variable: "--font-google-sans",
+  subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
@@ -26,7 +19,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${sodoSans.variable} font-sans antialiased`}>
+      <body className={`${googleSans.variable} font-sans antialiased`}>
         {children}
       </body>
     </html>
