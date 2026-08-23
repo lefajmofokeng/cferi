@@ -1,12 +1,13 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
+import { getEventStatus, eventStatusStyles, eventStatusLabels } from "@/lib/eventStatus";
 
 export default async function EventsPage() {
   const supabase = await createClient();
 
   const { data: events, error } = await supabase
     .from("events")
-    .select("id, title, slug, location, starts_at, cover_image_url")
+    .select("id, title, slug, location, starts_at, ends_at, cover_image_url")
     .eq("status", "published")
     .order("starts_at", { ascending: true });
 
@@ -28,6 +29,13 @@ export default async function EventsPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {events.map((event) => (
             <Link key={event.id} href={`/events/${event.slug}`} className="group flex flex-col">
+              <span
+                className={`inline-block text-xs font-medium px-2 py-1 rounded mb-2 w-fit ${
+                  eventStatusStyles[getEventStatus(event.starts_at, event.ends_at)]
+                }`}
+              >
+                {eventStatusLabels[getEventStatus(event.starts_at, event.ends_at)]}
+              </span>
               {event.cover_image_url && (
                 <div className="overflow-hidden rounded-xl mb-4 aspect-[16/10] bg-gray-100">
                   <img

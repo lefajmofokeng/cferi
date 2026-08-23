@@ -17,7 +17,7 @@ const menus = {
       {
         heading: "Incubation & Training",
         links: [
-          { href: "/business-incubation-programme", label: "Business Incubation Programme", desc: "Scale early-stage ventures with direct support" },
+          { href: "/business-incubation-programme", label: "Business Incubation Programme", desc: "Lean startup methodologies, business management development, pitching practices, and masterclasses." },
           { href: "/entrepreneurship-training", label: "Entrepreneurship Training", desc: "Practical frameworks for modern founders" },
           { href: "/mentorship-programme", label: "Mentorship Programme", desc: "1-on-1 guidance from active industry experts" },
           { href: "/enterprise-skills-development", label: "Enterprise & Skills Development", desc: "Targeted skill building for growing teams" },

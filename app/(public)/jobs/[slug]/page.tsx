@@ -1,5 +1,34 @@
 import { createClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
+import ShareButtons from "@/components/public/ShareButtons";
+import type { Metadata } from "next";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const supabase = await createClient();
+
+  const { data: job } = await supabase
+    .from("job_posts")
+    .select("title, company_name, description")
+    .eq("slug", slug)
+    .eq("status", "published")
+    .single();
+
+  if (!job) return {};
+
+  return {
+    title: `${job.title} at ${job.company_name}`,
+    description: job.description?.slice(0, 160),
+    openGraph: {
+      title: `${job.title} at ${job.company_name}`,
+      description: job.description?.slice(0, 160),
+    },
+  };
+}
 
 export default async function JobDetailPage({
   params,
@@ -63,6 +92,12 @@ export default async function JobDetailPage({
           Apply for this position
         </a>
       )}
+      <div className="mt-8 pt-6 border-t border-gray-200">
+      <ShareButtons
+        url={`${process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"}/jobs/${slug}`}
+        title={`${job.title} at ${job.company_name}`}
+      />
+      </div>
     </main>
   );
 }

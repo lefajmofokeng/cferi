@@ -1,5 +1,35 @@
 import { createClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
+import ShareButtons from "@/components/public/ShareButtons";
+import type { Metadata } from "next";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const supabase = await createClient();
+
+  const { data: event } = await supabase
+    .from("events")
+    .select("title, description, cover_image_url")
+    .eq("slug", slug)
+    .eq("status", "published")
+    .single();
+
+  if (!event) return {};
+
+  return {
+    title: event.title,
+    description: event.description?.slice(0, 160),
+    openGraph: {
+      title: event.title,
+      description: event.description?.slice(0, 160),
+      images: event.cover_image_url ? [event.cover_image_url] : [],
+    },
+  };
+}
 
 export default async function EventDetailPage({
   params,
@@ -76,6 +106,12 @@ export default async function EventDetailPage({
           </div>
         </div>
       </div>
+      <div className="mt-8 pt-6 border-t border-gray-200">
+  <ShareButtons
+    url={`${process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"}/events/${slug}`}
+    title={event.title}
+  />
+</div>
     </main>
   );
 }

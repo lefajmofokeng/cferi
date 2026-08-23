@@ -34,6 +34,11 @@ export default function ChatThread({
   const [file, setFile] = useState<File | null>(null);
   const [showClearConfirm, setShowClearConfirm] = useState(false);
 
+  const [isRecording, setIsRecording] = useState(false);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
+  const audioStreamRef = useRef<MediaStream | null>(null);
+
   useEffect(() => {
     const supabase = createClient();
     let active = true;
@@ -113,51 +118,108 @@ export default function ChatThread({
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  async function handleSend(e: React.FormEvent) {
-  e.preventDefault();
-  if (!text.trim() && !file) return;
-  setSending(true);
+  async function startRecording() {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const recorder = new MediaRecorder(stream);
+      audioChunksRef.current = [];
 
-  const supabase = createClient();
-  let fileUrl: string | null = null;
-  let fileName: string | null = null;
+      recorder.ondataavailable = (e) => {
+        if (e.data.size > 0) audioChunksRef.current.push(e.data);
+      };
 
-  if (file) {
-    const filePath = `${Date.now()}-${file.name}`;
+      recorder.onstop = async () => {
+        const audioBlob = new Blob(audioChunksRef.current, { type: "audio/webm" });
+        stream.getTracks().forEach((track) => track.stop());
+        await sendVoiceNote(audioBlob);
+      };
+
+      recorder.start();
+      mediaRecorderRef.current = recorder;
+      setIsRecording(true);
+    } catch {
+      alert("Microphone access is required to record a voice note.");
+    }
+  }
+
+  function stopRecording() {
+    mediaRecorderRef.current?.stop();
+    setIsRecording(false);
+  }
+
+  async function sendVoiceNote(audioBlob: Blob) {
+    setSending(true);
+    const supabase = createClient();
+    const filePath = `${Date.now()}-voice-note.webm`;
+
     const { error: uploadError } = await supabase.storage
       .from("chat-files")
-      .upload(filePath, file);
+      .upload(filePath, audioBlob);
 
     if (uploadError) {
       setSending(false);
       return;
     }
 
-    // Private bucket — generate a signed URL (valid 7 days) so it's viewable.
     const { data: signedData } = await supabase.storage
       .from("chat-files")
       .createSignedUrl(filePath, 60 * 60 * 24 * 7);
 
-    fileUrl = signedData?.signedUrl ?? null;
-    fileName = file.name;
+    await supabase.from("chat_messages").insert({
+      conversation_id: conversationId,
+      sender_id: currentUserId,
+      content: null,
+      file_url: signedData?.signedUrl ?? null,
+      file_name: "voice-note.webm",
+    });
+
+    setSending(false);
   }
 
-  const { error } = await supabase.from("chat_messages").insert({
-    conversation_id: conversationId,
-    sender_id: currentUserId,
-    content: text.trim() || null,
-    file_url: fileUrl,
-    file_name: fileName,
-  });
+  async function handleSend(e: React.FormEvent) {
+    e.preventDefault();
+    if (!text.trim() && !file) return;
+    setSending(true);
 
-  if (!error) {
-    setText("");
-    setFile(null);
+    const supabase = createClient();
+    let fileUrl: string | null = null;
+    let fileName: string | null = null;
+
+    if (file) {
+      const filePath = `${Date.now()}-${file.name}`;
+      const { error: uploadError } = await supabase.storage
+        .from("chat-files")
+        .upload(filePath, file);
+
+      if (uploadError) {
+        setSending(false);
+        return;
+      }
+
+      const { data: signedData } = await supabase.storage
+        .from("chat-files")
+        .createSignedUrl(filePath, 60 * 60 * 24 * 7);
+
+      fileUrl = signedData?.signedUrl ?? null;
+      fileName = file.name;
+    }
+
+    const { error } = await supabase.from("chat_messages").insert({
+      conversation_id: conversationId,
+      sender_id: currentUserId,
+      content: text.trim() || null,
+      file_url: fileUrl,
+      file_name: fileName,
+    });
+
+    if (!error) {
+      setText("");
+      setFile(null);
+    }
+    setSending(false);
   }
-  setSending(false);
-}
 
-async function handleClearConversation() {
+  async function handleClearConversation() {
     const supabase = createClient();
     const { error } = await supabase
         .from("chat_messages")
@@ -175,6 +237,10 @@ async function handleClearConversation() {
       <div className="flex-1 overflow-y-auto px-6 py-4 space-y-3">
         {messages.map((msg) => {
           const isMe = msg.sender_id === currentUserId;
+          const normalizedFileName = (msg.file_name ?? "").toLowerCase();
+          const isVoiceNote = !!msg.file_url && normalizedFileName.includes("voice-note");
+          const isImageAttachment = !!msg.file_url && isImageFile(msg.file_name);
+
           return (
             <div key={msg.id} className={`flex ${isMe ? "justify-end" : "justify-start"}`}>
               <div
@@ -188,26 +254,31 @@ async function handleClearConversation() {
                   </p>
                 )}
                 {msg.content && <p className="whitespace-pre-wrap">{msg.content}</p>}
-                {msg.file_url && isImageFile(msg.file_name) && (
-                <a href={msg.file_url} target="_blank" rel="noopener noreferrer" className="block mt-1">
+                {isImageAttachment && (
+                  <a href={msg.file_url!} target="_blank" rel="noopener noreferrer" className="block mt-1">
                     <img
-                    src={msg.file_url}
-                    alt={msg.file_name ?? "Attached image"}
-                    className="max-w-[220px] max-h-[220px] rounded object-cover"
+                      src={msg.file_url!}
+                      alt={msg.file_name ?? "Attached image"}
+                      className="max-w-[220px] max-h-[220px] rounded object-cover"
                     />
-                </a>
+                  </a>
                 )}
-                {msg.file_url && !isImageFile(msg.file_name) && (
-                <a
-                    href={msg.file_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`block mt-1 text-xs underline ${
-                    isMe ? "text-white" : "text-blue-600"
-                    }`}
-                >
-                    📎 {msg.file_name ?? "Attached file"}
-                </a>
+                {isVoiceNote ? (
+                  <audio controls src={msg.file_url!} className="mt-1 max-w-[220px]" />
+                ) : (
+                  msg.file_url &&
+                    !isImageAttachment && (
+                      <a
+                        href={msg.file_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`block mt-1 text-xs underline ${
+                          isMe ? "text-white" : "text-blue-600"
+                        }`}
+                      >
+                        📎 {msg.file_name ?? "Attached file"}
+                      </a>
+                    )
                 )}
                 <p className={`text-[10px] mt-1 ${isMe ? "text-gray-300" : "text-gray-400"}`}>
                   {new Date(msg.created_at).toLocaleTimeString([], {
@@ -244,6 +315,17 @@ async function handleClearConversation() {
         className="hidden"
       />
     </label>
+    <button
+  type="button"
+  onClick={isRecording ? stopRecording : startRecording}
+  className={`border rounded px-3 py-2 text-sm ${
+    isRecording
+      ? "border-red-400 bg-red-50 text-red-600 animate-pulse"
+      : "border-gray-300 hover:bg-gray-50"
+  }`}
+>
+  {isRecording ? "⏹ Stop" : "🎙️"}
+</button>
     <input
       type="text"
       value={text}

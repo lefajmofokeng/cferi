@@ -74,6 +74,9 @@ export default function Footer() {
             <Link href="/cookie-policy" className="hover:text-gray-900">
               Cookie Policy
             </Link>
+            <Link href="/cookie-policy" className="hover:text-gray-900">
+              Do not sell or share my information
+            </Link>
           </div>
         </div>
       </div>

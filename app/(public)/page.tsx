@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
+import { getEventStatus, eventStatusStyles, eventStatusLabels } from "@/lib/eventStatus";
 
 export default async function Home() {
   const supabase = await createClient();
@@ -12,12 +13,11 @@ export default async function Home() {
     .limit(3);
 
   const { data: events } = await supabase
-    .from("events")
-    .select("id, title, slug, location, starts_at, cover_image_url")
-    .eq("status", "published")
-    .gte("starts_at", new Date().toISOString())
-    .order("starts_at", { ascending: true })
-    .limit(3);
+  .from("events")
+  .select("id, title, slug, location, starts_at, ends_at, cover_image_url")
+  .eq("status", "published")
+  .order("starts_at", { ascending: false })
+  .limit(3);
 
   return (
     <>
@@ -93,6 +93,13 @@ export default async function Home() {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
               {events.map((event) => (
                 <Link key={event.id} href={`/events/${event.slug}`} className="group flex flex-col">
+                  <span
+                    className={`inline-block text-xs font-medium px-2 py-1 rounded mb-2 w-fit ${
+                      eventStatusStyles[getEventStatus(event.starts_at, event.ends_at)]
+                    }`}
+                  >
+                    {eventStatusLabels[getEventStatus(event.starts_at, event.ends_at)]}
+                  </span>
                   {event.cover_image_url && (
                     <div className="overflow-hidden rounded-xl mb-4 aspect-[16/10] bg-gray-100">
                       <img
@@ -138,12 +145,12 @@ export default async function Home() {
               Get in Touch
             </Link>
           </div>
-          <div className="min-h-[320px]">
+          <div className="min-h-[450px]">
             <iframe
               src="https://www.google.com/maps?q=Maluti+TVET+College&output=embed"
               width="100%"
               height="100%"
-              style={{ border: 0, minHeight: "320px" }}
+              style={{ border: 0, minHeight: "450px" }}
               allowFullScreen
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
