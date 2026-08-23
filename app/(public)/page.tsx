@@ -7,7 +7,7 @@ export default async function Home() {
 
   const { data: news } = await supabase
     .from("news_posts")
-    .select("id, title, slug, excerpt, cover_image_url")
+    .select("id, title, slug, excerpt, cover_image_url, published_at")
     .eq("status", "published")
     .order("published_at", { ascending: false })
     .limit(3);
@@ -64,6 +64,13 @@ export default async function Home() {
                   <h3 className="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors leading-snug mb-2">
                     {post.title}
                   </h3>
+                  {post.published_at && (
+                    <p className="text-xs text-gray-400 mb-2">
+                      {new Date(post.published_at).toLocaleDateString(undefined, {
+                        dateStyle: "medium",
+                      })}
+                    </p>
+                  )}
                   {post.excerpt && (
                     <p className="text-sm text-gray-600 line-clamp-2 mb-4 flex-grow">
                       {post.excerpt}

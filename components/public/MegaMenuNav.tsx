@@ -10,21 +10,28 @@ type LearnArticle = {
   cover_image_url: string | null;
 };
 
+type CaseStudy = {
+  id: string;
+  title: string;
+  slug: string;
+  cover_image_url: string | null;
+};
+
 const menus = {
   programs: {
-    label: "Programs",
-    columns: [
-      {
-        heading: "Incubation & Training",
-        links: [
-          { href: "/business-incubation-programme", label: "Business Incubation Programme", desc: "Lean startup methodologies, business management development, pitching practices, and masterclasses." },
-          { href: "/entrepreneurship-training", label: "Entrepreneurship Training", desc: "Practical frameworks for modern founders" },
-          { href: "/mentorship-programme", label: "Mentorship Programme", desc: "1-on-1 guidance from active industry experts" },
-          { href: "/enterprise-skills-development", label: "Enterprise & Skills Development", desc: "Targeted skill building for growing teams" },
-        ],
-      },
-    ],
-  },
+  label: "Programs",
+  columns: [
+    {
+      heading: "Incubation & Training",
+      links: [
+        { href: "/business-incubation-programme", label: "Business Incubation Programme", desc: "Lean startup methodologies, business management development, pitching practices, and masterclasses." },
+        { href: "/entrepreneurship-training", label: "Entrepreneurship Training", desc: "Practical frameworks for modern founders" },
+        { href: "/mentorship-programme", label: "Mentorship Programme", desc: "1-on-1 guidance from active industry experts" },
+        { href: "/enterprise-skills-development", label: "Enterprise & Skills Development", desc: "Targeted skill building for growing teams" },
+      ],
+    },
+  ],
+},
   discover: {
     label: "Discover",
     columns: [
@@ -77,7 +84,13 @@ const menus = {
 
 type MenuKey = keyof typeof menus;
 
-export default function MegaMenuNav({ learnArticles }: { learnArticles: LearnArticle[] }) {
+export default function MegaMenuNav({
+  learnArticles,
+  caseStudies,
+}: {
+  learnArticles: LearnArticle[];
+  caseStudies: CaseStudy[];
+}) {
   const [openMenu, setOpenMenu] = useState<MenuKey | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeAccordion, setActiveAccordion] = useState<MenuKey | null>(null);
@@ -188,7 +201,8 @@ export default function MegaMenuNav({ learnArticles }: { learnArticles: LearnArt
             {/* Left Column Section */}
             <div
               className={`py-8 pr-8 border-r border-slate-100 ${
-                openMenu === "resources" && learnArticles.length > 0
+                (openMenu === "resources" && learnArticles.length > 0) ||
+                (openMenu === "programs" && caseStudies.length > 0)
                   ? "col-span-5 space-y-6"
                   : "col-span-12 grid grid-cols-3 gap-8"
               }`}
@@ -235,7 +249,8 @@ export default function MegaMenuNav({ learnArticles }: { learnArticles: LearnArt
 
             {/* Right Featured Section (Full-bleed images) */}
             {openMenu === "resources" && learnArticles.length > 0 && (
-              <div className="col-span-7 py-8 pl-8 space-y-6">
+              <div className="col-span-7 py-6 pl-8">
+  <div className="bg-slate-50 rounded-[6px] p-6 space-y-6">
                 <div className="flex items-center justify-between">
                   <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
                     Featured Articles
@@ -291,7 +306,65 @@ export default function MegaMenuNav({ learnArticles }: { learnArticles: LearnArt
                   ))}
                 </div>
               </div>
+              </div>
             )}
+
+            {openMenu === "programs" && caseStudies.length > 0 && (
+  <div className="col-span-7 py-6 pl-8">
+  <div className="bg-slate-50 rounded-[6px] p-6 space-y-6">
+    <div className="flex items-center justify-between">
+      <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
+        Featured Case Studies
+      </p>
+      <Link
+        href="/case-studies"
+        onClick={() => setOpenMenu(null)}
+        className="text-xs font-bold text-slate-900 hover:text-blue-600 tracking-wider uppercase transition-colors"
+      >
+        View All &rarr;
+      </Link>
+    </div>
+
+    <div className="grid grid-cols-2 gap-6">
+      {caseStudies.map((cs) => (
+        <Link
+          key={cs.id}
+          href={`/case-studies/${cs.slug}`}
+          onClick={() => setOpenMenu(null)}
+          className="group flex flex-col justify-between space-y-4"
+        >
+          <div className="aspect-[16/9] w-full rounded-lg bg-slate-100 overflow-hidden border border-slate-200/80">
+            {cs.cover_image_url ? (
+              <img
+                src={cs.cover_image_url}
+                alt={cs.title}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              />
+            ) : (
+              <div className="w-full h-full bg-slate-900 flex items-center justify-center">
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+                  Maluti Center
+                </span>
+              </div>
+            )}
+          </div>
+
+          <div className="space-y-2 flex-grow">
+            <h3 className="text-base font-bold text-slate-900 leading-snug group-hover:text-blue-600 transition-colors line-clamp-2">
+              {cs.title}
+            </h3>
+          </div>
+
+          <div className="text-xs font-extrabold uppercase tracking-wider text-slate-900 flex items-center gap-1 group-hover:text-blue-600 transition-colors pt-2">
+            <span>Read More</span>
+            <span>&gt;</span>
+          </div>
+        </Link>
+      ))}
+    </div>
+  </div>
+  </div>
+)}
           </div>
         </div>
       )}

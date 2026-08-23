@@ -12,6 +12,13 @@ export default async function Navbar() {
     .order("published_at", { ascending: false })
     .limit(2);
 
+  const { data: caseStudies } = await supabase
+  .from("case_studies")
+  .select("id, title, slug, cover_image_url")
+  .eq("status", "published")
+  .order("published_at", { ascending: false })
+  .limit(3);  
+
   return (
     <header className="sticky top-0 z-50 w-full border-b border-gray-100 bg-white shadow-sm">
       <div className="mx-auto flex max-w-[1200px] items-center justify-between px-6 py-4 relative">
@@ -23,7 +30,7 @@ export default async function Navbar() {
           Maluti Incubation Center
         </Link>
         
-        <MegaMenuNav learnArticles={learnArticles ?? []} />
+        <MegaMenuNav learnArticles={learnArticles ?? []} caseStudies={caseStudies ?? []} />
       </div>
     </header>
   );
