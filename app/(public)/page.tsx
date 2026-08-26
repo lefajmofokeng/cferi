@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { getEventStatus, eventStatusStyles, eventStatusLabels } from "@/lib/eventStatus";
+import CronosScrollSection from "@/components/CronosScrollSection";
 
 export default async function Home() {
   const supabase = await createClient();
@@ -13,27 +14,36 @@ export default async function Home() {
     .limit(3);
 
   const { data: events } = await supabase
-  .from("events")
-  .select("id, title, slug, location, starts_at, ends_at, cover_image_url")
-  .eq("status", "published")
-  .order("starts_at", { ascending: false })
-  .limit(3);
+    .from("events")
+    .select("id, title, slug, location, starts_at, ends_at, cover_image_url")
+    .eq("status", "published")
+    .order("starts_at", { ascending: false })
+    .limit(3);
 
   return (
     <>
       {/* Hero Section */}
-      <section className="relative w-full bg-cover bg-center min-h-screen flex items-center justify-end bg-[url('https://images.pexels.com/photos/34586199/pexels-photo-34586199.jpeg')] bg-gray-900 text-white">
+      <section className="relative w-full bg-cover bg-center min-h-screen flex items-center justify-end bg-[url('https://images.pexels.com/photos/27790842/pexels-photo-27790842.jpeg')] bg-gray-900 text-white">
         <div className="absolute inset-0 bg-black/50" />
-        <div className="relative z-10 w-full max-w-[1200px] mx-auto px-6 py-16 text-right flex flex-col items-end">
+        <div className="relative z-10 w-full max-w-[1200px] mx-auto px-6 py-16 text-left flex flex-col items-start">
           <h1 className="text-4xl md:text-5xl font-bold mb-4 max-w-2xl">
             Maluti Incubation Center
           </h1>
-          <p className="text-gray-200 text-lg max-w-xl">
+          <p className="text-gray-200 text-lg max-w-xl mb-8">
             Supporting entrepreneurs and small businesses with mentorship,
             resources, and a collaborative space to grow.
           </p>
+          <Link
+            href="/apply"
+            className="inline-block bg-white text-black px-6 py-3 rounded-full font-medium hover:bg-gray-100 transition-colors"
+          >
+            Apply for Incubation
+          </Link>
         </div>
       </section>
+
+      {/* Interactive Expandable Video Component */}
+      <CronosScrollSection />
 
       {/* Main Content Area */}
       <main className="mx-auto w-full max-w-[1200px] px-6 py-16 space-y-16">

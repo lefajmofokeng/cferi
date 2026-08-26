@@ -1,5 +1,6 @@
 import Navbar from "@/components/public/Navbar";
 import Footer from "@/components/public/Footer";
+import ScrollToHash from "@/components/public/ScrollToHash";
 
 export default function PublicLayout({
   children,
@@ -7,10 +8,11 @@ export default function PublicLayout({
   children: React.ReactNode;
 }) {
   return (
-    <>
-      <Navbar />
-      {children}
-      <Footer />
-    </>
-  );
+  <>
+    <Navbar />
+    <ScrollToHash />
+    {children}
+    <Footer />
+  </>
+);
 }

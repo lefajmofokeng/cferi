@@ -7,28 +7,32 @@ const columns = [
       { href: "/business-incubation-programme", label: "Business Incubation Programme" },
       { href: "/entrepreneurship-training", label: "Entrepreneurship Training" },
       { href: "/mentorship-programme", label: "Mentorship Programme" },
-      { href: "/enterprise-skills-development", label: "Enterprise & Skills Development" },
-      { href: "/apply", label: "Apply for Incubation" },
+      { href: "/admin-compliance-support", label: "Admin & Compliance Support" },
     ],
   },
   {
     heading: "Discover",
     links: [
       { href: "/about", label: "About Us" },
-      { href: "/corporate-office", label: "Corporate Office" },
-      { href: "/leadership", label: "Leadership" },
+      { href: "/roadmap", label: "Roadmap" },
+      { href: "/council-management", label: "Council & Management" },
+      { href: "/corporate-office", label: "Office" },
+      { href: "/awards-achievements", label: "Awards & Achievements" },
+      { href: "/community-projects", label: "Community Projects" },
+      { href: "/work-integrated-learning-partners", label: "Work-Integrated Learning Partners" },
       { href: "/jobs", label: "Job Opportunities" },
-      { href: "/events", label: "Events" },
+      { href: "/governance", label: "Governance" },
     ],
   },
   {
     heading: "Resources",
     links: [
-      { href: "/news", label: "News" },
-      { href: "/announcements", label: "Announcements" },
-      { href: "/learn", label: "Learn" },
-      { href: "/help-center", label: "Help Center" },
       { href: "/contact", label: "Contact Us" },
+      { href: "/learn", label: "Learn" },
+      { href: "/case-studies", label: "Case Studies" },
+      { href: "/faqs", label: "FAQs" },
+      { href: "/glossary", label: "Glossary" },
+      { href: "/application-guide", label: "Application Guide" },
     ],
   },
   {
@@ -37,6 +41,17 @@ const columns = [
       { href: "/national-grant-structure", label: "National Grant Structure" },
       { href: "/corporate-procurement-connections", label: "Corporate Procurement Connections" },
       { href: "/tenders-public-sector-panels", label: "Tenders & Public Sector Panels" },
+      { href: "/exhibitions-commercial-trades", label: "Exhibitions & Commercial Trades" },
+    ],
+  },
+  {
+    heading: "Keeping Up With Us",
+    links: [
+      { href: "/news", label: "News" },
+      { href: "/events", label: "Events" },
+      { href: "/announcements", label: "Announcements" },
+      { href: "https://facebook.com/malutiincubation", label: "On Facebook" },
+      { href: "/gallery", label: "Gallery" },
     ],
   },
 ];
@@ -63,7 +78,7 @@ export default function Footer() {
 
       <div className="border-t border-gray-100">
         <div className="mx-auto max-w-6xl px-6 py-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-gray-500">
-          <p>© {new Date().getFullYear()} Maluti TVET College Incubation Center. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} Maluti TVET College, Center for Entrepreneurship & Rapid Incubation. All rights reserved.</p>
           <div className="flex items-center gap-4">
             <Link href="/privacy-policy" className="hover:text-gray-900">
               Privacy Policy
@@ -74,8 +89,11 @@ export default function Footer() {
             <Link href="/cookie-policy" className="hover:text-gray-900">
               Cookie Policy
             </Link>
+            <Link href="/help-center" className="hover:text-gray-900">
+              Help Center
+            </Link>
             <Link href="/cookie-policy" className="hover:text-gray-900">
-              Do not sell or share my information
+              Press Enquiries
             </Link>
           </div>
         </div>
