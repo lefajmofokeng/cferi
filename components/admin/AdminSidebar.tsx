@@ -134,6 +134,8 @@ export default function AdminSidebar() {
   const router = useRouter();
   const [userName, setUserName] = useState("");
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [unreadMessages, setUnreadMessages] = useState(0);
+  const [newApplications, setNewApplications] = useState(0);
 
   useEffect(() => {
     async function loadUser() {
@@ -155,7 +157,47 @@ export default function AdminSidebar() {
     setMobileOpen(false);
   }, [pathname]);
 
-  if (pathname === "/admin/login") return null;
+  useEffect(() => {
+  const supabase = createClient();
+
+  async function loadCounts() {
+    const { count: msgCount } = await supabase
+      .from("contact_messages")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "unread");
+
+    const { count: appCount } = await supabase
+      .from("incubation_applications")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "new");
+
+    setUnreadMessages(msgCount ?? 0);
+    setNewApplications(appCount ?? 0);
+  }
+
+  loadCounts();
+
+  const channel = supabase
+    .channel(`sidebar-badges-${crypto.randomUUID()}`)
+    .on(
+      "postgres_changes",
+      { event: "*", schema: "public", table: "contact_messages" },
+      loadCounts
+    )
+    .on(
+      "postgres_changes",
+      { event: "*", schema: "public", table: "incubation_applications" },
+      loadCounts
+    )
+    .subscribe();
+
+  return () => {
+    supabase.removeChannel(channel);
+  };
+}, []);
+
+
+  
 
   async function handleSignOut() {
     const supabase = createClient();
@@ -164,6 +206,8 @@ export default function AdminSidebar() {
     router.refresh();
   }
 
+  if (pathname === "/admin/login") return null;
+  
   const sidebarContent = (
     <div className="flex flex-col h-full bg-white text-gray-700 font-sans select-none rounded-[15px] border border-gray-200/80 shadow-xs overflow-hidden">
       {/* Header with Maluti Incubation Center Logo Placeholder */}
@@ -192,24 +236,36 @@ export default function AdminSidebar() {
               </p>
               <nav className="space-y-0.5">
                 {category.items.map((item) => {
-                  const isActive = pathname === item.href;
-                  return (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      className={`flex items-center gap-2.5 px-2.5 py-1.5 rounded-full text-xs transition-colors ${
-                        isActive
-                          ? "bg-gray-100 text-gray-900 font-semibold"
-                          : "text-gray-600 hover:bg-gray-50 hover:text-gray-900 font-medium"
-                      }`}
-                    >
-                      <span className={isActive ? "text-gray-900" : "text-gray-400"}>
-                        {item.icon}
-                      </span>
-                      <span className="truncate">{item.label}</span>
-                    </Link>
-                  );
-                })}
+  const isActive = pathname === item.href;
+  const badgeCount =
+    item.href === "/admin/messages"
+      ? unreadMessages
+      : item.href === "/admin/applications"
+      ? newApplications
+      : 0;
+
+  return (
+    <Link
+      key={item.href}
+      href={item.href}
+      className={`flex items-center gap-2.5 px-2.5 py-1.5 rounded-full text-xs transition-colors ${
+        isActive
+          ? "bg-gray-100 text-gray-900 font-semibold"
+          : "text-gray-600 hover:bg-gray-50 hover:text-gray-900 font-medium"
+      }`}
+    >
+      <span className={isActive ? "text-gray-900" : "text-gray-400"}>
+        {item.icon}
+      </span>
+      <span className="truncate flex-1">{item.label}</span>
+      {badgeCount > 0 && (
+        <span className="bg-red-600 text-white text-[10px] font-semibold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1">
+          {badgeCount > 9 ? "9+" : badgeCount}
+        </span>
+      )}
+    </Link>
+  );
+})}
               </nav>
             </div>
           ))}

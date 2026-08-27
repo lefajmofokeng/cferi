@@ -13,6 +13,7 @@ export default function ApplyPage() {
   const [file, setFile] = useState<File | null>(null);
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
+  const [referenceCode, setReferenceCode] = useState("");
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -36,6 +37,8 @@ export default function ApplyPage() {
       pitchDocumentUrl = filePath;
     }
 
+    const code = `MTC-${Date.now().toString(36).toUpperCase()}`;
+
     const { error } = await supabase.from("incubation_applications").insert({
       full_name: fullName,
       email,
@@ -44,7 +47,12 @@ export default function ApplyPage() {
       business_stage: businessStage,
       business_description: businessDescription,
       pitch_document_url: pitchDocumentUrl,
+      reference_code: code,
     });
+
+    if (!error) {
+      setReferenceCode(code);
+    }
 
     if (error) {
       setStatus("error");
@@ -66,9 +74,16 @@ export default function ApplyPage() {
       <h1 className="text-3xl font-semibold mb-8">Apply for Incubation</h1>
 
       {status === "success" ? (
-        <p className="text-green-700">
-          Thanks — your application has been submitted. We&apos;ll be in touch.
-        </p>
+        <div className="text-green-700 space-y-3">
+          <p>Thanks — your application has been submitted. We&apos;ll be in touch.</p>
+          <div className="bg-gray-50 border border-gray-200 rounded p-4">
+            <p className="text-sm text-gray-600 mb-1">Your reference number:</p>
+            <p className="text-lg font-mono font-semibold text-gray-900">{referenceCode}</p>
+            <p className="text-xs text-gray-500 mt-2">
+              Save this — you&apos;ll need it to check your application status later.
+            </p>
+          </div>
+        </div>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
