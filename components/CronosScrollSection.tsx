@@ -119,7 +119,7 @@ export default function CronosScrollSection() {
 
               <div className="cronos-action-block">
                 <div className="cronos-btn-combo">
-                  <a href="/application-guide" className="cronos-main-btn">
+                  <a href="/apply" className="cronos-main-btn">
                     Explore Incubation Programs
                   </a>
                 </div>

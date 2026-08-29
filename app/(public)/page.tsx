@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { getEventStatus, eventStatusStyles, eventStatusLabels } from "@/lib/eventStatus";
 import CronosScrollSection from "@/components/CronosScrollSection";
+import FeedbackWidget from "@/components/public/FeedbackWidget";
 
 export default async function Home() {
   const supabase = await createClient();
@@ -43,7 +44,9 @@ export default async function Home() {
       </section>
 
       {/* Interactive Expandable Video Component */}
-      <CronosScrollSection />
+      <section id="support">
+       <CronosScrollSection/>
+      </section>
 
       {/* Main Content Area */}
       <main className="mx-auto w-full max-w-[1200px] px-6 py-16 space-y-16">
@@ -98,7 +101,7 @@ export default async function Home() {
         {/* Events Section */}
         <section>
           <div className="flex items-center justify-between mb-8">
-            <h2 className="text-3xl font-bold text-gray-900">Upcoming Events</h2>
+            <h2 className="text-3xl font-bold text-gray-900">Latest Events</h2>
             <Link href="/events" className="text-sm font-medium text-blue-600 hover:underline flex items-center gap-1">
               See more →
             </Link>
@@ -174,6 +177,10 @@ export default async function Home() {
             />
           </div>
         </div>
+      </section>
+
+      <section className="max-w-6xl mx-auto px-6 mt-16 mb-16">
+        <FeedbackWidget />
       </section>
     </>
   );

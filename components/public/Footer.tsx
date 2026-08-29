@@ -30,6 +30,7 @@ const columns = [
       { href: "/contact", label: "Contact Us" },
       { href: "/learn", label: "Learn" },
       { href: "/case-studies", label: "Case Studies" },
+      { href: "/research-papers", label: "Research Papers" },
       { href: "/faqs", label: "FAQs" },
       { href: "/glossary", label: "Glossary" },
       { href: "/application-guide", label: "Application Guide" },
@@ -58,7 +59,7 @@ const columns = [
 
 export default function Footer() {
   return (
-    <footer className="border-t border-gray-200 mt-16">
+    <footer className="border-t border-gray-200 mt-16 bg-grey">
       <div className="mx-auto max-w-6xl px-6 py-12 grid grid-cols-2 md:grid-cols-4 gap-8">
         {columns.map((column) => (
           <div key={column.heading}>

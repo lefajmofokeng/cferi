@@ -38,7 +38,7 @@ export default function SiteSearch() {
       const supabase = createClient();
       const pattern = `%${trimmed}%`;
 
-      const [news, jobs, events, learn, caseStudies] = await Promise.all([
+      const [news, jobs, events, learn, caseStudies, researchPapers] = await Promise.all([
         supabase
           .from("news_posts")
           .select("title, slug")
@@ -69,6 +69,12 @@ export default function SiteSearch() {
           .eq("status", "published")
           .ilike("title", pattern)
           .limit(5),
+        supabase
+          .from("research_papers")
+          .select("title, slug")
+          .eq("status", "published")
+          .ilike("title", pattern)
+          .limit(5),
       ]);
 
       const dynamicResults: Result[] = [
@@ -77,6 +83,7 @@ export default function SiteSearch() {
         ...(events.data ?? []).map((e) => ({ title: e.title, href: `/events/${e.slug}`, type: "Events" })),
         ...(learn.data ?? []).map((l) => ({ title: l.title, href: `/learn/${l.slug}`, type: "Learn" })),
         ...(caseStudies.data ?? []).map((c) => ({ title: c.title, href: `/case-studies/${c.slug}`, type: "Case Studies" })),
+        ...(researchPapers.data ?? []).map((r) => ({ title: r.title, href: `/research-papers/${r.slug}`, type: "Research" })),
       ];
 
       const staticResults: Result[] = staticSearchIndex

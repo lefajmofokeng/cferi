@@ -6,6 +6,7 @@ import NotesDrawer from "./drawers/NotesDrawer";
 import ContactsDrawer from "./drawers/ContactsDrawer";
 import TasksDrawer from "./drawers/TasksDrawer";
 import FilesDrawer from "./drawers/FilesDrawer";
+import { usePathname } from "next/navigation";
 
 type ToolKey = "notes" | "contacts" | "tasks" | "files" | null;
 
@@ -22,7 +23,7 @@ export default function QuickActionsRail() {
 
   useEffect(() => {
     const supabase = createClient();
-
+    
     async function loadDueCount() {
       const {
         data: { user },
@@ -51,12 +52,15 @@ export default function QuickActionsRail() {
       .subscribe();
 
     const interval = setInterval(loadDueCount, 30000);
-
+    
     return () => {
       supabase.removeChannel(channel);
       clearInterval(interval);
     };
   }, []);
+
+  const pathname = usePathname();
+    if (pathname === "/admin/login") return null;
 
   return (
     <>
