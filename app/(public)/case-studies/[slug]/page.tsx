@@ -51,38 +51,124 @@ export default async function CaseStudyDetailPage({
   }
 
   return (
-    <main className="mx-auto max-w-3xl px-6 py-12">
-      <h1 className="text-3xl font-semibold mb-2">{caseStudy.title}</h1>
-      <p className="text-sm text-gray-500 mb-6">
-        {caseStudy.client_name}
-        {caseStudy.industry && ` — ${caseStudy.industry}`}
-      </p>
+    <div
+      style={{
+        minHeight: "100vh",
+        color: "#0f172a",
+        fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+        backgroundColor: "#ffffff",
+      }}
+    >
+      {/* CASE STUDY CONTENT CONTAINER */}
+      <main
+        style={{
+          maxWidth: "1200px",
+          margin: "0 auto",
+          padding: "4rem 1.5rem 4rem",
+          display: "flex",
+          flexDirection: "column",
+          gap: "2.5rem",
+        }}
+      >
+        {/* TITLE & METADATA (CLIENT / INDUSTRY) */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+          <h1
+            style={{
+              fontSize: "clamp(2.25rem, 5vw, 3.75rem)",
+              lineHeight: 1.15,
+              fontWeight: 700,
+              letterSpacing: "-0.025em",
+              color: "#0f172a",
+              margin: 0,
+            }}
+          >
+            {caseStudy.title}
+          </h1>
 
-      {caseStudy.cover_image_url && (
-        <img
-          src={caseStudy.cover_image_url}
-          alt={caseStudy.title}
-          className="w-full max-h-96 object-cover rounded mb-6"
-        />
-      )}
-
-      <div className="text-gray-700 leading-relaxed whitespace-pre-wrap mb-8">
-        {caseStudy.content}
-      </div>
-
-      {caseStudy.outcomes && (
-        <div className="bg-gray-50 border border-gray-200 rounded p-6 mb-8">
-          <h2 className="text-lg font-medium mb-2">Outcomes</h2>
-          <p className="text-gray-700 whitespace-pre-wrap">{caseStudy.outcomes}</p>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "0.5rem",
+              fontSize: "0.875rem",
+              color: "#64748b",
+            }}
+          >
+            {caseStudy.client_name && <span>{caseStudy.client_name}</span>}
+            {caseStudy.client_name && caseStudy.industry && (
+              <span style={{ color: "#cbd5e1" }}>/</span>
+            )}
+            {caseStudy.industry && <span>{caseStudy.industry}</span>}
+          </div>
         </div>
-      )}
 
-      <div className="pt-6 border-t border-gray-200">
-        <ShareButtons
-          url={`${process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"}/case-studies/${slug}`}
-          title={caseStudy.title}
-        />
-      </div>
-    </main>
+        {/* COVER IMAGE */}
+        {caseStudy.cover_image_url && (
+          <div style={{ width: "100%", overflow: "hidden" }}>
+            <img
+              src={caseStudy.cover_image_url}
+              alt={caseStudy.title}
+              style={{
+                width: "100%",
+                height: "auto",
+                maxHeight: "600px",
+                objectFit: "cover",
+                display: "block",
+              }}
+            />
+          </div>
+        )}
+
+        {/* CASE STUDY BODY CONTENT */}
+        <article style={{ width: "100%" }}>
+          <div
+            style={{
+              color: "#1e293b",
+              fontSize: "1.125rem",
+              lineHeight: 1.75,
+              fontWeight: 400,
+              whiteSpace: "pre-wrap",
+            }}
+          >
+            {caseStudy.content}
+          </div>
+        </article>
+
+        {/* OUTCOMES SECTION */}
+        {caseStudy.outcomes && (
+          <div style={{ width: "100%", paddingTop: "1rem" }}>
+            <h2
+              style={{
+                fontSize: "1.5rem",
+                fontWeight: 600,
+                color: "#0f172a",
+                marginBottom: "0.75rem",
+              }}
+            >
+              Outcomes
+            </h2>
+            <p
+              style={{
+                color: "#334155",
+                fontSize: "1.125rem",
+                lineHeight: 1.75,
+                whiteSpace: "pre-wrap",
+                margin: 0,
+              }}
+            >
+              {caseStudy.outcomes}
+            </p>
+          </div>
+        )}
+
+        {/* SHARE BUTTONS */}
+        <div style={{ paddingTop: "1rem" }}>
+          <ShareButtons
+            url={`${process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"}/case-studies/${slug}`}
+            title={caseStudy.title}
+          />
+        </div>
+      </main>
+    </div>
   );
 }

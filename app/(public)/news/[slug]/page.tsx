@@ -30,6 +30,7 @@ export async function generateMetadata({
     },
   };
 }
+
 export default async function NewsDetailPage({
   params,
 }: {
@@ -50,29 +51,101 @@ export default async function NewsDetailPage({
   }
 
   return (
-    <main className="mx-auto w-full max-w-[1200px] px-6 py-12">
-      <h1 className="text-3xl font-semibold mb-2">{post.title}</h1>
-      {post.cover_image_url && (
-        <img
-          src={post.cover_image_url}
-          alt={post.title}
-          className="w-full max-h-150 object-cover rounded mb-6"
-        />
-      )}
-      {post.published_at && (
-        <p className="text-sm text-gray-500 mb-8">
-          {new Date(post.published_at).toLocaleDateString()}
-        </p>
-      )}
-      <div className="text-gray-700 leading-relaxed whitespace-pre-wrap">
-        {post.content}
-      </div>
-      <div className="mt-8 pt-6 border-t border-gray-200">
-  <ShareButtons
-    url={`${process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"}/news/${slug}`}
-    title={post.title}
-  />
-</div>
-    </main>
+    <div
+      style={{
+        minHeight: "100vh",
+        color: "#0f172a",
+        fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+        backgroundColor: "#ffffff",
+      }}
+    >
+      {/* NEWS CONTENT CONTAINER */}
+      <main
+        style={{
+          maxWidth: "1200px",
+          margin: "0 auto",
+          padding: "4rem 1.5rem 4rem",
+          display: "flex",
+          flexDirection: "column",
+          gap: "2.5rem",
+        }}
+      >
+        {/* TITLE & METADATA (DATE) */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+          <h1
+            style={{
+              fontSize: "clamp(2.25rem, 5vw, 3.75rem)",
+              lineHeight: 1.15,
+              fontWeight: 700,
+              letterSpacing: "-0.025em",
+              color: "#0f172a",
+              margin: 0,
+            }}
+          >
+            {post.title}
+          </h1>
+
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "0.5rem",
+              fontSize: "0.875rem",
+              color: "#64748b",
+            }}
+          >
+            {post.published_at && (
+              <span>
+                {new Date(post.published_at).toLocaleDateString("en-US", {
+                  month: "long",
+                  day: "numeric",
+                  year: "numeric",
+                })}
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* COVER IMAGE */}
+        {post.cover_image_url && (
+          <div style={{ width: "100%", overflow: "hidden" }}>
+            <img
+              src={post.cover_image_url}
+              alt={post.title}
+              style={{
+                width: "100%",
+                height: "auto",
+                maxHeight: "600px",
+                objectFit: "cover",
+                display: "block",
+              }}
+            />
+          </div>
+        )}
+
+        {/* NEWS BODY CONTENT */}
+        <article style={{ width: "100%" }}>
+          <div
+            style={{
+              color: "#1e293b",
+              fontSize: "1.125rem",
+              lineHeight: 1.75,
+              fontWeight: 400,
+              whiteSpace: "pre-wrap",
+            }}
+          >
+            {post.content}
+          </div>
+        </article>
+
+        {/* SHARE BUTTONS */}
+        <div style={{ paddingTop: "1rem" }}>
+          <ShareButtons
+            url={`${process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"}/news/${slug}`}
+            title={post.title}
+          />
+        </div>
+      </main>
+    </div>
   );
 }

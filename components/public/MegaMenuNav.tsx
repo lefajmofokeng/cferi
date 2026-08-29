@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
+import { createClient } from "@/lib/supabase/client";
 
 type LearnArticle = {
   id: string;
@@ -107,6 +108,82 @@ export default function MegaMenuNav({
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeAccordion, setActiveAccordion] = useState<MenuKey | null>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [liveResults, setLiveResults] = useState<
+  { href: string; title: string; desc: string; category: string; cover_image_url: string | null }[]
+  >([]);
+
+  useEffect(() => {
+      const trimmed = searchQuery.trim();
+      if (trimmed.length < 2) {
+        setLiveResults([]);
+        return;
+      }
+
+      const timeout = setTimeout(async () => {
+        const supabase = createClient();
+        const pattern = `%${trimmed}%`;
+
+        const [news, jobs, events, research] = await Promise.all([
+          supabase
+            .from("news_posts")
+            .select("title, slug")
+            .eq("status", "published")
+            .ilike("title", pattern)
+            .limit(5),
+          supabase
+            .from("job_posts")
+            .select("title, slug")
+            .eq("status", "published")
+            .ilike("title", pattern)
+            .limit(5),
+          supabase
+            .from("events")
+            .select("title, slug")
+            .eq("status", "published")
+            .ilike("title", pattern)
+            .limit(5),
+          supabase
+            .from("research_papers")
+            .select("title, slug")
+            .eq("status", "published")
+            .ilike("title", pattern)
+            .limit(5),
+        ]);
+
+        setLiveResults([
+          ...(news.data ?? []).map((n) => ({
+            href: `/news/${n.slug}`,
+            title: n.title,
+            desc: "News",
+            category: "News",
+            cover_image_url: null,
+          })),
+          ...(jobs.data ?? []).map((j) => ({
+            href: `/jobs/${j.slug}`,
+            title: j.title,
+            desc: "Job Opportunity",
+            category: "Jobs",
+            cover_image_url: null,
+          })),
+          ...(events.data ?? []).map((e) => ({
+            href: `/events/${e.slug}`,
+            title: e.title,
+            desc: "Event",
+            category: "Events",
+            cover_image_url: null,
+          })),
+          ...(research.data ?? []).map((r) => ({
+            href: `/research-papers/${r.slug}`,
+            title: r.title,
+            desc: "Research Paper",
+            category: "Research",
+            cover_image_url: null,
+          })),
+        ]);
+      }, 250);
+
+      return () => clearTimeout(timeout);
+    }, [searchQuery]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -161,17 +238,19 @@ export default function MegaMenuNav({
     })),
   ];
 
-  const searchResults = searchQuery.trim()
-    ? allSearchableItems.filter(
-        (i) =>
-          i.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          i.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          i.desc.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    : [];
+  const staticFilteredResults = searchQuery.trim()
+  ? allSearchableItems.filter(
+      (i) =>
+        i.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        i.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        i.desc.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+  : [];
+
+  const searchResults = [...staticFilteredResults, ...liveResults];
 
   return (
-    <div onMouseLeave={handleMouseLeave}>
+    <div className="nav-wrapper" onMouseLeave={handleMouseLeave}>
       {/* White Tint Backdrop Blur Layer */}
       {openMenu && <div className="menu-backdrop" onClick={() => setOpenMenu(null)} />}
 

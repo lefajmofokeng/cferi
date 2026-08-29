@@ -151,7 +151,7 @@ export default function CronosScrollSection() {
               poster="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1200&q=80"
             >
               <source
-                src="videos/entrepreneur.mp4"
+                src="./videos/entrepreneur.mp4"
                 type="video/mp4"
               />
             </video>

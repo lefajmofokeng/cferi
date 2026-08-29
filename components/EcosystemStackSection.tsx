@@ -61,7 +61,7 @@ const programs: ProgramModule[] = [
 
 export default function EcosystemStackSection() {
   return (
-    <section className="relative w-full py-35 bg-white">
+    <section id="ecosystem-stack" className="relative w-full py-35 bg-white">
       <div className="w-full max-w-[1200px] mx-auto px-6">
         
         {/* --- HEADER LAYER --- */}

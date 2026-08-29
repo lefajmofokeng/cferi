@@ -545,3 +545,12 @@
     opacity: 1;
   }
 }
+
+/* Desktop only: cluster nav links + search right next to the logo,
+   instead of letting header-container's space-between center them. */
+@media (min-width: 1025px) {
+  .nav-wrapper {
+    margin-left: 2rem;
+    margin-right: auto;
+  }
+}

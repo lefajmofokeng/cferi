@@ -52,95 +52,144 @@ export default async function LearnDetailPage({
   }
 
   return (
-    <div className="min-h-screen bg-slate-50/50 text-slate-900 font-sans antialiased">
+    <div
+      style={{
+        minHeight: "100vh",
+        color: "#0f172a",
+        fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+        backgroundColor: "#ffffff",
+      }}
+    >
       {/* HEADER / BREADCRUMB BAR */}
-      <header className="border-b border-slate-200/80 bg-white/80 backdrop-blur-md sticky top-0 z-30">
-        <div className="mx-auto max-w-4xl px-6 py-4 flex items-center justify-between">
+      <header style={{ padding: "1.5rem 0" }}>
+        <div
+          style={{
+            maxWidth: "1200px",
+            margin: "0 auto",
+            padding: "0 1.5rem",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
           <Link
             href="/learn"
-            className="inline-flex items-center gap-2 text-xs font-semibold text-slate-600 hover:text-blue-600 transition-colors"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "0.5rem",
+              fontSize: "0.875rem",
+              fontWeight: 500,
+              color: "#64748b",
+              textDecoration: "none",
+            }}
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            <svg
+              style={{ width: "1rem", height: "1rem" }}
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M10 19l-7-7m0 0l7-7m-7 7h18"
+              />
             </svg>
             <span>Back to Learn</span>
           </Link>
-          <div className="text-xs font-medium text-slate-400">
-            Article
-          </div>
         </div>
       </header>
 
       {/* ARTICLE CONTENT CONTAINER */}
-      <main className="mx-auto max-w-4xl px-6 py-10 md:py-16 space-y-10">
-        
-        {/* ARTICLE HEADER & METADATA */}
-        <div className="space-y-6 text-center max-w-3xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-blue-600 text-xs font-semibold uppercase tracking-wider">
-            Knowledge Base
-          </div>
-
-          <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight text-slate-900 leading-tight">
+      <main
+        style={{
+          maxWidth: "1200px",
+          margin: "0 auto",
+          padding: "2rem 1.5rem 4rem",
+          display: "flex",
+          flexDirection: "column",
+          gap: "2.5rem",
+        }}
+      >
+        {/* TITLE & METADATA (DATE / AUTHOR) */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+          <h1
+            style={{
+              fontSize: "clamp(2.25rem, 5vw, 3.75rem)",
+              lineHeight: 1.15,
+              fontWeight: 700,
+              letterSpacing: "-0.025em",
+              color: "#0f172a",
+              margin: 0,
+            }}
+          >
             {article.title}
           </h1>
 
-          <div className="flex items-center justify-center gap-3 pt-2">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 text-white font-bold flex items-center justify-center text-sm shadow-md">
-              {article.author ? article.author.charAt(0).toUpperCase() : "A"}
-            </div>
-            <div className="text-left text-xs">
-              <p className="font-semibold text-slate-900">{article.author || "Editorial Team"}</p>
-              {article.published_at && (
-                <p className="text-slate-500">
-                  Published {new Date(article.published_at).toLocaleDateString("en-US", {
-                    month: "long",
-                    day: "numeric",
-                    year: "numeric"
-                  })}
-                </p>
-              )}
-            </div>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "0.5rem",
+              fontSize: "0.875rem",
+              color: "#64748b",
+            }}
+          >
+            {article.published_at && (
+              <span>
+                {new Date(article.published_at).toLocaleDateString("en-US", {
+                  month: "long",
+                  day: "numeric",
+                  year: "numeric",
+                })}
+              </span>
+            )}
+            <span style={{ color: "#cbd5e1" }}>/</span>
+            <span>{article.author || "Editorial Team"}</span>
           </div>
         </div>
 
         {/* COVER IMAGE */}
         {article.cover_image_url && (
-          <div className="relative aspect-[16/9] w-full overflow-hidden rounded-3xl bg-slate-900 shadow-xl border border-slate-200/80">
+          <div style={{ width: "100%", overflow: "hidden" }}>
             <img
               src={article.cover_image_url}
               alt={article.title}
-              className="w-full h-full object-cover object-center"
+              style={{
+                width: "100%",
+                height: "auto",
+                maxHeight: "600px",
+                objectFit: "cover",
+                display: "block",
+              }}
             />
           </div>
         )}
 
         {/* ARTICLE BODY CONTENT */}
-        <article className="max-w-3xl mx-auto bg-white p-8 md:p-12 rounded-3xl border border-slate-200/80 shadow-sm">
-          <div className="text-slate-700 text-base md:text-lg leading-relaxed whitespace-pre-wrap font-normal space-y-6">
+        <article style={{ width: "100%" }}>
+          <div
+            style={{
+              color: "#1e293b",
+              fontSize: "1.125rem",
+              lineHeight: 1.75,
+              fontWeight: 400,
+              whiteSpace: "pre-wrap",
+            }}
+          >
             {article.content}
           </div>
         </article>
 
-        {/* FOOTER CALLOUT */}
-        <div className="max-w-3xl mx-auto pt-6 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-slate-500">
-            Enjoyed this guide? Explore more articles in our learning repository.
-          </p>
-          <Link
-            href="/learn"
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-black text-white text-xs font-semibold transition-all shadow-md"
-          >
-            Explore More Articles
-          </Link>
+        {/* SHARE BUTTONS */}
+        <div style={{ paddingTop: "1rem" }}>
+          <ShareButtons
+            url={`${process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"}/learn/${slug}`}
+            title={article.title}
+          />
         </div>
-
-        <div className="mt-8 pt-6 border-t border-gray-200">
-  <ShareButtons
-    url={`${process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"}/learn/${slug}`}
-    title={article.title}
-  />
-</div>
-
       </main>
     </div>
   );

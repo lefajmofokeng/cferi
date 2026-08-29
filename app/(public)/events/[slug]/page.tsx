@@ -50,68 +50,205 @@ export default async function EventDetailPage({
     notFound();
   }
 
+  const formattedStartDate = event.starts_at
+    ? new Date(event.starts_at).toLocaleString("en-US", {
+        dateStyle: "full",
+        timeStyle: "short",
+      })
+    : null;
+
+  const formattedEndDate = event.ends_at
+    ? new Date(event.ends_at).toLocaleString("en-US", {
+        timeStyle: "short",
+      })
+    : null;
+
   return (
-    <main className="mx-auto w-full max-w-[1200px] px-6 py-12">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-        {/* Main Details Section */}
-        <div className="lg:col-span-2">
-          <h1 className="text-3xl font-semibold mb-4 text-gray-900">{event.title}</h1>
+    <div
+      style={{
+        minHeight: "100vh",
+        color: "#0f172a",
+        fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+        backgroundColor: "#ffffff",
+      }}
+    >
+      {/* MAIN CONTENT CONTAINER */}
+      <main
+        style={{
+          maxWidth: "1200px",
+          margin: "0 auto",
+          padding: "4rem 1.5rem 4rem",
+          display: "flex",
+          flexDirection: "column",
+          gap: "2.5rem",
+        }}
+      >
+        {/* TWO PANEL GRID LAYOUT */}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+            gap: "3rem",
+            alignItems: "start",
+          }}
+        >
+          {/* MAIN DETAILS PANEL */}
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "2.5rem",
+              gridColumn: "span 2",
+            }}
+          >
+            {/* TITLE & QUICK METADATA */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+              <h1
+                style={{
+                  fontSize: "clamp(2.25rem, 5vw, 3.75rem)",
+                  lineHeight: 1.15,
+                  fontWeight: 700,
+                  letterSpacing: "-0.025em",
+                  color: "#0f172a",
+                  margin: 0,
+                }}
+              >
+                {event.title}
+              </h1>
 
-          {event.cover_image_url && (
-            <div className="overflow-hidden rounded-xl mb-6 bg-gray-100">
-              <img
-                src={event.cover_image_url}
-                alt={event.title}
-                className="w-full max-h-[420px] object-cover"
-              />
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  flexWrap: "wrap",
+                  gap: "0.5rem",
+                  fontSize: "0.875rem",
+                  color: "#64748b",
+                }}
+              >
+                {formattedStartDate && (
+                  <span>
+                    {formattedStartDate}
+                    {formattedEndDate && ` – ${formattedEndDate}`}
+                  </span>
+                )}
+                {formattedStartDate && event.location && (
+                  <span style={{ color: "#cbd5e1" }}>/</span>
+                )}
+                {event.location && <span>{event.location}</span>}
+              </div>
             </div>
-          )}
 
-          <div className="text-gray-700 leading-relaxed whitespace-pre-wrap">
-            {event.description}
+            {/* COVER IMAGE */}
+            {event.cover_image_url && (
+              <div style={{ width: "100%", overflow: "hidden" }}>
+                <img
+                  src={event.cover_image_url}
+                  alt={event.title}
+                  style={{
+                    width: "100%",
+                    height: "auto",
+                    maxHeight: "600px",
+                    objectFit: "cover",
+                    display: "block",
+                  }}
+                />
+              </div>
+            )}
+
+            {/* EVENT DESCRIPTION CONTENT */}
+            <article style={{ width: "100%" }}>
+              <div
+                style={{
+                  color: "#1e293b",
+                  fontSize: "1.125rem",
+                  lineHeight: 1.75,
+                  fontWeight: 400,
+                  whiteSpace: "pre-wrap",
+                }}
+              >
+                {event.description}
+              </div>
+            </article>
           </div>
-        </div>
 
-        {/* Event Meta Sidebar */}
-        <div className="lg:col-span-1">
-          <div className="bg-gray-50 border border-gray-200/80 rounded-xl p-6 space-y-4 sticky top-8">
-            <h2 className="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-3">
-              Event Details
-            </h2>
-
-            <div>
-              <span className="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">
+          {/* SIDE PANEL / EVENT SUMMARY */}
+          <aside
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "1.5rem",
+              position: "sticky",
+              top: "2rem",
+            }}
+          >
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
+              <span
+                style={{
+                  fontSize: "0.75rem",
+                  fontWeight: 600,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.05em",
+                  color: "#94a3b8",
+                }}
+              >
                 Date & Time
               </span>
-              <p className="text-sm text-gray-700">
-                {new Date(event.starts_at).toLocaleString(undefined, {
-                  dateStyle: "full",
-                  timeStyle: "short",
-                })}
-                {event.ends_at &&
-                  ` – ${new Date(event.ends_at).toLocaleString(undefined, {
-                    timeStyle: "short",
-                  })}`}
+              <p
+                style={{
+                  fontSize: "0.95rem",
+                  color: "#334155",
+                  margin: 0,
+                  lineHeight: 1.5,
+                }}
+              >
+                {formattedStartDate ? (
+                  <>
+                    {formattedStartDate}
+                    {formattedEndDate && ` – ${formattedEndDate}`}
+                  </>
+                ) : (
+                  "TBA"
+                )}
               </p>
             </div>
 
             {event.location && (
-              <div>
-                <span className="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">
+              <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
+                <span
+                  style={{
+                    fontSize: "0.75rem",
+                    fontWeight: 600,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.05em",
+                    color: "#94a3b8",
+                  }}
+                >
                   Location
                 </span>
-                <p className="text-sm text-gray-700">{event.location}</p>
+                <p
+                  style={{
+                    fontSize: "0.95rem",
+                    color: "#334155",
+                    margin: 0,
+                    lineHeight: 1.5,
+                  }}
+                >
+                  {event.location}
+                </p>
               </div>
             )}
-          </div>
+          </aside>
         </div>
-      </div>
-      <div className="mt-8 pt-6 border-t border-gray-200">
-  <ShareButtons
-    url={`${process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"}/events/${slug}`}
-    title={event.title}
-  />
-</div>
-    </main>
+
+        {/* SHARE BUTTONS */}
+        <div style={{ paddingTop: "1rem" }}>
+          <ShareButtons
+            url={`${process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"}/events/${slug}`}
+            title={event.title}
+          />
+        </div>
+      </main>
+    </div>
   );
 }
