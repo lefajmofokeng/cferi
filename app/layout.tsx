@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Google_Sans_Flex } from "next/font/google";
 import "./globals.css";
+import "./navbar.css"
 
 const googleSans = Google_Sans_Flex({
   variable: "--font-google-sans",

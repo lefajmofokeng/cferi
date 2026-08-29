@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getEventStatus, eventStatusStyles, eventStatusLabels } from "@/lib/eventStatus";
 import CronosScrollSection from "@/components/CronosScrollSection";
 import FeedbackWidget from "@/components/public/FeedbackWidget";
+import EcosystemStackSection from "@/components/EcosystemStackSection";
 
 export default async function Home() {
   const supabase = await createClient();
@@ -45,8 +46,11 @@ export default async function Home() {
 
       {/* Interactive Expandable Video Component */}
       <section id="support">
-       <CronosScrollSection/>
+        <CronosScrollSection />
       </section>
+
+      {/* NEW: Ecosystem Stacking Cards & Scroll Text Reveal Component */}
+      <EcosystemStackSection />
 
       {/* Main Content Area */}
       <main className="mx-auto w-full max-w-[1200px] px-6 py-16 space-y-16">

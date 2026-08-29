@@ -32,9 +32,11 @@ export default function CronosScrollSection() {
         return;
 
       if (window.innerWidth <= 768) {
-        videoWrapperRef.current.style.cssText = "";
-        contentGridRef.current.style.opacity = "1";
-        contentGridRef.current.style.transform = "none";
+        // Completely clear JS-applied styles on mobile
+        videoWrapperRef.current.removeAttribute("style");
+        contentGridRef.current.removeAttribute("style");
+        darkenerRef.current.removeAttribute("style");
+        overlayRef.current.removeAttribute("style");
         return;
       }
 
@@ -107,7 +109,7 @@ export default function CronosScrollSection() {
               <span className="cronos-sub-brand">
                 Center for Entrepreneurship & Rapid Incubation<span style={{ fontFamily: "Google Sans Flex, sans-serif" }}>&#174;.</span>
               </span>
-              <p className="cronos-brand-desc">
+              <p className="cronos-brand-desc cronos-desktop-only">
                 The Maluti TVET College Incubation Center empowers student innovators and local entrepreneurs with world-class mentorship, rapid digital prototyping, technical resources, and enterprise funding pathways.
               </p>
             </div>
@@ -116,6 +118,13 @@ export default function CronosScrollSection() {
               <h2 className="cronos-main-heading">
                 By bridging vocational skill development with digital innovation, we accelerate early-stage ventures into market-ready businesses built for sustainable economic impact across South Africa.
               </h2>
+
+              {/* Mobile container placement: Slot for video container */}
+              <div className="cronos-mobile-video-slot" />
+
+              <p className="cronos-brand-desc cronos-mobile-only">
+                The Maluti TVET College Incubation Center empowers student innovators and local entrepreneurs with world-class mentorship, rapid digital prototyping, technical resources, and enterprise funding pathways.
+              </p>
 
               <div className="cronos-action-block">
                 <div className="cronos-btn-combo">
@@ -224,6 +233,15 @@ export default function CronosScrollSection() {
           max-width: 420px;
           margin: 0;
         }
+        .cronos-mobile-only {
+          display: none;
+        }
+        .cronos-desktop-only {
+          display: block;
+        }
+        .cronos-mobile-video-slot {
+          display: none;
+        }
         .cronos-col-right {
           display: flex;
           flex-direction: column;
@@ -325,62 +343,78 @@ export default function CronosScrollSection() {
           color: #f1f5f9;
           font-weight: 400;
         }
+
+        /* Mobile & Tablet Responsive View */
         @media (max-width: 768px) {
-          .cronos-sticky-viewport {
-            height: auto;
-            position: relative;
-            overflow: visible;
-            padding: 3rem 0;
+          .cronos-scroll-section-wrapper {
+            padding: 40px 0;
           }
           .cronos-scroll-track {
             height: auto !important;
           }
+          .cronos-sticky-viewport {
+            height: auto !important;
+            position: relative !important;
+            overflow: visible !important;
+            display: block !important;
+          }
           .cronos-content-grid {
-            grid-template-columns: 1fr;
-            gap: 2.5rem;
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 1.5rem !important;
+            padding: 0 20px !important;
             opacity: 1 !important;
+            transform: none !important;
           }
           .cronos-col-left {
-            padding-bottom: 0;
-            gap: 1.5rem;
+            padding-bottom: 0 !important;
           }
-          .cronos-brand-desc {
-            max-width: 100%;
+          .cronos-col-right {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 1.5rem !important;
+          }
+          .cronos-sub-brand {
+            font-size: 2.25rem !important;
+          }
+          .cronos-main-heading {
+            font-size: 1.25rem !important;
+          }
+          .cronos-desktop-only {
+            display: none !important;
+          }
+          .cronos-mobile-only {
+            display: block !important;
+            max-width: 100% !important;
           }
           .cronos-video-anchor {
-            display: none;
+            display: none !important;
           }
+
+          /* Video element forced into flow directly under the main heading */
+          .cronos-mobile-video-slot {
+            display: block !important;
+            width: 100% !important;
+          }
+
           .cronos-video-container-wrapper {
-            display: flex;
-            position: absolute;
+            position: relative !important;
             top: auto !important;
             left: auto !important;
             width: 100% !important;
             height: auto !important;
-            aspect-ratio: 16 / 9;
-            margin-top: 2rem;
+            aspect-ratio: 16 / 9 !important;
             transform: none !important;
-            box-shadow: none;
+            box-shadow: none !important;
+            border-radius: 12px !important;
+            pointer-events: auto !important;
+            margin: 0 !important;
+            z-index: 1 !important;
           }
-          .cronos-video-darkener {
-            opacity: 0.4 !important;
-          }
+          
+          .cronos-video-darkener,
           .cronos-fullscreen-overlay {
-            position: absolute;
-            left: 0;
-            opacity: 1 !important;
-            transform: none !important;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
-          }
-          .cronos-overlay-heading {
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-          }
-          .cronos-overlay-text {
-            font-size: 0.875rem;
+            display: none !important;
           }
         }
       `}</style>
