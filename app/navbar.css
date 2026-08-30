@@ -1,4 +1,7 @@
-/* Header Base */
+/* ==========================================================================
+   1. Site Header & Outer Layout
+   ========================================================================== */
+
 .site-header {
   position: sticky;
   top: 0;
@@ -62,7 +65,7 @@
   color: #0284c7;
 }
 
-/* Header Actions */
+/* Header Action Buttons */
 .header-right {
   display: flex;
   align-items: center;
@@ -99,7 +102,11 @@
   background-color: #1e293b;
 }
 
-/* Glassmorphism Backdrop Blur Overlay */
+/* ==========================================================================
+   2. Desktop Navigation & Backdrop Overlay
+   ========================================================================== */
+
+/* Glassmorphism Backdrop Overlay */
 .menu-backdrop {
   position: fixed;
   top: 64px;
@@ -113,7 +120,7 @@
   animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Desktop Navigation Link Group */
+/* Nav Item Trigger Group */
 .nav-list {
   display: flex;
   align-items: center;
@@ -150,7 +157,10 @@
   background-color: #f8fafc;
 }
 
-/* Sliding Megamenu Drawer */
+/* ==========================================================================
+   3. Sliding MegaMenu Drawer Layout
+   ========================================================================== */
+
 .megamenu-drawer {
   position: absolute;
   top: 64px;
@@ -180,6 +190,7 @@
   align-items: stretch;
 }
 
+/* Full Width 4-Column Fallback Layout */
 .grid-col-wide {
   grid-column: span 12;
   display: grid;
@@ -187,98 +198,12 @@
   gap: 2.5rem;
 }
 
-/* Left featured image block styling */
+/* Left Featured Column Block (Span 4 of 12) */
 .grid-col-featured-left {
   grid-column: span 4;
 }
 
-.editorial-card-left {
-  display: block;
-  height: 100%;
-  min-height: 280px;
-  text-decoration: none;
-  border-radius: 16px;
-  overflow: hidden;
-  position: relative;
-}
-
-.editorial-card-left .editorial-card-image {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  background-color: #0f172a;
-}
-
-.editorial-card-left .editorial-card-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-  transition: transform 0.4s ease;
-}
-
-.editorial-card-left:hover .editorial-card-image img {
-  transform: scale(1.03);
-}
-
-.editorial-card-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(15, 23, 42, 0.1) 0%, rgba(15, 23, 42, 0.88) 100%);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 1.5rem;
-  z-index: 2;
-}
-
-.editorial-card-eyebrow {
-  display: block;
-  font-size: 0.6875rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: rgba(255, 255, 255, 0.8);
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-}
-
-.editorial-card-title {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #ffffff;
-  line-height: 1.35;
-  margin: 0;
-  letter-spacing: -0.01em;
-}
-
-.editorial-view-all {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.375rem;
-  font-size: 0.8125rem;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.9);
-  transition: gap 0.2s ease, color 0.2s ease;
-  margin-top: 1rem;
-}
-
-.editorial-view-all .arrow-icon {
-  font-size: 0.875rem;
-  line-height: 1;
-  transition: transform 0.2s ease;
-}
-
-.editorial-card-left:hover .editorial-view-all,
-.mobile-editorial-card:hover .editorial-view-all {
-  color: #ffffff;
-}
-
-.editorial-card-left:hover .editorial-view-all .arrow-icon,
-.mobile-editorial-card:hover .editorial-view-all .arrow-icon {
-  transform: translate(2px, -2px);
-}
-
-/* 3 Columns Layout After Image */
+/* Right 3 Link Columns Block (Span 8 of 12) */
 .grid-col-three {
   grid-column: span 8;
   display: grid;
@@ -286,6 +211,7 @@
   gap: 2rem;
 }
 
+/* Category Subheaders & Link Lists */
 .column-eyebrow {
   display: block;
   font-size: 0.6875rem;
@@ -319,6 +245,71 @@
   color: #64748b;
 }
 
+/* ==========================================================================
+   4. Featured Editorial Cards & Action Footer
+   ========================================================================== */
+
+.editorial-card-left {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  background-color: #0f172a;
+}
+
+.editorial-card-image {
+  position: relative;
+  width: 100%;
+  flex: 1;
+  min-height: 220px;
+  text-decoration: none;
+  display: block;
+}
+
+.editorial-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+.editorial-card-image:hover img {
+  transform: scale(1.03);
+}
+
+.editorial-card-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.1) 0%, rgba(15, 23, 42, 0.88) 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 1.25rem;
+  z-index: 2;
+}
+
+.editorial-card-eyebrow {
+  display: block;
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.editorial-card-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #ffffff;
+  line-height: 1.35;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
 .editorial-placeholder {
   width: 100%;
   height: 100%;
@@ -332,7 +323,53 @@
   text-transform: uppercase;
 }
 
-/* Centered Search Container */
+/* Dedicated Category Navigation Footer Bar */
+.editorial-view-all {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.875rem 1.25rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #ffffff;
+  background-color: #020617;
+  text-decoration: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.editorial-view-all:hover {
+  background-color: #1e293b;
+  color: #38bdf8;
+}
+
+.editorial-view-all .arrow-icon,
+.editorial-view-all-mobile .arrow-icon {
+  font-size: 0.875rem;
+  transition: transform 0.2s ease;
+}
+
+.editorial-view-all:hover .arrow-icon,
+.editorial-view-all-mobile:hover .arrow-icon {
+  transform: translate(2px, -2px);
+}
+
+.editorial-view-all-mobile {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #ffffff;
+  background-color: #020617;
+  text-decoration: none;
+}
+
+/* ==========================================================================
+   5. Search Panel & Dynamic Results
+   ========================================================================== */
+
 .search-megamenu-container {
   display: flex;
   flex-direction: column;
@@ -381,7 +418,6 @@
   color: #0f172a;
 }
 
-/* Search Results Stack */
 .search-results-list {
   width: 100%;
   display: flex;
@@ -463,7 +499,10 @@
   object-fit: cover;
 }
 
-/* Mobile Alignment & Action Group */
+/* ==========================================================================
+   6. Mobile Drawer & Accordion Styling
+   ========================================================================== */
+
 .mobile-header-right {
   display: none;
   align-items: center;
@@ -517,6 +556,17 @@
   padding: 0.5rem 0;
 }
 
+/* ==========================================================================
+   7. Responsive Breakpoints & Animations
+   ========================================================================== */
+
+@media (min-width: 1025px) {
+  .nav-wrapper {
+    margin-left: 2rem;
+    margin-right: auto;
+  }
+}
+
 @media (max-width: 1024px) {
   .desktop-only {
     display: none !important;
@@ -544,7 +594,7 @@
   }
 }
 
-/* Animations */
+/* Keyframe Animations */
 @keyframes slideDown {
   0% {
     opacity: 0;
@@ -562,12 +612,5 @@
   }
   100% {
     opacity: 1;
-  }
-}
-
-@media (min-width: 1025px) {
-  .nav-wrapper {
-    margin-left: 2rem;
-    margin-right: auto;
   }
 }

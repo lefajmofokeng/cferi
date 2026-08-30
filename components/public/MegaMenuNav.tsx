@@ -402,57 +402,69 @@ export default function MegaMenuNav({
                 {/* Single Overlay Image Card Aligned Left */}
                 {openMenu === "resources" && featuredArticle && (
                   <div className="grid-col-featured-left">
-                    <Link
-                      href={`/learn/${featuredArticle.slug}`}
-                      onClick={() => setOpenMenu(null)}
-                      className="editorial-card-left"
-                    >
-                      <div className="editorial-card-image">
+                    <div className="editorial-card-left">
+                      <Link
+                        href={`/learn/${featuredArticle.slug}`}
+                        onClick={() => setOpenMenu(null)}
+                        className="editorial-card-image"
+                      >
                         {featuredArticle.cover_image_url ? (
                           <img src={featuredArticle.cover_image_url} alt={featuredArticle.title} />
                         ) : (
                           <div className="editorial-placeholder">Learn Article</div>
                         )}
                         <div className="editorial-card-overlay">
-                          <div>
-                            <span className="editorial-card-eyebrow">Learn & Guides</span>
-                            <h3 className="editorial-card-title">{featuredArticle.title}</h3>
-                          </div>
-                          <div className="editorial-view-all">
-                            <span>Show all articles</span>
-                            <span className="arrow-icon">↗</span>
-                          </div>
+                          <span className="editorial-card-eyebrow">Learn & Guides</span>
+                          <h3 className="editorial-card-title">{featuredArticle.title}</h3>
                         </div>
-                      </div>
-                    </Link>
+                      </Link>
+
+                      <Link
+                        href="/learn"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setOpenMenu(null);
+                        }}
+                        className="editorial-view-all"
+                      >
+                        <span>Show all articles</span>
+                        <span className="arrow-icon">↗</span>
+                      </Link>
+                    </div>
                   </div>
                 )}
 
                 {openMenu === "programs" && featuredCaseStudy && (
                   <div className="grid-col-featured-left">
-                    <Link
-                      href={`/case-studies/${featuredCaseStudy.slug}`}
-                      onClick={() => setOpenMenu(null)}
-                      className="editorial-card-left"
-                    >
-                      <div className="editorial-card-image">
+                    <div className="editorial-card-left">
+                      <Link
+                        href={`/case-studies/${featuredCaseStudy.slug}`}
+                        onClick={() => setOpenMenu(null)}
+                        className="editorial-card-image"
+                      >
                         {featuredCaseStudy.cover_image_url ? (
                           <img src={featuredCaseStudy.cover_image_url} alt={featuredCaseStudy.title} />
                         ) : (
                           <div className="editorial-placeholder">Case Study</div>
                         )}
                         <div className="editorial-card-overlay">
-                          <div>
-                            <span className="editorial-card-eyebrow">Case Studies</span>
-                            <h3 className="editorial-card-title">{featuredCaseStudy.title}</h3>
-                          </div>
-                          <div className="editorial-view-all">
-                            <span>Show all case studies</span>
-                            <span className="arrow-icon">↗</span>
-                          </div>
+                          <span className="editorial-card-eyebrow">Case Studies</span>
+                          <h3 className="editorial-card-title">{featuredCaseStudy.title}</h3>
                         </div>
-                      </div>
-                    </Link>
+                      </Link>
+
+                      <Link
+                        href="/case-studies"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setOpenMenu(null);
+                        }}
+                        className="editorial-view-all"
+                      >
+                        <span>Show all case studies</span>
+                        <span className="arrow-icon">↗</span>
+                      </Link>
+                    </div>
                   </div>
                 )}
 
@@ -511,57 +523,67 @@ export default function MegaMenuNav({
                   {isAccordionOpen && (
                     <div style={{ paddingTop: "0.75rem", paddingLeft: "0.5rem" }}>
                       {key === "resources" && featuredArticle && (
-                        <Link
-                          href={`/learn/${featuredArticle.slug}`}
-                          onClick={() => setMobileOpen(false)}
-                          className="mobile-editorial-card"
-                          style={{ display: "block", marginBottom: "1.25rem", borderRadius: "12px", overflow: "hidden", position: "relative" }}
-                        >
-                          <div style={{ height: "200px", position: "relative", backgroundColor: "#0f172a" }}>
+                        <div className="mobile-editorial-card" style={{ marginBottom: "1.25rem", borderRadius: "12px", overflow: "hidden", border: "1px solid #e2e8f0", backgroundColor: "#0f172a" }}>
+                          <Link
+                            href={`/learn/${featuredArticle.slug}`}
+                            onClick={() => setMobileOpen(false)}
+                            style={{ display: "block", height: "180px", position: "relative" }}
+                          >
                             {featuredArticle.cover_image_url ? (
                               <img src={featuredArticle.cover_image_url} alt={featuredArticle.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                             ) : (
                               <div className="editorial-placeholder" style={{ height: "100%" }}>Learn Article</div>
                             )}
                             <div className="editorial-card-overlay" style={{ padding: "1rem" }}>
-                              <div>
-                                <span className="editorial-card-eyebrow">Learn & Guides</span>
-                                <h3 className="editorial-card-title" style={{ fontSize: "1rem" }}>{featuredArticle.title}</h3>
-                              </div>
-                              <div className="editorial-view-all" style={{ marginTop: "0.75rem" }}>
-                                <span>Show all articles</span>
-                                <span className="arrow-icon">↗</span>
-                              </div>
+                              <span className="editorial-card-eyebrow">Learn & Guides</span>
+                              <h3 className="editorial-card-title" style={{ fontSize: "1rem" }}>{featuredArticle.title}</h3>
                             </div>
-                          </div>
-                        </Link>
+                          </Link>
+
+                          <Link
+                            href="/learn"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setMobileOpen(false);
+                            }}
+                            className="editorial-view-all-mobile"
+                          >
+                            <span>Show all articles</span>
+                            <span className="arrow-icon">↗</span>
+                          </Link>
+                        </div>
                       )}
 
                       {key === "programs" && featuredCaseStudy && (
-                        <Link
-                          href={`/case-studies/${featuredCaseStudy.slug}`}
-                          onClick={() => setMobileOpen(false)}
-                          className="mobile-editorial-card"
-                          style={{ display: "block", marginBottom: "1.25rem", borderRadius: "12px", overflow: "hidden", position: "relative" }}
-                        >
-                          <div style={{ height: "200px", position: "relative", backgroundColor: "#0f172a" }}>
+                        <div className="mobile-editorial-card" style={{ marginBottom: "1.25rem", borderRadius: "12px", overflow: "hidden", border: "1px solid #e2e8f0", backgroundColor: "#0f172a" }}>
+                          <Link
+                            href={`/case-studies/${featuredCaseStudy.slug}`}
+                            onClick={() => setMobileOpen(false)}
+                            style={{ display: "block", height: "180px", position: "relative" }}
+                          >
                             {featuredCaseStudy.cover_image_url ? (
                               <img src={featuredCaseStudy.cover_image_url} alt={featuredCaseStudy.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                             ) : (
                               <div className="editorial-placeholder" style={{ height: "100%" }}>Case Study</div>
                             )}
                             <div className="editorial-card-overlay" style={{ padding: "1rem" }}>
-                              <div>
-                                <span className="editorial-card-eyebrow">Case Studies</span>
-                                <h3 className="editorial-card-title" style={{ fontSize: "1rem" }}>{featuredCaseStudy.title}</h3>
-                              </div>
-                              <div className="editorial-view-all" style={{ marginTop: "0.75rem" }}>
-                                <span>Show all case studies</span>
-                                <span className="arrow-icon">↗</span>
-                              </div>
+                              <span className="editorial-card-eyebrow">Case Studies</span>
+                              <h3 className="editorial-card-title" style={{ fontSize: "1rem" }}>{featuredCaseStudy.title}</h3>
                             </div>
-                          </div>
-                        </Link>
+                          </Link>
+
+                          <Link
+                            href="/case-studies"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setMobileOpen(false);
+                            }}
+                            className="editorial-view-all-mobile"
+                          >
+                            <span>Show all case studies</span>
+                            <span className="arrow-icon">↗</span>
+                          </Link>
+                        </div>
                       )}
 
                       {menus[key].columns.map((column, cIdx) => (
