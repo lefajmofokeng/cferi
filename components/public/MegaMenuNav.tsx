@@ -27,6 +27,11 @@ const menus = {
         links: [
           { href: "/business-incubation-programme", label: "Business Incubation", desc: "Lean startup methodologies, business management development, pitching practices, and masterclasses." },
           { href: "/entrepreneurship-training", label: "Entrepreneurship Training", desc: "Intensive operational training modules focused on local scalable frameworks for emerging SMMEs." },
+        ],
+      },
+      {
+        heading: "Scaling",
+        links: [
           { href: "/mentorship-programme", label: "Mentorship Program", desc: "Direct deployment of expert corporate mentors to work directly on your unique scaling blockages." },
           { href: "/admin-compliance-support", label: "Admin & Compliance", desc: "Fast-tracked business registrations through CIPC, SARS tax compliance, and robust financial framework setups." },
         ],
@@ -64,10 +69,20 @@ const menus = {
     label: "Resources",
     columns: [
       {
-        heading: "Knowledge Base",
+        heading: "Updates",
         links: [
           { href: "/news", label: "News & Insights", desc: "Latest ecosystem updates and press." },
+        ],
+      },
+      {
+        heading: "Notices",
+        links: [
           { href: "/announcements", label: "Announcements", desc: "Official press and platform notices." },
+        ],
+      },
+      {
+        heading: "Guides",
+        links: [
           { href: "/learn", label: "Learn & Guides", desc: "In-depth guides and technical articles." },
         ],
       },
@@ -109,81 +124,81 @@ export default function MegaMenuNav({
   const [activeAccordion, setActiveAccordion] = useState<MenuKey | null>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [liveResults, setLiveResults] = useState<
-  { href: string; title: string; desc: string; category: string; cover_image_url: string | null }[]
+    { href: string; title: string; desc: string; category: string; cover_image_url: string | null }[]
   >([]);
 
   useEffect(() => {
-      const trimmed = searchQuery.trim();
-      if (trimmed.length < 2) {
-        setLiveResults([]);
-        return;
-      }
+    const trimmed = searchQuery.trim();
+    if (trimmed.length < 2) {
+      setLiveResults([]);
+      return;
+    }
 
-      const timeout = setTimeout(async () => {
-        const supabase = createClient();
-        const pattern = `%${trimmed}%`;
+    const timeout = setTimeout(async () => {
+      const supabase = createClient();
+      const pattern = `%${trimmed}%`;
 
-        const [news, jobs, events, research] = await Promise.all([
-          supabase
-            .from("news_posts")
-            .select("title, slug")
-            .eq("status", "published")
-            .ilike("title", pattern)
-            .limit(5),
-          supabase
-            .from("job_posts")
-            .select("title, slug")
-            .eq("status", "published")
-            .ilike("title", pattern)
-            .limit(5),
-          supabase
-            .from("events")
-            .select("title, slug")
-            .eq("status", "published")
-            .ilike("title", pattern)
-            .limit(5),
-          supabase
-            .from("research_papers")
-            .select("title, slug")
-            .eq("status", "published")
-            .ilike("title", pattern)
-            .limit(5),
-        ]);
+      const [news, jobs, events, research] = await Promise.all([
+        supabase
+          .from("news_posts")
+          .select("title, slug")
+          .eq("status", "published")
+          .ilike("title", pattern)
+          .limit(5),
+        supabase
+          .from("job_posts")
+          .select("title, slug")
+          .eq("status", "published")
+          .ilike("title", pattern)
+          .limit(5),
+        supabase
+          .from("events")
+          .select("title, slug")
+          .eq("status", "published")
+          .ilike("title", pattern)
+          .limit(5),
+        supabase
+          .from("research_papers")
+          .select("title, slug")
+          .eq("status", "published")
+          .ilike("title", pattern)
+          .limit(5),
+      ]);
 
-        setLiveResults([
-          ...(news.data ?? []).map((n) => ({
-            href: `/news/${n.slug}`,
-            title: n.title,
-            desc: "News",
-            category: "News",
-            cover_image_url: null,
-          })),
-          ...(jobs.data ?? []).map((j) => ({
-            href: `/jobs/${j.slug}`,
-            title: j.title,
-            desc: "Job Opportunity",
-            category: "Jobs",
-            cover_image_url: null,
-          })),
-          ...(events.data ?? []).map((e) => ({
-            href: `/events/${e.slug}`,
-            title: e.title,
-            desc: "Event",
-            category: "Events",
-            cover_image_url: null,
-          })),
-          ...(research.data ?? []).map((r) => ({
-            href: `/research-papers/${r.slug}`,
-            title: r.title,
-            desc: "Research Paper",
-            category: "Research",
-            cover_image_url: null,
-          })),
-        ]);
-      }, 250);
+      setLiveResults([
+        ...(news.data ?? []).map((n) => ({
+          href: `/news/${n.slug}`,
+          title: n.title,
+          desc: "News",
+          category: "News",
+          cover_image_url: null,
+        })),
+        ...(jobs.data ?? []).map((j) => ({
+          href: `/jobs/${j.slug}`,
+          title: j.title,
+          desc: "Job Opportunity",
+          category: "Jobs",
+          cover_image_url: null,
+        })),
+        ...(events.data ?? []).map((e) => ({
+          href: `/events/${e.slug}`,
+          title: e.title,
+          desc: "Event",
+          category: "Events",
+          cover_image_url: null,
+        })),
+        ...(research.data ?? []).map((r) => ({
+          href: `/research-papers/${r.slug}`,
+          title: r.title,
+          desc: "Research Paper",
+          category: "Research",
+          cover_image_url: null,
+        })),
+      ]);
+    }, 250);
 
-      return () => clearTimeout(timeout);
-    }, [searchQuery]);
+    return () => clearTimeout(timeout);
+  }, [searchQuery]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -209,7 +224,6 @@ export default function MegaMenuNav({
     }, 150);
   };
 
-  // Build searchable repository with titles, descriptions, categories, and images
   const allSearchableItems = [
     ...Object.values(menus).flatMap((m) =>
       m.columns.flatMap((c) =>
@@ -239,22 +253,23 @@ export default function MegaMenuNav({
   ];
 
   const staticFilteredResults = searchQuery.trim()
-  ? allSearchableItems.filter(
-      (i) =>
-        i.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        i.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        i.desc.toLowerCase().includes(searchQuery.toLowerCase())
-    )
-  : [];
+    ? allSearchableItems.filter(
+        (i) =>
+          i.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          i.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          i.desc.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : [];
 
   const searchResults = [...staticFilteredResults, ...liveResults];
 
+  const featuredArticle = learnArticles.length > 0 ? learnArticles[0] : null;
+  const featuredCaseStudy = caseStudies.length > 0 ? caseStudies[0] : null;
+
   return (
     <div className="nav-wrapper" onMouseLeave={handleMouseLeave}>
-      {/* White Tint Backdrop Blur Layer */}
       {openMenu && <div className="menu-backdrop" onClick={() => setOpenMenu(null)} />}
 
-      {/* Desktop Navigation Links */}
       <nav className="nav-list desktop-only">
         {(Object.keys(menus) as MenuKey[]).map((key) => {
           const isOpen = openMenu === key;
@@ -271,7 +286,6 @@ export default function MegaMenuNav({
           );
         })}
 
-        {/* Search Icon Trigger Toggle */}
         <button
           type="button"
           onClick={() => {
@@ -287,7 +301,6 @@ export default function MegaMenuNav({
         </button>
       </nav>
 
-      {/* Mobile Toggle & Search Action */}
       <div className="mobile-header-right">
         <button
           type="button"
@@ -324,7 +337,6 @@ export default function MegaMenuNav({
         </button>
       </div>
 
-      {/* Sliding Megamenu Drawer */}
       {openMenu && (
         <div
           onMouseEnter={() => openMenu !== "search" && handleMouseEnter(openMenu as MenuKey)}
@@ -332,8 +344,6 @@ export default function MegaMenuNav({
           className="megamenu-drawer"
         >
           <div className="megamenu-inner">
-            
-            {/* Centered Search Megamenu View */}
             {openMenu === "search" ? (
               <div className="search-megamenu-container">
                 <div className="search-input-wrapper">
@@ -354,7 +364,6 @@ export default function MegaMenuNav({
                   </button>
                 </div>
 
-                {/* Real-time Editorial Results Stack */}
                 {searchQuery.trim() !== "" && (
                   <div className="search-results-list">
                     {searchResults.length > 0 ? (
@@ -389,13 +398,70 @@ export default function MegaMenuNav({
                 )}
               </div>
             ) : (
-              /* Navigation Links View */
               <div className="megamenu-grid">
+                {/* Single Overlay Image Card Aligned Left */}
+                {openMenu === "resources" && featuredArticle && (
+                  <div className="grid-col-featured-left">
+                    <Link
+                      href={`/learn/${featuredArticle.slug}`}
+                      onClick={() => setOpenMenu(null)}
+                      className="editorial-card-left"
+                    >
+                      <div className="editorial-card-image">
+                        {featuredArticle.cover_image_url ? (
+                          <img src={featuredArticle.cover_image_url} alt={featuredArticle.title} />
+                        ) : (
+                          <div className="editorial-placeholder">Learn Article</div>
+                        )}
+                        <div className="editorial-card-overlay">
+                          <div>
+                            <span className="editorial-card-eyebrow">Learn & Guides</span>
+                            <h3 className="editorial-card-title">{featuredArticle.title}</h3>
+                          </div>
+                          <div className="editorial-view-all">
+                            <span>Show all articles</span>
+                            <span className="arrow-icon">↗</span>
+                          </div>
+                        </div>
+                      </div>
+                    </Link>
+                  </div>
+                )}
+
+                {openMenu === "programs" && featuredCaseStudy && (
+                  <div className="grid-col-featured-left">
+                    <Link
+                      href={`/case-studies/${featuredCaseStudy.slug}`}
+                      onClick={() => setOpenMenu(null)}
+                      className="editorial-card-left"
+                    >
+                      <div className="editorial-card-image">
+                        {featuredCaseStudy.cover_image_url ? (
+                          <img src={featuredCaseStudy.cover_image_url} alt={featuredCaseStudy.title} />
+                        ) : (
+                          <div className="editorial-placeholder">Case Study</div>
+                        )}
+                        <div className="editorial-card-overlay">
+                          <div>
+                            <span className="editorial-card-eyebrow">Case Studies</span>
+                            <h3 className="editorial-card-title">{featuredCaseStudy.title}</h3>
+                          </div>
+                          <div className="editorial-view-all">
+                            <span>Show all case studies</span>
+                            <span className="arrow-icon">↗</span>
+                          </div>
+                        </div>
+                      </div>
+                    </Link>
+                  </div>
+                )}
+
+                {/* 3 Link Columns Positioned Right */}
                 <div
                   className={
-                    (openMenu === "resources" && learnArticles.length > 0) ||
-                    (openMenu === "programs" && caseStudies.length > 0)
-                      ? "grid-col-split"
+                    (openMenu === "resources" && featuredArticle) ||
+                    (openMenu === "programs" && featuredCaseStudy)
+                      ? "grid-col-three"
                       : "grid-col-wide"
                   }
                 >
@@ -420,78 +486,12 @@ export default function MegaMenuNav({
                     </div>
                   ))}
                 </div>
-
-                {/* Featured Articles / Case Studies Right Rail */}
-                {openMenu === "resources" && learnArticles.length > 0 && (
-                  <div className="grid-col-featured">
-                    <div className="featured-header">
-                      <span className="column-eyebrow" style={{ margin: 0 }}>
-                        Featured Articles
-                      </span>
-                      <Link href="/learn" onClick={() => setOpenMenu(null)} className="featured-view-all">
-                        View All &rarr;
-                      </Link>
-                    </div>
-                    <div className="featured-grid">
-                      {learnArticles.map((article) => (
-                        <Link
-                          key={article.id}
-                          href={`/learn/${article.slug}`}
-                          onClick={() => setOpenMenu(null)}
-                          className="editorial-card"
-                        >
-                          <div className="editorial-card-image">
-                            {article.cover_image_url ? (
-                              <img src={article.cover_image_url} alt={article.title} />
-                            ) : (
-                              <div className="editorial-placeholder">Maluti Center</div>
-                            )}
-                          </div>
-                          <h3 className="editorial-card-title">{article.title}</h3>
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {openMenu === "programs" && caseStudies.length > 0 && (
-                  <div className="grid-col-featured">
-                    <div className="featured-header">
-                      <span className="column-eyebrow" style={{ margin: 0 }}>
-                        Case Studies
-                      </span>
-                      <Link href="/case-studies" onClick={() => setOpenMenu(null)} className="featured-view-all">
-                        View All &rarr;
-                      </Link>
-                    </div>
-                    <div className="featured-grid">
-                      {caseStudies.map((cs) => (
-                        <Link
-                          key={cs.id}
-                          href={`/case-studies/${cs.slug}`}
-                          onClick={() => setOpenMenu(null)}
-                          className="editorial-card"
-                        >
-                          <div className="editorial-card-image">
-                            {cs.cover_image_url ? (
-                              <img src={cs.cover_image_url} alt={cs.title} />
-                            ) : (
-                              <div className="editorial-placeholder">Case Study</div>
-                            )}
-                          </div>
-                          <h3 className="editorial-card-title">{cs.title}</h3>
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                )}
               </div>
             )}
           </div>
         </div>
       )}
 
-      {/* Mobile Drawer */}
       {mobileOpen && (
         <div className="mobile-drawer">
           <div>
@@ -510,6 +510,60 @@ export default function MegaMenuNav({
 
                   {isAccordionOpen && (
                     <div style={{ paddingTop: "0.75rem", paddingLeft: "0.5rem" }}>
+                      {key === "resources" && featuredArticle && (
+                        <Link
+                          href={`/learn/${featuredArticle.slug}`}
+                          onClick={() => setMobileOpen(false)}
+                          className="mobile-editorial-card"
+                          style={{ display: "block", marginBottom: "1.25rem", borderRadius: "12px", overflow: "hidden", position: "relative" }}
+                        >
+                          <div style={{ height: "200px", position: "relative", backgroundColor: "#0f172a" }}>
+                            {featuredArticle.cover_image_url ? (
+                              <img src={featuredArticle.cover_image_url} alt={featuredArticle.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                            ) : (
+                              <div className="editorial-placeholder" style={{ height: "100%" }}>Learn Article</div>
+                            )}
+                            <div className="editorial-card-overlay" style={{ padding: "1rem" }}>
+                              <div>
+                                <span className="editorial-card-eyebrow">Learn & Guides</span>
+                                <h3 className="editorial-card-title" style={{ fontSize: "1rem" }}>{featuredArticle.title}</h3>
+                              </div>
+                              <div className="editorial-view-all" style={{ marginTop: "0.75rem" }}>
+                                <span>Show all articles</span>
+                                <span className="arrow-icon">↗</span>
+                              </div>
+                            </div>
+                          </div>
+                        </Link>
+                      )}
+
+                      {key === "programs" && featuredCaseStudy && (
+                        <Link
+                          href={`/case-studies/${featuredCaseStudy.slug}`}
+                          onClick={() => setMobileOpen(false)}
+                          className="mobile-editorial-card"
+                          style={{ display: "block", marginBottom: "1.25rem", borderRadius: "12px", overflow: "hidden", position: "relative" }}
+                        >
+                          <div style={{ height: "200px", position: "relative", backgroundColor: "#0f172a" }}>
+                            {featuredCaseStudy.cover_image_url ? (
+                              <img src={featuredCaseStudy.cover_image_url} alt={featuredCaseStudy.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                            ) : (
+                              <div className="editorial-placeholder" style={{ height: "100%" }}>Case Study</div>
+                            )}
+                            <div className="editorial-card-overlay" style={{ padding: "1rem" }}>
+                              <div>
+                                <span className="editorial-card-eyebrow">Case Studies</span>
+                                <h3 className="editorial-card-title" style={{ fontSize: "1rem" }}>{featuredCaseStudy.title}</h3>
+                              </div>
+                              <div className="editorial-view-all" style={{ marginTop: "0.75rem" }}>
+                                <span>Show all case studies</span>
+                                <span className="arrow-icon">↗</span>
+                              </div>
+                            </div>
+                          </div>
+                        </Link>
+                      )}
+
                       {menus[key].columns.map((column, cIdx) => (
                         <div key={cIdx} style={{ marginBottom: "1rem" }}>
                           {column.heading && (
