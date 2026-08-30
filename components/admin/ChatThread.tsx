@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import "./ChatThread.css";
 
 type Message = {
   id: string;
@@ -19,13 +20,17 @@ function isImageFile(fileName: string | null): boolean {
   return /\.(png|jpe?g|gif|webp|svg)$/i.test(fileName);
 }
 
+interface ChatThreadProps {
+  conversationId: string;
+  currentUserId: string;
+  id?: string;
+}
+
 export default function ChatThread({
   conversationId,
   currentUserId,
-}: {
-  conversationId: string;
-  currentUserId: string;
-}) {
+  id = "chat-thread",
+}: ChatThreadProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [senderNames, setSenderNames] = useState<SenderMap>({});
   const [text, setText] = useState("");
@@ -215,35 +220,9 @@ export default function ChatThread({
   }
 
   return (
-    <div className="flex flex-col h-full bg-[#FFFFFF]">
-      {/* Scrollbar styling */}
-      <style jsx global>{`
-        .chat-thread-scrollbar::-webkit-scrollbar {
-          width: 5px;
-        }
-        .chat-thread-scrollbar::-webkit-scrollbar-button {
-          display: none;
-          width: 0;
-          height: 0;
-        }
-        .chat-thread-scrollbar::-webkit-scrollbar-track {
-          background: transparent;
-        }
-        .chat-thread-scrollbar::-webkit-scrollbar-thumb {
-          background-color: #dadce0;
-          border-radius: 4px;
-        }
-        .chat-thread-scrollbar::-webkit-scrollbar-thumb:hover {
-          background-color: #bdc1c6;
-        }
-        .chat-thread-scrollbar {
-          scrollbar-width: thin;
-          scrollbar-color: #dadce0 transparent;
-        }
-      `}</style>
-
+    <section id={id} className="chat-thread">
       {/* Message Feed Area */}
-      <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4 chat-thread-scrollbar bg-[#F8F9FA]/30">
+      <div className="chat-thread__messages">
         {messages.map((msg) => {
           const isMe = msg.sender_id === currentUserId;
           const normalizedFileName = (msg.file_name ?? "").toLowerCase();
@@ -252,39 +231,42 @@ export default function ChatThread({
           const senderName = senderNames[msg.sender_id] ?? "Team Member";
 
           return (
-            <div key={msg.id} className={`flex ${isMe ? "justify-end" : "justify-start"} items-end gap-2`}>
+            <div
+              key={msg.id}
+              className={`chat-thread__message-row ${
+                isMe ? "chat-thread__message-row--me" : "chat-thread__message-row--other"
+              }`}
+            >
               {!isMe && (
-                <div className="w-7 h-7 rounded-full bg-gray-200 text-gray-700 text-xs font-semibold flex items-center justify-center shrink-0 mb-1">
+                <div className="chat-thread__avatar">
                   {senderName.charAt(0).toUpperCase()}
                 </div>
               )}
 
               <div
-                className={`max-w-md rounded-2xl px-4 py-2.5 text-xs leading-relaxed shadow-xs ${
-                  isMe
-                    ? "bg-[#1A73E8] text-white rounded-br-xs"
-                    : "bg-[#F1F3F4] text-gray-800 rounded-bl-xs border border-gray-200/60"
+                className={`chat-thread__bubble ${
+                  isMe ? "chat-thread__bubble--me" : "chat-thread__bubble--other"
                 }`}
               >
                 {!isMe && (
-                  <p className="text-[11px] font-semibold mb-1 text-gray-600">
+                  <p className="chat-thread__sender-name">
                     {senderName}
                   </p>
                 )}
-                {msg.content && <p className="whitespace-pre-wrap">{msg.content}</p>}
+                {msg.content && <p className="chat-thread__content">{msg.content}</p>}
                 
                 {isImageAttachment && (
-                  <a href={msg.file_url!} target="_blank" rel="noopener noreferrer" className="block mt-2">
+                  <a href={msg.file_url!} target="_blank" rel="noopener noreferrer" className="chat-thread__image-link">
                     <img
                       src={msg.file_url!}
                       alt={msg.file_name ?? "Attached image"}
-                      className="max-w-[240px] max-h-[240px] rounded-lg border border-gray-200/50 object-cover hover:opacity-95 transition-opacity"
+                      className="chat-thread__image"
                     />
                   </a>
                 )}
 
                 {isVoiceNote ? (
-                  <audio controls src={msg.file_url!} className="mt-2 max-w-[220px]" />
+                  <audio controls src={msg.file_url!} className="chat-thread__audio" />
                 ) : (
                   msg.file_url &&
                     !isImageAttachment && (
@@ -292,11 +274,11 @@ export default function ChatThread({
                         href={msg.file_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className={`inline-flex items-center gap-1.5 mt-2 text-xs font-medium underline ${
-                          isMe ? "text-white" : "text-[#1A73E8]"
+                        className={`chat-thread__file-link ${
+                          isMe ? "chat-thread__file-link--me" : "chat-thread__file-link--other"
                         }`}
                       >
-                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="chat-thread__icon-file" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
                         </svg>
                         <span>{msg.file_name ?? "Attached file"}</span>
@@ -304,7 +286,7 @@ export default function ChatThread({
                     )
                 )}
 
-                <p className={`text-[10px] mt-1 text-right ${isMe ? "text-blue-100" : "text-gray-400"}`}>
+                <p className={`chat-thread__timestamp ${isMe ? "chat-thread__timestamp--me" : "chat-thread__timestamp--other"}`}>
                   {new Date(msg.created_at).toLocaleTimeString([], {
                     hour: "2-digit",
                     minute: "2-digit",
@@ -318,11 +300,11 @@ export default function ChatThread({
       </div>
 
       {/* Input Action Bar */}
-      <form onSubmit={handleSend} className="border-t border-gray-200 p-3 bg-white space-y-2">
+      <form onSubmit={handleSend} className="chat-thread__form">
         {file && (
-          <div className="flex items-center justify-between text-xs bg-[#E8F0FE] text-[#1A73E8] border border-blue-200 rounded-md px-3 py-1.5">
-            <span className="truncate flex items-center gap-1.5 font-medium">
-              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="chat-thread__file-preview">
+            <span className="chat-thread__file-name">
+              <svg className="chat-thread__icon-file" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
               </svg>
               {file.name}
@@ -330,23 +312,23 @@ export default function ChatThread({
             <button
               type="button"
               onClick={() => setFile(null)}
-              className="text-[#1A73E8] hover:text-blue-800 ml-2"
+              className="chat-thread__remove-file"
             >
               ✕
             </button>
           </div>
         )}
 
-        <div className="flex items-center gap-2">
+        <div className="chat-thread__input-row">
           {/* File Upload Button */}
-          <label className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-full cursor-pointer transition-colors">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <label className="chat-thread__action-btn">
+            <svg className="chat-thread__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
             </svg>
             <input
               type="file"
               onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-              className="hidden"
+              className="chat-thread__file-input"
             />
           </label>
 
@@ -354,14 +336,12 @@ export default function ChatThread({
           <button
             type="button"
             onClick={isRecording ? stopRecording : startRecording}
-            className={`p-2 rounded-full transition-colors ${
-              isRecording
-                ? "bg-red-50 text-red-600 animate-pulse"
-                : "text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+            className={`chat-thread__action-btn ${
+              isRecording ? "chat-thread__action-btn--recording" : ""
             }`}
             title={isRecording ? "Stop Recording" : "Record Voice Note"}
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="chat-thread__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
             </svg>
           </button>
@@ -372,21 +352,21 @@ export default function ChatThread({
             value={text}
             onChange={(e) => setText(e.target.value)}
             placeholder="Write a message..."
-            className="flex-1 bg-[#F1F3F4] border-none rounded-full px-4 py-2 text-xs text-gray-800 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#1A73E8]"
+            className="chat-thread__input"
           />
 
           {/* Send Button */}
           <button
             type="submit"
             disabled={sending || (!text.trim() && !file)}
-            className="bg-[#1A73E8] text-white p-2 rounded-full hover:bg-blue-600 disabled:opacity-40 disabled:hover:bg-[#1A73E8] transition-colors"
+            className="chat-thread__send-btn"
           >
-            <svg className="w-4 h-4 transform rotate-90" fill="currentColor" viewBox="0 0 24 24">
+            <svg className="chat-thread__send-icon" fill="currentColor" viewBox="0 0 24 24">
               <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
             </svg>
           </button>
         </div>
       </form>
-    </div>
+    </section>
   );
 }

@@ -1,29 +1,72 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import NotesDrawer from "./drawers/NotesDrawer";
 import ContactsDrawer from "./drawers/ContactsDrawer";
 import TasksDrawer from "./drawers/TasksDrawer";
 import FilesDrawer from "./drawers/FilesDrawer";
 import { usePathname } from "next/navigation";
+import "./QuickActionsRail.css";
 
 type ToolKey = "notes" | "contacts" | "tasks" | "files" | null;
 
-const tools: { key: Exclude<ToolKey, null>; icon: string; label: string }[] = [
-  { key: "notes", icon: "📝", label: "Notes" },
-  { key: "contacts", icon: "👤", label: "Contacts" },
-  { key: "tasks", icon: "✅", label: "Tasks" },
-  { key: "files", icon: "📁", label: "Files" },
+interface ToolConfig {
+  key: Exclude<ToolKey, null>;
+  label: string;
+  icon: React.ReactNode;
+}
+
+const tools: ToolConfig[] = [
+  {
+    key: "notes",
+    label: "Notes",
+    icon: (
+      <svg className="quick-actions-rail__icon" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M3 18h12v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
+      </svg>
+    ),
+  },
+  {
+    key: "contacts",
+    label: "Contacts",
+    icon: (
+      <svg className="quick-actions-rail__icon" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+      </svg>
+    ),
+  },
+  {
+    key: "tasks",
+    label: "Tasks",
+    icon: (
+      <svg className="quick-actions-rail__icon" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+      </svg>
+    ),
+  },
+  {
+    key: "files",
+    label: "Files",
+    icon: (
+      <svg className="quick-actions-rail__icon" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z" />
+      </svg>
+    ),
+  },
 ];
 
-export default function QuickActionsRail() {
+interface QuickActionsRailProps {
+  id?: string;
+}
+
+export default function QuickActionsRail({ id = "quick-actions-rail" }: QuickActionsRailProps) {
   const [openTool, setOpenTool] = useState<ToolKey>(null);
   const [dueTaskCount, setDueTaskCount] = useState(0);
 
   useEffect(() => {
     const supabase = createClient();
-    
+
     async function loadDueCount() {
       const {
         data: { user },
@@ -52,7 +95,7 @@ export default function QuickActionsRail() {
       .subscribe();
 
     const interval = setInterval(loadDueCount, 30000);
-    
+
     return () => {
       supabase.removeChannel(channel);
       clearInterval(interval);
@@ -60,49 +103,56 @@ export default function QuickActionsRail() {
   }, []);
 
   const pathname = usePathname();
-    if (pathname === "/admin/login") return null;
+  if (pathname === "/admin/login") return null;
 
   return (
     <>
-      <aside className="fixed right-0 top-0 h-screen w-14 border-l border-gray-200 bg-white flex flex-col items-center py-6 gap-4 z-30">
-        {tools.map((tool) => (
-          <button
-            key={tool.key}
-            onClick={() => setOpenTool(tool.key)}
-            title={tool.label}
-            className={`relative w-10 h-10 rounded-lg flex items-center justify-center text-lg hover:bg-gray-100 ${
-              openTool === tool.key ? "bg-gray-100" : ""
-            }`}
-          >
-            {tool.icon}
-            {tool.key === "tasks" && dueTaskCount > 0 && (
-              <span className="absolute -top-1 -right-1 bg-red-600 text-white text-[10px] font-semibold rounded-full min-w-[16px] h-[16px] flex items-center justify-center px-1">
-                {dueTaskCount > 9 ? "9+" : dueTaskCount}
-              </span>
-            )}
-          </button>
-        ))}
+      <aside id={id} className="quick-actions-rail">
+        {tools.map((tool) => {
+          const isActive = openTool === tool.key;
+          return (
+            <button
+              key={tool.key}
+              onClick={() => setOpenTool(isActive ? null : tool.key)}
+              title={tool.label}
+              className={`quick-actions-rail__button ${
+                isActive ? "quick-actions-rail__button--active" : ""
+              }`}
+            >
+              {tool.icon}
+              {tool.key === "tasks" && dueTaskCount > 0 && (
+                <span className="quick-actions-rail__badge">
+                  {dueTaskCount > 9 ? "9+" : dueTaskCount}
+                </span>
+              )}
+            </button>
+          );
+        })}
       </aside>
 
       {openTool && (
         <>
           <div
-            className="fixed inset-0 bg-black/20 z-40"
+            className="quick-actions-rail__backdrop"
             onClick={() => setOpenTool(null)}
           />
-          <div className="fixed right-0 top-0 h-screen w-96 bg-white border-l border-gray-200 shadow-lg z-50 flex flex-col">
-            <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
-              <p className="font-medium">
+          <div className="quick-actions-rail__drawer">
+            <div className="quick-actions-rail__drawer-header">
+              <h3 className="quick-actions-rail__drawer-title">
                 {tools.find((t) => t.key === openTool)?.label}
-              </p>
+              </h3>
               <button
+                type="button"
                 onClick={() => setOpenTool(null)}
-                className="text-gray-400 hover:text-gray-700"
+                className="quick-actions-rail__close-btn"
+                aria-label="Close panel"
               >
-                ✕
+                <svg className="quick-actions-rail__close-icon" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                </svg>
               </button>
             </div>
-            <div className="flex-1 overflow-y-auto p-4">
+            <div className="quick-actions-rail__drawer-content">
               {openTool === "notes" && <NotesDrawer />}
               {openTool === "contacts" && <ContactsDrawer />}
               {openTool === "tasks" && <TasksDrawer />}

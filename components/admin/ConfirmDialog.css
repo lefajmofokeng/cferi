@@ -1,0 +1,99 @@
+.confirm-dialog-wrapper {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  scroll-margin-top: 80px;
+}
+
+.confirm-dialog__overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(32, 33, 36, 0.4);
+  backdrop-filter: blur(2px);
+}
+
+.confirm-dialog__container {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 28rem;
+  margin-left: 1rem;
+  margin-right: 1rem;
+  padding: 1.5rem;
+  background-color: #ffffff;
+  border-radius: 1.75rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1), 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+.confirm-dialog__title {
+  margin: 0 0 0.75rem 0;
+  font-size: 1.5rem;
+  font-weight: 400;
+  line-height: 1.33;
+  color: #1f1f1f;
+  letter-spacing: 0;
+}
+
+.confirm-dialog__description {
+  margin: 0 0 1.5rem 0;
+  font-size: 0.875rem;
+  line-height: 1.43;
+  color: #444746;
+  letter-spacing: 0.25px;
+}
+
+.confirm-dialog__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.confirm-dialog__button {
+  height: 2.5rem;
+  padding: 0 1.5rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.1px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.confirm-dialog__button--cancel {
+  background-color: transparent;
+  color: #0b57d0;
+}
+
+.confirm-dialog__button--cancel:hover {
+  background-color: #f2f2f2;
+}
+
+.confirm-dialog__button--cancel:focus-visible {
+  outline: 2px solid #0b57d0;
+  outline-offset: 2px;
+}
+
+.confirm-dialog__button--confirm {
+  background-color: #b3261e;
+  color: #ffffff;
+}
+
+.confirm-dialog__button--confirm:hover {
+  background-color: #8c1d18;
+  box-shadow: 0 1px 3px 1px rgba(0, 0, 0, 0.15), 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+}
+
+.confirm-dialog__button--confirm:focus-visible {
+  outline: 2px solid #b3261e;
+  outline-offset: 2px;
+}

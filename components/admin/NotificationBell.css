@@ -1,0 +1,148 @@
+.notification-bell {
+  position: relative;
+  display: inline-block;
+  scroll-margin-top: 80px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.notification-bell__button {
+  position: relative;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  border: none;
+  color: #444746;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.notification-bell__button:hover {
+  background-color: #f1f3f4;
+  color: #1f1f1f;
+}
+
+.notification-bell__icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.notification-bell__badge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  background-color: #b3261e;
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 600;
+  border-radius: 9999px;
+  min-width: 1rem;
+  height: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0.25rem;
+  border: 2px solid #ffffff;
+  line-height: 1;
+}
+
+.notification-bell__dropdown {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  margin-top: 0.5rem;
+  width: 20rem;
+  background-color: #ffffff;
+  border-radius: 1.75rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1), 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e0e0e0;
+  z-index: 50;
+  max-height: 24rem;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.notification-bell__header {
+  padding: 1rem 1.25rem 0.5rem 1.25rem;
+  border-bottom: 1px solid #f1f3f4;
+}
+
+.notification-bell__header-title {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #1f1f1f;
+}
+
+.notification-bell__empty {
+  padding: 2rem 1rem;
+  text-align: center;
+  font-size: 0.875rem;
+  color: #747775;
+}
+
+.notification-bell__list {
+  list-style: none;
+  margin: 0;
+  padding: 0.5rem 0;
+  overflow-y: auto;
+  flex: 1 1 0%;
+}
+
+.notification-bell__item {
+  margin: 0;
+}
+
+.notification-bell__link {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.75rem 1.25rem;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+}
+
+.notification-bell__link:hover {
+  background-color: #f1f3f4;
+}
+
+.notification-bell__item-icon {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 9999px;
+  background-color: #e8f0fe;
+  color: #0b57d0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 0.125rem;
+}
+
+.notification-bell__item-icon svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.notification-bell__item-content {
+  flex: 1 1 0%;
+  min-width: 0;
+}
+
+.notification-bell__item-title {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: #1f1f1f;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.notification-bell__item-time {
+  margin: 0.25rem 0 0 0;
+  font-size: 0.75rem;
+  color: #747775;
+}

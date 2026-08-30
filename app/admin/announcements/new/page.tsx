@@ -38,116 +38,112 @@ export default function NewAnnouncementPage() {
   }
 
   return (
-    <main className="p-6 font-sans text-gray-800 max-w-7xl mx-auto space-y-6">
-      {/* Top Header & Navigation Breadcrumb */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2 text-xs text-gray-500 font-medium mb-1">
-            <Link href="/admin/announcements" className="hover:text-gray-800 transition-colors">
-              Announcements
-            </Link>
-            <span>/</span>
-            <span className="text-gray-800">New Announcement</span>
-          </div>
-          <h1 className="text-xl font-bold text-gray-900 tracking-tight">
-            Create Announcement
-          </h1>
-        </div>
+    <main className="g-form-console">
+      <style>{cssStyles}</style>
 
-        <div className="flex items-center gap-3">
-          <Link
-            href="/admin/announcements"
-            className="px-4 py-2 rounded-full border border-gray-200 text-xs font-semibold text-gray-600 hover:bg-gray-50 transition-colors"
-          >
-            Cancel
+      {/* Top Header & Navigation Breadcrumb */}
+      <header className="g-form-console__header">
+        <nav aria-label="Breadcrumb" className="g-form-console__breadcrumb">
+          <Link href="/admin/announcements" className="g-form-console__breadcrumb-link">
+            Announcements
           </Link>
-          <button
-            type="submit"
-            form="announcement-form"
-            disabled={saving}
-            className="inline-flex items-center gap-2 bg-gray-900 hover:bg-gray-800 text-white font-medium text-xs px-5 py-2.5 rounded-full shadow-xs transition-colors disabled:opacity-50"
-          >
-            {saving ? (
-              <>
-                <svg className="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                </svg>
-                <span>Saving...</span>
-              </>
-            ) : (
-              <span>Save Announcement</span>
-            )}
-          </button>
+          <span className="g-form-console__breadcrumb-sep" aria-hidden="true">/</span>
+          <span className="g-form-console__breadcrumb-active" aria-current="page">New Announcement</span>
+        </nav>
+
+        <div className="g-form-console__title-row">
+          <h1 className="g-form-console__title">Create Announcement</h1>
+          <div className="g-form-console__actions">
+            <Link href="/admin/announcements" className="g-form-console__btn-secondary">
+              Cancel
+            </Link>
+            <button
+              type="submit"
+              form="announcement-form"
+              disabled={saving}
+              className="g-form-console__btn-primary"
+            >
+              {saving ? (
+                <>
+                  <svg className="g-form-console__spinner" viewBox="0 0 24 24">
+                    <circle className="g-form-console__spinner-circle" cx="12" cy="12" r="10" />
+                    <path className="g-form-console__spinner-path" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                  </svg>
+                  <span>Saving...</span>
+                </>
+              ) : (
+                <span>Save Announcement</span>
+              )}
+            </button>
+          </div>
         </div>
-      </div>
+      </header>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-[12px] p-4 text-xs text-red-600 flex items-center gap-2">
-          <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        <div className="g-form-console__error" role="alert">
+          <svg className="g-form-console__error-icon" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
           </svg>
           <span>{error}</span>
         </div>
       )}
 
       {/* Main Form Layout Grid */}
-      <form id="announcement-form" onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <form id="announcement-form" onSubmit={handleSubmit} className="g-form-console__grid">
         {/* Left Column: Announcement Content */}
-        <div className="lg:col-span-2 space-y-6">
-          <div className="bg-white rounded-[15px] border border-gray-200/80 p-5 shadow-xs space-y-4">
-            <h2 className="text-xs font-bold text-gray-400 uppercase tracking-wider pb-1 border-b border-gray-100">
-              Announcement Content
-            </h2>
+        <div className="g-form-console__col-main">
+          <div className="g-form-console__card">
+            <h2 className="g-form-console__card-title">Announcement Content</h2>
 
             {/* Title */}
-            <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1.5">
-                Title <span className="text-red-500">*</span>
+            <div className="g-form-console__field">
+              <label htmlFor="announcement-title" className="g-form-console__label">
+                Title <span className="g-form-console__required">*</span>
               </label>
               <input
+                id="announcement-title"
                 type="text"
                 required
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="e.g., Scheduled System Maintenance"
-                className="w-full bg-white border border-gray-200 rounded-lg px-3.5 py-2 text-xs font-medium focus:outline-hidden focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all placeholder:text-gray-400"
+                className="g-form-console__input"
               />
             </div>
 
             {/* Message Body */}
-            <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1.5">
-                Message <span className="text-red-500">*</span>
+            <div className="g-form-console__field">
+              <label htmlFor="announcement-message" className="g-form-console__label">
+                Message <span className="g-form-console__required">*</span>
               </label>
               <textarea
+                id="announcement-message"
                 required
                 rows={8}
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder="Type your announcement details here..."
-                className="w-full bg-white border border-gray-200 rounded-lg p-3.5 text-xs font-medium focus:outline-hidden focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all placeholder:text-gray-400 resize-y"
+                className="g-form-console__textarea g-form-console__textarea--large"
               />
             </div>
           </div>
         </div>
 
         {/* Right Column: Settings & Visibility */}
-        <div className="space-y-6">
-          <div className="bg-white rounded-[15px] border border-gray-200/80 p-5 shadow-xs space-y-4">
-            <h2 className="text-xs font-bold text-gray-400 uppercase tracking-wider pb-1 border-b border-gray-100">
-              Publishing & Visibility
-            </h2>
+        <div className="g-form-console__col-side">
+          <div className="g-form-console__card">
+            <h2 className="g-form-console__card-title">Publishing & Visibility</h2>
 
             {/* Status */}
-            <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1.5">
+            <div className="g-form-console__field">
+              <label htmlFor="announcement-status" className="g-form-console__label">
                 Status
               </label>
               <select
+                id="announcement-status"
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
-                className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-xs font-medium focus:outline-hidden focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all"
+                className="g-form-console__select"
               >
                 <option value="draft">Draft</option>
                 <option value="published">Published</option>
@@ -155,23 +151,20 @@ export default function NewAnnouncementPage() {
             </div>
 
             {/* Pin Option */}
-            <div className="pt-2">
-              <label
-                htmlFor="isPinned"
-                className="flex items-start gap-3 p-3 rounded-lg border border-gray-200/80 bg-gray-50/50 hover:bg-gray-50 cursor-pointer transition-colors"
-              >
+            <div className="g-form-console__field">
+              <label htmlFor="isPinned" className="g-form-console__checkbox-card">
                 <input
                   type="checkbox"
                   id="isPinned"
                   checked={isPinned}
                   onChange={(e) => setIsPinned(e.target.checked)}
-                  className="mt-0.5 h-4 w-4 rounded border-gray-300 text-gray-900 focus:ring-gray-900"
+                  className="g-form-console__checkbox"
                 />
-                <div className="text-xs">
-                  <span className="font-semibold text-gray-800 block">
+                <div className="g-form-console__checkbox-text">
+                  <span className="g-form-console__checkbox-label">
                     Pin Announcement
                   </span>
-                  <span className="text-gray-500 font-normal">
+                  <span className="g-form-console__checkbox-desc">
                     Keep this item fixed at the top of the announcements list.
                   </span>
                 </div>
@@ -183,3 +176,311 @@ export default function NewAnnouncementPage() {
     </main>
   );
 }
+
+const cssStyles = `
+  /* Google Admin Console Design System Edit/New Form Styles */
+  .g-form-console {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    font-family: "Google Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: #1f1f1f;
+    background-color: #f8f9fa;
+    min-height: 100vh;
+    box-sizing: border-box;
+  }
+
+  .g-form-console *,
+  .g-form-console *::before,
+  .g-form-console *::after {
+    box-sizing: inherit;
+  }
+
+  /* Header & Navigation */
+  .g-form-console__header {
+    margin-bottom: 1.5rem;
+  }
+
+  .g-form-console__breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #5f6368;
+    margin-bottom: 0.5rem;
+  }
+
+  .g-form-console__breadcrumb-link {
+    color: #5f6368;
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+
+  .g-form-console__breadcrumb-link:hover {
+    color: #1a73e8;
+  }
+
+  .g-form-console__breadcrumb-sep {
+    color: #dadce0;
+  }
+
+  .g-form-console__breadcrumb-active {
+    color: #1a73e8;
+  }
+
+  .g-form-console__title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .g-form-console__title {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: #202124;
+    letter-spacing: -0.01em;
+  }
+
+  .g-form-console__actions {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+  }
+
+  /* Action Buttons */
+  .g-form-console__btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 1.25rem;
+    border-radius: 9999px;
+    border: 1px solid #dadce0;
+    background-color: #ffffff;
+    color: #1a73e8;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+  }
+
+  .g-form-console__btn-secondary:hover {
+    background-color: #f1f3f4;
+    border-color: #d2e3fc;
+  }
+
+  .g-form-console__btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1.25rem;
+    border-radius: 9999px;
+    border: none;
+    background-color: #1a73e8;
+    color: #ffffff;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.3), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
+    transition: background-color 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+  }
+
+  .g-form-console__btn-primary:hover:not(:disabled) {
+    background-color: #1765cc;
+    box-shadow: 0 1px 3px 0 rgba(60, 64, 67, 0.3), 0 4px 8px 3px rgba(60, 64, 67, 0.15);
+  }
+
+  .g-form-console__btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  /* Spinner Animations */
+  .g-form-console__spinner {
+    width: 0.875rem;
+    height: 0.875rem;
+    animation: g-spin 1s linear infinite;
+  }
+
+  .g-form-console__spinner-circle {
+    opacity: 0.25;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 4;
+  }
+
+  .g-form-console__spinner-path {
+    opacity: 0.75;
+    fill: currentColor;
+  }
+
+  @keyframes g-spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  /* Error Banner */
+  .g-form-console__error {
+    background-color: #fce8e6;
+    border: 1px solid #f2b8b5;
+    color: #c5221f;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8125rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .g-form-console__error-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    flex-shrink: 0;
+  }
+
+  /* Form Grid */
+  .g-form-console__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 1024px) {
+    .g-form-console__grid {
+      grid-template-columns: 2fr 1fr;
+    }
+  }
+
+  .g-form-console__col-main,
+  .g-form-console__col-side {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  /* Surface Cards */
+  .g-form-console__card {
+    background-color: #ffffff;
+    border: 1px solid #dadce0;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .g-form-console__card-title {
+    margin: 0;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #f1f3f4;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #5f6368;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* Form Fields */
+  .g-form-console__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+  }
+
+  .g-form-console__label {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: #202124;
+  }
+
+  .g-form-console__required {
+    color: #d93025;
+  }
+
+  .g-form-console__input,
+  .g-form-console__textarea,
+  .g-form-console__select {
+    width: 100%;
+    background-color: #ffffff;
+    border: 1px solid #dadce0;
+    border-radius: 0.5rem;
+    padding: 0.625rem 0.875rem;
+    font-size: 0.8125rem;
+    font-family: inherit;
+    color: #202124;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .g-form-console__input:focus,
+  .g-form-console__textarea:focus,
+  .g-form-console__select:focus {
+    outline: none;
+    border-color: #1a73e8;
+    box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
+  }
+
+  .g-form-console__input::placeholder,
+  .g-form-console__textarea::placeholder {
+    color: #80868b;
+  }
+
+  .g-form-console__textarea {
+    resize: vertical;
+  }
+
+  .g-form-console__textarea--large {
+    min-height: 180px;
+  }
+
+  /* Custom Checkbox Card Component */
+  .g-form-console__checkbox-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.875rem 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid #dadce0;
+    background-color: #f8f9fa;
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+  }
+
+  .g-form-console__checkbox-card:hover {
+    background-color: #f1f3f4;
+    border-color: #bdc1c6;
+  }
+
+  .g-form-console__checkbox {
+    margin-top: 0.125rem;
+    width: 1rem;
+    height: 1rem;
+    accent-color: #1a73e8;
+    cursor: pointer;
+  }
+
+  .g-form-console__checkbox-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+  }
+
+  .g-form-console__checkbox-label {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: #202124;
+  }
+
+  .g-form-console__checkbox-desc {
+    font-size: 0.75rem;
+    color: #5f6368;
+    line-height: 1.3;
+  }
+`;

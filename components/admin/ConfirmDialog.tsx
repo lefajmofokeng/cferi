@@ -1,5 +1,7 @@
 "use client";
 
+import "./ConfirmDialog.css";
+
 type ConfirmDialogProps = {
   open: boolean;
   title: string;
@@ -7,6 +9,7 @@ type ConfirmDialogProps = {
   confirmLabel?: string;
   onConfirm: () => void;
   onCancel: () => void;
+  id?: string;
 };
 
 export default function ConfirmDialog({
@@ -16,31 +19,42 @@ export default function ConfirmDialog({
   confirmLabel = "Confirm",
   onConfirm,
   onCancel,
+  id = "confirm-dialog",
 }: ConfirmDialogProps) {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <div className="bg-white rounded-lg shadow-lg max-w-sm w-full p-6">
-        <h2 className="text-lg font-semibold mb-2">{title}</h2>
+    <section id={id} className="confirm-dialog-wrapper">
+      <div className="confirm-dialog__overlay" onClick={onCancel} />
+      <div
+        className="confirm-dialog__container"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="confirm-dialog-title"
+      >
+        <h2 id="confirm-dialog-title" className="confirm-dialog__title">
+          {title}
+        </h2>
         {description && (
-          <p className="text-sm text-gray-600 mb-6">{description}</p>
+          <p className="confirm-dialog__description">{description}</p>
         )}
-        <div className="flex justify-end gap-3">
+        <div className="confirm-dialog__actions">
           <button
+            type="button"
             onClick={onCancel}
-            className="px-4 py-2 rounded text-sm border border-gray-300 hover:bg-gray-50"
+            className="confirm-dialog__button confirm-dialog__button--cancel"
           >
             Cancel
           </button>
           <button
+            type="button"
             onClick={onConfirm}
-            className="px-4 py-2 rounded text-sm bg-red-600 text-white hover:bg-red-700"
+            className="confirm-dialog__button confirm-dialog__button--confirm"
           >
             {confirmLabel}
           </button>
         </div>
       </div>
-    </div>
+    </section>
   );
 }

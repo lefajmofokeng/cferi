@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import "./NotificationBell.css";
 
 type Notification = {
   id: string;
@@ -12,7 +13,11 @@ type Notification = {
   createdAt: string;
 };
 
-export default function NotificationBell() {
+interface NotificationBellProps {
+  id?: string;
+}
+
+export default function NotificationBell({ id = "notification-bell" }: NotificationBellProps) {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -68,7 +73,7 @@ export default function NotificationBell() {
     loadInitialCounts();
 
     const channel = supabase
-  .channel(`admin-notifications-${crypto.randomUUID()}`)
+      .channel(`admin-notifications-${crypto.randomUUID()}`)
       .on(
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "incubation_applications" },
@@ -111,38 +116,60 @@ export default function NotificationBell() {
   }, []);
 
   return (
-    <div ref={containerRef} className="relative">
+    <section id={id} ref={containerRef} className="notification-bell">
       <button
+        type="button"
         onClick={() => setOpen((prev) => !prev)}
-        className="relative p-2 rounded hover:bg-gray-100"
+        className="notification-bell__button"
+        aria-label="Notifications"
+        title="Notifications"
       >
-        🔔
+        <svg className="notification-bell__icon" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" />
+        </svg>
         {notifications.length > 0 && (
-          <span className="absolute -top-0.5 -right-0.5 bg-red-600 text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center">
+          <span className="notification-bell__badge">
             {notifications.length > 9 ? "9+" : notifications.length}
           </span>
         )}
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-2 w-80 bg-white border border-gray-200 rounded shadow-lg z-50 max-h-96 overflow-y-auto">
+        <div className="notification-bell__dropdown">
+          <div className="notification-bell__header">
+            <span className="notification-bell__header-title">Notifications</span>
+          </div>
+
           {notifications.length === 0 ? (
-            <p className="text-sm text-gray-400 px-4 py-4 text-center">
+            <div className="notification-bell__empty">
               No new notifications.
-            </p>
+            </div>
           ) : (
-            <ul>
+            <ul className="notification-bell__list">
               {notifications.map((n) => (
-                <li key={`${n.type}-${n.id}`}>
+                <li key={`${n.type}-${n.id}`} className="notification-bell__item">
                   <Link
                     href={n.href}
                     onClick={() => setOpen(false)}
-                    className="block px-4 py-3 hover:bg-gray-50 border-b border-gray-100 text-sm"
+                    className="notification-bell__link"
                   >
-                    <p className="text-gray-900">{n.title}</p>
-                    <p className="text-xs text-gray-400 mt-0.5">
-                      {new Date(n.createdAt).toLocaleString()}
-                    </p>
+                    <div className="notification-bell__item-icon">
+                      {n.type === "application" ? (
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
+                        </svg>
+                      ) : (
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
+                        </svg>
+                      )}
+                    </div>
+                    <div className="notification-bell__item-content">
+                      <p className="notification-bell__item-title">{n.title}</p>
+                      <p className="notification-bell__item-time">
+                        {new Date(n.createdAt).toLocaleString()}
+                      </p>
+                    </div>
                   </Link>
                 </li>
               ))}
@@ -150,6 +177,6 @@ export default function NotificationBell() {
           )}
         </div>
       )}
-    </div>
+    </section>
   );
 }

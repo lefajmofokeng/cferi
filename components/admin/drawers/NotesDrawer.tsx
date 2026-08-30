@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import "./NotesDrawer.css";
 
 type Note = {
   id: string;
@@ -9,7 +10,11 @@ type Note = {
   updated_at: string;
 };
 
-export default function NotesDrawer() {
+interface NotesDrawerProps {
+  id?: string;
+}
+
+export default function NotesDrawer({ id = "notes-drawer" }: NotesDrawerProps) {
   const [notes, setNotes] = useState<Note[]>([]);
   const [newNote, setNewNote] = useState("");
   const [loading, setLoading] = useState(true);
@@ -55,47 +60,61 @@ export default function NotesDrawer() {
     await loadNotes();
   }
 
-  if (loading) return <p className="text-gray-400 text-sm">Loading...</p>;
+  if (loading) {
+    return (
+      <section id={id} className="notes-drawer">
+        <p className="notes-drawer__loading">Loading...</p>
+      </section>
+    );
+  }
 
   return (
-    <div className="space-y-4">
-      <div>
+    <section id={id} className="notes-drawer">
+      <div className="notes-drawer__form">
         <textarea
           value={newNote}
           onChange={(e) => setNewNote(e.target.value)}
-          placeholder="Write a note..."
+          placeholder="Take a note..."
           rows={3}
-          className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
+          className="notes-drawer__textarea"
         />
-        <button
-          onClick={handleAdd}
-          disabled={saving}
-          className="mt-2 bg-black text-white px-4 py-1.5 rounded text-sm hover:opacity-90 disabled:opacity-50"
-        >
-          {saving ? "Saving..." : "Add Note"}
-        </button>
+        <div className="notes-drawer__form-actions">
+          <button
+            type="button"
+            onClick={handleAdd}
+            disabled={saving || !newNote.trim()}
+            className="notes-drawer__add-btn"
+          >
+            <svg className="notes-drawer__btn-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+            </svg>
+            <span>{saving ? "Saving..." : "Save note"}</span>
+          </button>
+        </div>
       </div>
 
-      <div className="space-y-2">
+      <div className="notes-drawer__list">
         {notes.length === 0 ? (
-          <p className="text-gray-400 text-sm">No notes yet.</p>
+          <p className="notes-drawer__empty">No notes yet.</p>
         ) : (
           notes.map((note) => (
-            <div
-              key={note.id}
-              className="border border-gray-200 rounded p-3 text-sm flex justify-between items-start gap-2"
-            >
-              <p className="whitespace-pre-wrap flex-1">{note.content}</p>
+            <div key={note.id} className="notes-drawer__card">
+              <p className="notes-drawer__card-content">{note.content}</p>
               <button
+                type="button"
                 onClick={() => handleDelete(note.id)}
-                className="text-gray-300 hover:text-red-600 text-xs"
+                aria-label="Delete note"
+                title="Delete note"
+                className="notes-drawer__delete-btn"
               >
-                ✕
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+                </svg>
               </button>
             </div>
           ))
         )}
       </div>
-    </div>
+    </section>
   );
 }

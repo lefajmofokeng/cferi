@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
+import "./adminNews.css";
 
 export default async function AdminNewsPage() {
   const supabase = await createClient();
@@ -11,10 +12,10 @@ export default async function AdminNewsPage() {
 
   if (error) {
     return (
-      <main className="p-6 font-sans text-gray-800 max-w-7xl mx-auto">
-        <div className="bg-red-50 border border-red-200 rounded-[12px] p-4 text-xs text-red-600 flex items-center gap-2">
-          <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      <main className="g-console">
+        <div className="g-console__error" role="alert">
+          <svg className="g-console__error-icon" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
           </svg>
           <span>Failed to load news: {error.message}</span>
         </div>
@@ -23,102 +24,98 @@ export default async function AdminNewsPage() {
   }
 
   return (
-    <main className="p-6 font-sans text-gray-800 max-w-7xl mx-auto space-y-6">
-      {/* Top Console Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2 text-xs text-gray-500 font-medium mb-1">
-            <span>Content</span>
-            <span>/</span>
-            <span className="text-gray-800">News</span>
-          </div>
-          <h1 className="text-xl font-bold text-gray-900 tracking-tight">
-            News Manager
-          </h1>
+    <main className="g-console">
+      {/* Header */}
+      <header className="g-console__header">
+        <nav aria-label="Breadcrumb" className="g-console__breadcrumb">
+          <span className="g-console__breadcrumb-link">Content</span>
+          <span className="g-console__breadcrumb-sep" aria-hidden="true">/</span>
+          <span className="g-console__breadcrumb-active" aria-current="page">News</span>
+        </nav>
+        <div className="g-console__title-row">
+          <h1 className="g-console__title">News Manager</h1>
+          <Link href="/admin/news/new" className="g-console__btn-primary">
+            <svg className="g-console__btn-icon" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+            </svg>
+            <span>New Post</span>
+          </Link>
         </div>
+      </header>
 
-        <Link
-          href="/admin/news/new"
-          className="inline-flex items-center justify-center gap-2 bg-gray-900 hover:bg-gray-800 text-white font-medium text-xs px-4 py-2.5 rounded-full shadow-xs transition-colors self-start sm:self-auto"
-        >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-          </svg>
-          <span>New Post</span>
-        </Link>
-      </div>
-
-      {/* Main Table Panel Container */}
-      <div className="bg-white rounded-[15px] border border-gray-200/80 shadow-xs overflow-hidden">
-        {/* Table Toolbar */}
-        <div className="px-5 py-3.5 border-b border-gray-100 flex items-center justify-between bg-gray-50/40">
-          <span className="text-xs font-semibold text-gray-600">
-            All Posts ({posts.length})
+      {/* Main Table Surface */}
+      <section className="g-console__card">
+        <div className="g-console__card-toolbar">
+          <span className="g-console__card-count">
+            All Posts ({posts?.length ?? 0})
           </span>
         </div>
 
-        {posts.length === 0 ? (
-          <div className="py-16 text-center">
-            <div className="w-12 h-12 rounded-full bg-gray-100 text-gray-400 flex items-center justify-center mx-auto mb-3">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+        {!posts || posts.length === 0 ? (
+          <div className="g-console__empty">
+            <div className="g-console__empty-avatar">
+              <svg fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
               </svg>
             </div>
-            <p className="text-sm font-medium text-gray-600">No news posts found</p>
-            <p className="text-xs text-gray-400 mt-1">
+            <p className="g-console__empty-headline">No news posts found</p>
+            <p className="g-console__empty-sub">
               Create your first news article using the button above.
             </p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs border-collapse">
+          <div className="g-console__table-container">
+            <table className="g-console__table">
               <thead>
-                <tr className="border-b border-gray-100 bg-gray-50/60 text-gray-500 font-medium">
-                  <th className="py-3 px-5">Title</th>
-                  <th className="py-3 px-4">Status</th>
-                  <th className="py-3 px-4">Last Updated</th>
-                  <th className="py-3 px-5 text-right">Actions</th>
+                <tr>
+                  <th scope="col" className="g-console__th">Title</th>
+                  <th scope="col" className="g-console__th">Status</th>
+                  <th scope="col" className="g-console__th">Last Updated</th>
+                  <th scope="col" className="g-console__th g-console__th--right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100 text-gray-700">
+              <tbody>
                 {posts.map((post) => {
                   const isPublished = post.status === "published";
 
                   return (
-                    <tr
-                      key={post.id}
-                      className="hover:bg-gray-50/80 transition-colors group"
-                    >
-                      <td className="py-3.5 px-5 font-semibold text-gray-900 max-w-sm truncate">
+                    <tr key={post.id} className="g-console__tr">
+                      <td className="g-console__td g-console__td--title">
                         {post.title}
                       </td>
-                      <td className="py-3.5 px-4">
+                      <td className="g-console__td">
                         <span
-                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium ${
+                          className={`g-console__chip ${
                             isPublished
-                              ? "bg-emerald-50 text-emerald-700 border border-emerald-200/60"
-                              : "bg-gray-100 text-gray-600 border border-gray-200/60"
+                              ? "g-console__chip--published"
+                              : "g-console__chip--draft"
                           }`}
                         >
                           <span
-                            className={`h-1.5 w-1.5 rounded-full ${
-                              isPublished ? "bg-emerald-500" : "bg-gray-400"
+                            className={`g-console__chip-dot ${
+                              isPublished
+                                ? "g-console__chip-dot--published"
+                                : "g-console__chip-dot--draft"
                             }`}
+                            aria-hidden="true"
                           />
                           {post.status}
                         </span>
                       </td>
-                      <td className="py-3.5 px-4 text-gray-500 font-mono text-[11px]">
-                        {new Date(post.updated_at).toLocaleDateString()}
+                      <td className="g-console__td g-console__td--date">
+                        {post.updated_at
+                          ? new Date(post.updated_at).toLocaleDateString()
+                          : "N/A"}
                       </td>
-                      <td className="py-3.5 px-5 text-right">
+                      <td className="g-console__td g-console__td--right">
                         <Link
                           href={`/admin/news/${post.id}/edit`}
-                          className="inline-flex items-center gap-1 font-semibold text-gray-700 hover:text-gray-900 hover:bg-gray-100 px-2.5 py-1 rounded-md transition-colors"
+                          className="g-console__action-btn"
+                          aria-label={`Edit ${post.title}`}
                         >
                           <span>Edit</span>
-                          <svg className="w-3.5 h-3.5 text-gray-400 group-hover:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                          <svg fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
                           </svg>
                         </Link>
                       </td>
@@ -129,7 +126,7 @@ export default async function AdminNewsPage() {
             </table>
           </div>
         )}
-      </div>
+      </section>
     </main>
   );
 }
