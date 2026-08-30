@@ -1,9 +1,9 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { getEventStatus, eventStatusStyles, eventStatusLabels } from "@/lib/eventStatus";
-import CronosScrollSection from "@/components/CronosScrollSection";
-import FeedbackWidget from "@/components/public/FeedbackWidget";
-import EcosystemStackSection from "@/components/EcosystemStackSection";
+import CronosScrollSection from "@/components/public/CronosScrollSection/CronosScrollSection";
+import FeedbackWidget from "@/components/public/FeedbackWidget/Feedbackwidget";
+import EcosystemStackSection from "@/components/public/EcosystemStackSection/EcosystemStackSection";
 
 export default async function Home() {
   const supabase = await createClient();

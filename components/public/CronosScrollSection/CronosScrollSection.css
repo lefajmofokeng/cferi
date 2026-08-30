@@ -1,0 +1,243 @@
+.cronos-scroll-section-wrapper {
+  --cronos-font-sans: 'Google Sans Flex', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --cronos-bg-color: #ffffff;
+  --cronos-text-primary: #0f172a;
+  --cronos-text-secondary: #475569;
+  --cronos-radius: 50px;
+  font-family: var(--cronos-font-sans);
+  background-color: var(--cronos-bg-color);
+  color: var(--cronos-text-primary);
+  margin: 0;
+  padding: 120px 0 60px 0;
+  box-sizing: border-box;
+  overflow: clip;
+}
+.cronos-scroll-track {
+  position: relative;
+  height: 290vh;
+}
+.cronos-sticky-viewport {
+  position: sticky;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cronos-content-grid {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 4rem;
+  align-items: stretch;
+  z-index: 2;
+  transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+}
+.cronos-col-left {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-bottom: 3rem;
+}
+.cronos-sub-brand {
+  font-size: 4rem;
+  font-weight: 400;
+  line-height: 1;
+  color: #000000;
+  text-align: left;
+  letter-spacing: -0.03em;
+}
+.cronos-brand-desc {
+  font-size: 1.125rem;
+  line-height: 1.6;
+  color: var(--cronos-text-secondary);
+  text-align: left;
+  max-width: 420px;
+  margin: 0;
+}
+.cronos-mobile-only {
+  display: none;
+}
+.cronos-desktop-only {
+  display: block;
+}
+.cronos-mobile-video-slot {
+  display: none;
+}
+.cronos-col-right {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+.cronos-main-heading {
+  font-size: 1.75rem;
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+  color: var(--cronos-text-primary);
+  margin: 0;
+  text-align: left;
+}
+.cronos-action-block {
+  display: flex;
+  justify-content: flex-start;
+}
+.cronos-btn-combo {
+  display: inline-flex;
+  align-items: stretch;
+}
+.cronos-main-btn {
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: #ffffff;
+  background: #080d1b;
+  border: none;
+  padding: 14px 25px;
+  cursor: pointer;
+  border-radius: 50px;
+  text-decoration: none;
+  display: inline-block;
+  transition: background-color 0.15s ease;
+}
+.cronos-main-btn:hover {
+  background-color: #080d11;
+}
+.cronos-video-anchor {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 5px;
+}
+.cronos-video-container-wrapper {
+  position: absolute;
+  z-index: 100;
+  border-radius: 5px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
+  will-change: transform, width, height, top, left, border-radius;
+  pointer-events: none;
+}
+.cronos-video-element {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.cronos-video-darkener {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(15, 23, 42, 0.6);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.cronos-fullscreen-overlay {
+  position: absolute;
+  top: 0;
+  left: 150px;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  padding: 2rem;
+}
+.cronos-overlay-inner {
+  text-align: left;
+  max-width: 600px;
+  line-height: 1;
+}
+.cronos-overlay-heading {
+  font-size: 3rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  margin-bottom: 1rem;
+}
+.cronos-overlay-text {
+  font-size: 1.25rem;
+  line-height: 1.6;
+  color: #f1f5f9;
+  font-weight: 400;
+}
+
+@media (max-width: 768px) {
+  .cronos-scroll-section-wrapper {
+    padding: 40px 0;
+  }
+  .cronos-scroll-track {
+    height: auto !important;
+  }
+  .cronos-sticky-viewport {
+    height: auto !important;
+    position: relative !important;
+    overflow: visible !important;
+    display: block !important;
+  }
+  .cronos-content-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1.5rem !important;
+    padding: 0 20px !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .cronos-col-left {
+    padding-bottom: 0 !important;
+  }
+  .cronos-col-right {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1.5rem !important;
+  }
+  .cronos-sub-brand {
+    font-size: 2.25rem !important;
+  }
+  .cronos-main-heading {
+    font-size: 1.25rem !important;
+  }
+  .cronos-desktop-only {
+    display: none !important;
+  }
+  .cronos-mobile-only {
+    display: block !important;
+    max-width: 100% !important;
+  }
+  .cronos-video-anchor {
+    display: none !important;
+  }
+  .cronos-mobile-video-slot {
+    display: block !important;
+    width: 100% !important;
+    aspect-ratio: 16 / 9;
+    }
+  .cronos-video-container-wrapper {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 16 / 9 !important;
+    transform: none !important;
+    box-shadow: none !important;
+    border-radius: 12px !important;
+    pointer-events: auto !important;
+    margin: 0 !important;
+    z-index: 1 !important;
+  }
+  .cronos-video-darkener,
+  .cronos-fullscreen-overlay {
+    display: none !important;
+  }
+}

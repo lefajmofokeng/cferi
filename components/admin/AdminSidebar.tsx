@@ -117,6 +117,15 @@ const navigationCategories = [
         ),
       },
       {
+        href: "/admin/feedback",
+        label: "Site Feedback",
+        icon: (
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+          </svg>
+        ),
+      },
+      {
         href: "/admin/chat",
         label: "Live Chat",
         icon: (
@@ -145,6 +154,7 @@ export default function AdminSidebar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [unreadMessages, setUnreadMessages] = useState(0);
   const [newApplications, setNewApplications] = useState(0);
+  const [unreadFeedback, setUnreadFeedback] = useState(0);
 
   useEffect(() => {
     async function loadUser() {
@@ -180,8 +190,14 @@ export default function AdminSidebar() {
       .select("id", { count: "exact", head: true })
       .eq("status", "new");
 
+    const { count: feedbackCount } = await supabase
+      .from("site_feedback")
+      .select("id", { count: "exact", head: true })
+      .eq("is_read", false);
+
     setUnreadMessages(msgCount ?? 0);
     setNewApplications(appCount ?? 0);
+    setUnreadFeedback(feedbackCount ?? 0);
   }
 
   loadCounts();
@@ -198,15 +214,17 @@ export default function AdminSidebar() {
       { event: "*", schema: "public", table: "incubation_applications" },
       loadCounts
     )
+    .on(
+      "postgres_changes",
+      { event: "*", schema: "public", table: "site_feedback" },
+      loadCounts
+    )
     .subscribe();
 
   return () => {
     supabase.removeChannel(channel);
   };
 }, []);
-
-
-  
 
   async function handleSignOut() {
     const supabase = createClient();
@@ -216,83 +234,83 @@ export default function AdminSidebar() {
   }
 
   if (pathname === "/admin/login") return null;
-  
+
   const sidebarContent = (
-    <div className="flex flex-col h-full bg-white text-gray-700 font-sans select-none rounded-[15px] border border-gray-200/80 shadow-xs overflow-hidden">
-      {/* Header with Maluti Incubation Center Logo Placeholder */}
-      <div className="px-4 py-3 flex items-center gap-2.5 border-b border-gray-100">
+    <div className="flex flex-col h-full bg-white text-gray-700 font-sans select-none border-r border-gray-200">
+      {/* Header */}
+      <div className="px-5 py-4 flex items-center gap-3">
         <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gray-100 border border-dashed border-gray-300 text-gray-500 font-bold text-xs">
           LOGO
         </div>
         <div className="flex flex-col min-w-0">
-          <span className="text-xs font-semibold text-gray-800 leading-tight truncate">
+          <span className="text-sm font-semibold text-gray-900 leading-tight truncate">
             Maluti Incubation Center
           </span>
-          <span className="text-[10px] text-gray-400 font-medium">
+          <span className="text-xs text-gray-500 font-normal">
             Admin Console
           </span>
         </div>
       </div>
 
-      {/* Main Navigation (Tight spacing to prevent internal scrolling) */}
-      <div className="flex-1 px-2.5 py-2 space-y-2.5 overflow-hidden flex flex-col justify-between">
-        <div className="space-y-2.5">
-          {navigationCategories.map((category, idx) => (
-            <div key={category.title}>
-              {idx > 0 && <div className="my-1.5 border-t border-gray-100" />}
-              <p className="px-2.5 pb-1 text-[10px] font-medium text-gray-400 tracking-wide uppercase">
-                {category.title}
-              </p>
-              <nav className="space-y-0.5">
-                {category.items.map((item) => {
-  const isActive = pathname === item.href;
-  const badgeCount =
-    item.href === "/admin/messages"
-      ? unreadMessages
-      : item.href === "/admin/applications"
-      ? newApplications
-      : 0;
+      {/* Main Navigation List */}
+      <div className="flex-1 px-3 py-2 overflow-y-auto space-y-4 custom-sidebar-scrollbar">
+        {navigationCategories.map((category, idx) => (
+          <div key={category.title}>
+            {idx > 0 && <div className="my-3 border-t border-gray-200/60" />}
+            <p className="px-3 pb-2 text-xs font-normal text-gray-500">
+              {category.title}
+            </p>
+            <nav className="space-y-1">
+              {category.items.map((item) => {
+                const isActive = pathname === item.href;
+                const badgeCount =
+                  item.href === "/admin/messages"
+                    ? unreadMessages
+                    : item.href === "/admin/applications"
+                    ? newApplications
+                    : item.href === "/admin/feedback"
+                    ? unreadFeedback
+                    : 0;
 
-  return (
-    <Link
-      key={item.href}
-      href={item.href}
-      className={`flex items-center gap-2.5 px-2.5 py-1.5 rounded-full text-xs transition-colors ${
-        isActive
-          ? "bg-gray-100 text-gray-900 font-semibold"
-          : "text-gray-600 hover:bg-gray-50 hover:text-gray-900 font-medium"
-      }`}
-    >
-      <span className={isActive ? "text-gray-900" : "text-gray-400"}>
-        {item.icon}
-      </span>
-      <span className="truncate flex-1">{item.label}</span>
-      {badgeCount > 0 && (
-        <span className="bg-red-600 text-white text-[10px] font-semibold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1">
-          {badgeCount > 9 ? "9+" : badgeCount}
-        </span>
-      )}
-    </Link>
-  );
-})}
-              </nav>
-            </div>
-          ))}
-        </div>
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`flex items-center gap-3.5 px-3 py-2 rounded-full text-sm transition-colors ${
+                      isActive
+                        ? "bg-[#f1f3f4] text-gray-900 font-semibold"
+                        : "text-[#475569] hover:bg-gray-100/80 hover:text-gray-900 font-normal"
+                    }`}
+                  >
+                    <span className={isActive ? "text-gray-900" : "text-gray-500"}>
+                      {item.icon}
+                    </span>
+                    <span className="truncate flex-1">{item.label}</span>
+                    {badgeCount > 0 && (
+                      <span className="bg-red-600 text-white text-xs font-semibold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1">
+                        {badgeCount > 9 ? "9+" : badgeCount}
+                      </span>
+                    )}
+                  </Link>
+                );
+              })}
+            </nav>
+          </div>
+        ))}
       </div>
 
-      {/* Footer Profile Bar */}
-      <div className="p-2 border-t border-gray-100 bg-gray-50/60 mt-auto">
-        <div className="flex items-center justify-between px-2 py-0.5">
-          <div className="flex items-center gap-2 min-w-0">
-            <div className="flex h-6.5 w-6.5 shrink-0 items-center justify-center rounded-full bg-slate-800 text-[11px] font-bold text-white">
+      {/* Profile Footer */}
+      <div className="p-3 border-t border-gray-200/60 bg-white">
+        <div className="flex items-center justify-between px-2 py-1">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-slate-800 text-xs font-bold text-white">
               {(userName || "Admin").charAt(0).toUpperCase()}
             </div>
             <div className="flex flex-col min-w-0">
-              <span className="text-xs font-medium text-gray-800 truncate leading-tight">
+              <span className="text-xs font-medium text-gray-900 truncate leading-tight">
                 {userName || "Admin"}
               </span>
-              <span className="text-[10px] text-gray-400 truncate">
+              <span className="text-[11px] text-gray-500 truncate">
                 Signed in
               </span>
             </div>
@@ -300,7 +318,7 @@ export default function AdminSidebar() {
           <button
             onClick={handleSignOut}
             title="Sign Out"
-            className="p-1 text-gray-400 hover:text-red-600 hover:bg-gray-200/50 rounded-full transition-colors"
+            className="p-1.5 text-gray-500 hover:text-red-600 hover:bg-gray-100 rounded-full transition-colors"
           >
             <svg
               className="w-4 h-4"
@@ -323,10 +341,37 @@ export default function AdminSidebar() {
 
   return (
     <>
+      {/* Embedded CSS for custom scrollbar (removes top/bottom arrows) */}
+      <style jsx global>{`
+        .custom-sidebar-scrollbar::-webkit-scrollbar {
+          width: 8px;
+        }
+        .custom-sidebar-scrollbar::-webkit-scrollbar-button {
+          display: none;
+          width: 0;
+          height: 0;
+        }
+        .custom-sidebar-scrollbar::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .custom-sidebar-scrollbar::-webkit-scrollbar-thumb {
+          background-color: #d1d5db;
+          border-radius: 9999px;
+        }
+        .custom-sidebar-scrollbar::-webkit-scrollbar-thumb:hover,
+        .custom-sidebar-scrollbar::-webkit-scrollbar-thumb:active {
+          background-color: #9ca3af;
+        }
+        .custom-sidebar-scrollbar {
+          scrollbar-width: thin;
+          scrollbar-color: #d1d5db transparent;
+        }
+      `}</style>
+
       {/* Mobile Header Bar */}
-      <div className="lg:hidden p-[5px] shrink-0">
-        <div className="flex items-center justify-between bg-white text-gray-800 px-3.5 py-2.5 rounded-[12px] border border-gray-200">
-          <div className="flex items-center gap-2 min-w-0">
+      <div className="lg:hidden p-2 shrink-0">
+        <div className="flex items-center justify-between bg-white text-gray-800 px-4 py-3 rounded-lg border border-gray-200">
+          <div className="flex items-center gap-2.5 min-w-0">
             <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded bg-gray-100 border border-dashed border-gray-300 text-[9px] font-bold text-gray-500">
               LOGO
             </div>
@@ -360,15 +405,15 @@ export default function AdminSidebar() {
 
       {/* Mobile Drawer */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-64 p-[5px] transform transition-transform duration-200 ease-in-out lg:hidden ${
+        className={`fixed inset-y-0 left-0 z-50 w-72 transform transition-transform duration-200 ease-in-out lg:hidden ${
           mobileOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         {sidebarContent}
       </aside>
 
-      {/* Desktop Floating Sidebar */}
-      <aside className="hidden lg:flex w-60 shrink-0 h-screen p-[5px] sticky top-0">
+      {/* Desktop Sidebar */}
+      <aside className="hidden lg:flex w-72 shrink-0 h-screen sticky top-0">
         {sidebarContent}
       </aside>
     </>
