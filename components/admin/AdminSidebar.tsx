@@ -154,6 +154,7 @@ export default function AdminSidebar({ id = "admin-sidebar" }: AdminSidebarProps
   const pathname = usePathname();
   const router = useRouter();
   const [userName, setUserName] = useState("");
+  const [role, setRole] = useState("");
   const [mobileOpen, setMobileOpen] = useState(false);
   const [unreadMessages, setUnreadMessages] = useState(0);
   const [newApplications, setNewApplications] = useState(0);
@@ -166,10 +167,13 @@ export default function AdminSidebar({ id = "admin-sidebar" }: AdminSidebarProps
       if (user) {
         const { data } = await supabase
           .from("admin_users")
-          .select("full_name")
+          .select("full_name, role")
           .eq("id", user.id)
           .single();
-        if (data) setUserName(data.full_name);
+        if (data) {
+          setUserName(data.full_name);
+          setRole(data.role);
+        }
       }
     }
     loadUser();
@@ -304,16 +308,10 @@ export default function AdminSidebar({ id = "admin-sidebar" }: AdminSidebarProps
       <div className="admin-sidebar__footer">
         <div className="admin-sidebar__profile">
           <div className="admin-sidebar__user-info">
-            <div className="admin-sidebar__avatar">
-              {(userName || "Admin").charAt(0).toUpperCase()}
-            </div>
-            <div className="admin-sidebar__user-details">
-              <span className="admin-sidebar__user-name">
-                {userName || "Admin"}
-              </span>
-              <span className="admin-sidebar__user-status">
-                Signed in
-              </span>
+            <div className="admin-sidebar__user-info">
+              <div className="admin-sidebar__avatar">
+                {(userName || "Admin").charAt(0).toUpperCase()}
+              </div>
             </div>
           </div>
           <button
@@ -339,28 +337,48 @@ export default function AdminSidebar({ id = "admin-sidebar" }: AdminSidebarProps
       {/* Mobile Header Bar */}
       <div className="admin-sidebar__mobile-bar">
         <div className="admin-sidebar__mobile-bar-inner">
-          <div className="admin-sidebar__mobile-brand">
-            <div className="admin-sidebar__mobile-logo">
-              LOGO
+          <div className="admin-sidebar__mobile-bar-inner">
+            <div className="admin-sidebar__mobile-brand">
+              <div className="admin-sidebar__mobile-logo">
+                LOGO
+              </div>
+              <span className="admin-sidebar__mobile-title">
+                Maluti Console
+              </span>
             </div>
-            <span className="admin-sidebar__mobile-title">
-              Maluti Console
-            </span>
+
+            <div className="admin-sidebar__mobile-right">
+              <div className="admin-sidebar__mobile-profile">
+                <div className="admin-sidebar__mobile-avatar">
+                  {(userName || "Admin").charAt(0).toUpperCase()}
+                </div>
+                <div className="admin-sidebar__mobile-user-details">
+                  <span className="admin-sidebar__mobile-user-name">
+                    {userName || "Admin"}
+                  </span>
+                  {role && (
+                    <span className="admin-sidebar__mobile-user-role">
+                      {role.replace("_", " ")}
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              <button
+                onClick={() => setMobileOpen(!mobileOpen)}
+                className="admin-sidebar__mobile-toggle"
+                aria-label="Toggle navigation"
+              >
+                <svg className="admin-sidebar__toggle-icon" viewBox="0 0 24 24" fill="currentColor">
+                  {mobileOpen ? (
+                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                  ) : (
+                    <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
+                  )}
+                </svg>
+              </button></div>
+            </div>
           </div>
-          <button
-            onClick={() => setMobileOpen(!mobileOpen)}
-            className="admin-sidebar__mobile-toggle"
-            aria-label="Toggle navigation"
-          >
-            <svg className="admin-sidebar__toggle-icon" viewBox="0 0 24 24" fill="currentColor">
-              {mobileOpen ? (
-                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
-              ) : (
-                <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
-              )}
-            </svg>
-          </button>
-        </div>
       </div>
 
       {/* Mobile Overlay */}

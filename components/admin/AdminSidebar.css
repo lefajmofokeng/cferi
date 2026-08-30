@@ -398,4 +398,55 @@
     width: 0;
     height: 0;
   }
+
+  .admin-sidebar__mobile-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.admin-sidebar__mobile-profile {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.admin-sidebar__mobile-avatar {
+  display: flex;
+  height: 1.75rem;
+  width: 1.75rem;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background-color: #1e293b;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.admin-sidebar__mobile-user-details {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.admin-sidebar__mobile-user-name {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #111827;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 6rem;
+  line-height: 1.2;
+}
+
+.admin-sidebar__mobile-user-role {
+  font-size: 10px;
+  color: #6b7280;
+  text-transform: capitalize;
+  white-space: nowrap;
+}
 }

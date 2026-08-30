@@ -23,6 +23,39 @@ export default function AdminTeamPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
+  const [newPassword, setNewPassword] = useState("");
+  const [changingPassword, setChangingPassword] = useState(false);
+  const [passwordError, setPasswordError] = useState("");
+  const [passwordSuccess, setPasswordSuccess] = useState("");
+
+  const [resetTargetId, setResetTargetId] = useState<string | null>(null);
+  const [resetPassword, setResetPassword] = useState("");
+  const [resetting, setResetting] = useState(false);
+  const [resetError, setResetError] = useState("");
+  const [resetSuccessId, setResetSuccessId] = useState<string | null>(null);
+
+  async function handleResetPassword(targetUserId: string) {
+      setResetting(true);
+      setResetError("");
+
+      const res = await fetch("/api/admin/reset-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ targetUserId, newPassword: resetPassword }),
+      });
+
+      const result = await res.json();
+
+      if (!res.ok) {
+        setResetError(result.error ?? "Something went wrong.");
+      } else {
+        setResetSuccessId(targetUserId);
+        setResetPassword("");
+        setResetTargetId(null);
+      }
+      setResetting(false);
+    }
+
   async function loadTeam() {
     const supabase = createClient();
 
@@ -51,6 +84,30 @@ export default function AdminTeamPage() {
   useEffect(() => {
     loadTeam();
   }, []);
+
+  async function handleChangePassword(e: React.FormEvent) {
+      e.preventDefault();
+      setChangingPassword(true);
+      setPasswordError("");
+      setPasswordSuccess("");
+
+      if (newPassword.length < 6) {
+        setPasswordError("Password must be at least 6 characters.");
+        setChangingPassword(false);
+        return;
+      }
+
+      const supabase = createClient();
+      const { error } = await supabase.auth.updateUser({ password: newPassword });
+
+      if (error) {
+        setPasswordError(error.message);
+      } else {
+        setPasswordSuccess("Password updated successfully.");
+        setNewPassword("");
+      }
+      setChangingPassword(false);
+    }
 
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
@@ -122,13 +179,15 @@ export default function AdminTeamPage() {
 
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs border-collapse">
-                <thead>
-                  <tr className="border-b border-gray-100 bg-gray-50/60 text-gray-500 font-medium">
-                    <th className="py-3 px-5">Member</th>
-                    <th className="py-3 px-4">Role</th>
-                    <th className="py-3 px-5 text-right">Added On</th>
+                <thead className="bg-gray-50 text-gray-600">
+                  <tr className="text-left border-b border-gray-200 text-gray-500">
+                    <th className="py-2 pr-4">Name</th>
+                    <th className="py-2 pr-4">Role</th>
+                    <th className="py-2 pr-4">Added</th>
+                    <th className="py-2 pr-4"></th>
                   </tr>
                 </thead>
+                {resetError && <p className="text-red-600 text-sm mt-2">{resetError}</p>}
                 <tbody className="divide-y divide-gray-100 text-gray-700">
                   {team.map((member) => {
                     const isSuper = member.role === "super_admin";
@@ -160,8 +219,51 @@ export default function AdminTeamPage() {
                             {member.role.replace("_", " ")}
                           </span>
                         </td>
-                        <td className="py-3.5 px-5 text-right text-gray-500 font-mono text-[11px]">
+                        <td className="py-3.5 px-5 text-gray-500 font-mono text-[11px]">
                           {new Date(member.created_at).toLocaleDateString()}
+                        </td>
+                        <td className="py-3.5 px-4">
+                          {currentUserRole === "super_admin" && (
+                            <>
+                              {resetTargetId === member.id ? (
+                                <div className="flex items-center gap-2">
+                                  <input
+                                    type="password"
+                                    placeholder="New password"
+                                    value={resetPassword}
+                                    onChange={(e) => setResetPassword(e.target.value)}
+                                    className="border border-gray-300 rounded px-2 py-1 text-sm w-32"
+                                  />
+                                  <button
+                                    onClick={() => handleResetPassword(member.id)}
+                                    disabled={resetting || resetPassword.length < 6}
+                                    className="text-xs bg-black text-white px-3 py-1 rounded hover:opacity-90 disabled:opacity-50"
+                                  >
+                                    {resetting ? "..." : "Confirm"}
+                                  </button>
+                                  <button
+                                    onClick={() => {
+                                      setResetTargetId(null);
+                                      setResetPassword("");
+                                    }}
+                                    className="text-xs text-gray-400"
+                                  >
+                                    Cancel
+                                  </button>
+                                </div>
+                              ) : (
+                                <button
+                                  onClick={() => setResetTargetId(member.id)}
+                                  className="text-xs text-blue-600 hover:underline"
+                                >
+                                  Reset Password
+                                </button>
+                              )}
+                              {resetSuccessId === member.id && (
+                                <p className="text-xs text-green-700 mt-1">Password reset successfully.</p>
+                              )}
+                            </>
+                          )}
                         </td>
                       </tr>
                     );
@@ -170,6 +272,32 @@ export default function AdminTeamPage() {
               </table>
             </div>
           </div>
+        </div>
+
+        <div className="mt-10 mb-10 max-w-md">
+          <h2 className="text-lg font-medium mb-4">Change My Password</h2>
+          <form onSubmit={handleChangePassword} className="space-y-3">
+            <div>
+              <label className="block text-sm font-medium mb-1">New Password</label>
+              <input
+                type="password"
+                required
+                minLength={6}
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                className="w-full border border-gray-300 rounded px-3 py-2"
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={changingPassword}
+              className="bg-black text-white px-6 py-2.5 rounded hover:opacity-90 disabled:opacity-50"
+            >
+              {changingPassword ? "Updating..." : "Update Password"}
+            </button>
+            {passwordError && <p className="text-red-600 text-sm">{passwordError}</p>}
+            {passwordSuccess && <p className="text-green-700 text-sm">{passwordSuccess}</p>}
+          </form>
         </div>
 
         {/* Right Sidebar: Add Admin Form or Restricted Notice */}
