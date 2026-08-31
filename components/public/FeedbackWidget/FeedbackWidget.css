@@ -82,10 +82,12 @@
   min-height: 72px;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 368px) {
   .feedback-widget__textarea {
     width: 20rem;
   }
+
+  .feedback-widget__title {width: 100%; }
 }
 
 .feedback-widget__button {

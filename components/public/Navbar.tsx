@@ -27,11 +27,9 @@ export default async function Navbar() {
         <div className="header-left">
           <Link href="/" className="brand-link">
             <div className="brand-icon">
-              <span>M</span>
+              <img src="/images/logo.png" alt="Maluti Incubation Logo" width={40} height={40} />
             </div>
-            <span className="brand-title desktop-only">
-              Maluti<span className="brand-highlight"> Incubation</span>
-            </span>
+        
           </Link>
         </div>
 

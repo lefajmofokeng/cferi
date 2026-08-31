@@ -41,17 +41,11 @@
   width: 40px;
   align-items: center;
   justify-content: center;
-  border-radius: 12px;
-  background-color: #020617;
   color: #ffffff;
   font-weight: 700;
   font-size: 0.75rem;
   letter-spacing: 0.05em;
   transition: background-color 0.2s ease;
-}
-
-.brand-link:hover .brand-icon {
-  background-color: #1e293b;
 }
 
 .brand-title {
