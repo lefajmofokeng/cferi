@@ -10,11 +10,15 @@ type Conversation = {
   type: "channel" | "dm";
   name: string | null;
   displayName: string;
+  otherUserId?: string;
 };
 
 type AdminUser = {
   id: string;
   full_name: string;
+  avatar_url: string | null;
+  job_title: string | null;
+  phone: string | null;
 };
 
 export default function AdminChatPage() {
@@ -25,6 +29,7 @@ export default function AdminChatPage() {
   const [loading, setLoading] = useState(true);
   const [showClearConfirm, setShowClearConfirm] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [profilePanelUserId, setProfilePanelUserId] = useState<string | null>(null);
 
   async function loadEverything() {
     const supabase = createClient();
@@ -37,7 +42,7 @@ export default function AdminChatPage() {
 
     const { data: allAdmins } = await supabase
       .from("admin_users")
-      .select("id, full_name")
+      .select("id, full_name, avatar_url, job_title, phone")
       .neq("id", user.id);
     setTeammates(allAdmins ?? []);
 
@@ -70,7 +75,11 @@ export default function AdminChatPage() {
 
         const otherId = otherParticipants?.[0]?.admin_id;
         const other = (allAdmins ?? []).find((a) => a.id === otherId);
-        resolved.push({ ...convo, displayName: other?.full_name ?? "Direct Message" });
+        resolved.push({
+          ...convo,
+          displayName: other?.full_name ?? "Direct Message",
+          otherUserId: otherId,
+        });
       }
     }
 
@@ -268,9 +277,11 @@ export default function AdminChatPage() {
                   {filteredDMs.length}
                 </span>
               </div>
+
               <div className="space-y-0.5 mt-1">
                 {filteredDMs.map((c) => {
                   const isSelected = selectedConversationId === c.id;
+                  const otherMember = teammates.find((t) => t.id === c.otherUserId);
                   return (
                     <button
                       key={c.id}
@@ -281,7 +292,25 @@ export default function AdminChatPage() {
                           : "text-gray-700 hover:bg-gray-100 font-normal"
                       }`}
                     >
-                      <span className={`w-2 h-2 rounded-full shrink-0 ${isSelected ? "bg-[#1A73E8]" : "bg-emerald-500"}`} />
+                      <span
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (c.otherUserId) setProfilePanelUserId(c.otherUserId);
+                        }}
+                        className="shrink-0"
+                      >
+                        {otherMember?.avatar_url ? (
+                          <img
+                            src={otherMember.avatar_url}
+                            alt={c.displayName}
+                            className="w-5 h-5 rounded-full object-cover hover:ring-2 hover:ring-[#1A73E8] transition-all"
+                          />
+                        ) : (
+                          <span className="w-5 h-5 rounded-full bg-gray-200 text-gray-700 text-[9px] font-semibold flex items-center justify-center hover:ring-2 hover:ring-[#1A73E8] transition-all">
+                            {c.displayName.charAt(0).toUpperCase()}
+                          </span>
+                        )}
+                      </span>
                       <span className="truncate">{c.displayName}</span>
                     </button>
                   );
@@ -363,7 +392,45 @@ export default function AdminChatPage() {
               </p>
             </div>
           )}
-        </section>
+                </section>
+
+        {profilePanelUserId && (() => {
+          const member = teammates.find((t) => t.id === profilePanelUserId);
+          if (!member) return null;
+          return (
+            <aside className="w-72 border-l border-gray-200 bg-white flex flex-col shrink-0">
+              <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+                <span className="text-sm font-medium text-gray-900">Profile</span>
+                <button
+                  onClick={() => setProfilePanelUserId(null)}
+                  className="text-gray-400 hover:text-gray-700 text-sm"
+                >
+                  ✕
+                </button>
+              </div>
+              <div className="p-5 flex flex-col items-center text-center">
+                {member.avatar_url ? (
+                  <img
+                    src={member.avatar_url}
+                    alt={member.full_name}
+                    className="w-20 h-20 rounded-full object-cover mb-3"
+                  />
+                ) : (
+                  <div className="w-20 h-20 rounded-full bg-gray-200 text-gray-700 text-2xl font-bold flex items-center justify-center mb-3">
+                    {member.full_name.charAt(0).toUpperCase()}
+                  </div>
+                )}
+                <p className="text-sm font-semibold text-gray-900">{member.full_name}</p>
+                {member.job_title && (
+                  <p className="text-xs text-gray-500 mt-0.5">{member.job_title}</p>
+                )}
+                {member.phone && (
+                  <p className="text-xs text-gray-600 mt-3">📞 {member.phone}</p>
+                )}
+              </div>
+            </aside>
+          );
+        })()}
       </div>
 
       <ConfirmDialog

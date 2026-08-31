@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 
 type AdminUser = {
@@ -8,6 +8,9 @@ type AdminUser = {
   full_name: string;
   role: string;
   created_at: string;
+  phone: string | null;
+  job_title: string | null;
+  avatar_url: string | null;
 };
 
 export default function AdminTeamPage() {
@@ -34,6 +37,17 @@ export default function AdminTeamPage() {
   const [resetError, setResetError] = useState("");
   const [resetSuccessId, setResetSuccessId] = useState<string | null>(null);
 
+  const [myFullName, setMyFullName] = useState("");
+  const [myPhone, setMyPhone] = useState("");
+  const [myJobTitle, setMyJobTitle] = useState("");
+  const [myAvatarUrl, setMyAvatarUrl] = useState<string | null>(null);
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [savingProfile, setSavingProfile] = useState(false);
+  const [profileError, setProfileError] = useState("");
+  const [profileSuccess, setProfileSuccess] = useState("");
+
+  const [expandedMemberId, setExpandedMemberId] = useState<string | null>(null);
+  
   async function handleResetPassword(targetUserId: string) {
       setResetting(true);
       setResetError("");
@@ -72,9 +86,24 @@ export default function AdminTeamPage() {
       setCurrentUserRole(me?.role ?? null);
     }
 
+    if (user) {
+        const { data: me } = await supabase
+          .from("admin_users")
+          .select("role, full_name, phone, job_title, avatar_url")
+          .eq("id", user.id)
+          .single();
+        setCurrentUserRole(me?.role ?? null);
+        if (me) {
+          setMyFullName(me.full_name ?? "");
+          setMyPhone(me.phone ?? "");
+          setMyJobTitle(me.job_title ?? "");
+          setMyAvatarUrl(me.avatar_url);
+        }
+      }
+
     const { data } = await supabase
       .from("admin_users")
-      .select("id, full_name, role, created_at")
+      .select("id, full_name, role, created_at, phone, job_title, avatar_url")
       .order("created_at", { ascending: true });
 
     setTeam(data ?? []);
@@ -84,6 +113,56 @@ export default function AdminTeamPage() {
   useEffect(() => {
     loadTeam();
   }, []);
+
+  async function handleSaveProfile(e: React.FormEvent) {
+      e.preventDefault();
+      setSavingProfile(true);
+      setProfileError("");
+      setProfileSuccess("");
+
+      const supabase = createClient();
+      let finalAvatarUrl = myAvatarUrl;
+
+      if (avatarFile) {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        if (!user) return;
+
+        const filePath = `${user.id}-${Date.now()}-${avatarFile.name}`;
+        const { error: uploadError } = await supabase.storage
+          .from("avatars")
+          .upload(filePath, avatarFile);
+
+        if (uploadError) {
+          setProfileError(`Photo upload failed: ${uploadError.message}`);
+          setSavingProfile(false);
+          return;
+        }
+
+        const { data: publicUrlData } = supabase.storage
+          .from("avatars")
+          .getPublicUrl(filePath);
+        finalAvatarUrl = publicUrlData.publicUrl;
+      }
+
+      const { error } = await supabase.rpc("update_own_profile", {
+        new_full_name: myFullName,
+        new_phone: myPhone || null,
+        new_job_title: myJobTitle || null,
+        new_avatar_url: finalAvatarUrl,
+      });
+
+      if (error) {
+        setProfileError(error.message);
+      } else {
+        setProfileSuccess("Profile updated successfully.");
+        setMyAvatarUrl(finalAvatarUrl);
+        setAvatarFile(null);
+        loadTeam();
+      }
+      setSavingProfile(false);
+    }
 
   async function handleChangePassword(e: React.FormEvent) {
       e.preventDefault();
@@ -193,12 +272,28 @@ export default function AdminTeamPage() {
                     const isSuper = member.role === "super_admin";
                     const isAdmin = member.role === "admin";
 
+                  const isExpanded = expandedMemberId === member.id;
+
                     return (
+                    <React.Fragment key={member.id}>
                       <tr key={member.id} className="hover:bg-gray-50/80 transition-colors">
-                        <td className="py-3.5 px-5 font-semibold text-gray-900 flex items-center gap-2.5">
-                          <span className="w-7 h-7 rounded-full bg-gray-100 text-gray-700 text-xs font-bold flex items-center justify-center shrink-0 border border-gray-200/60">
-                            {member.full_name.charAt(0).toUpperCase()}
-                          </span>
+                        <td
+                          onClick={() =>
+                            setExpandedMemberId(isExpanded ? null : member.id)
+                          }
+                          className="py-3.5 px-5 font-semibold text-gray-900 flex items-center gap-2.5 cursor-pointer"
+                        >
+                          {member.avatar_url ? (
+                            <img
+                              src={member.avatar_url}
+                              alt={member.full_name}
+                              className="w-7 h-7 rounded-full object-cover shrink-0 border border-gray-200/60"
+                            />
+                          ) : (
+                            <span className="w-7 h-7 rounded-full bg-gray-100 text-gray-700 text-xs font-bold flex items-center justify-center shrink-0 border border-gray-200/60">
+                              {member.full_name.charAt(0).toUpperCase()}
+                            </span>
+                          )}
                           <span>{member.full_name}</span>
                         </td>
                         <td className="py-3.5 px-4">
@@ -266,12 +361,110 @@ export default function AdminTeamPage() {
                           )}
                         </td>
                       </tr>
+                      {isExpanded && (
+                        <tr key={`${member.id}-details`} className="bg-gray-50/60">
+                          <td colSpan={4} className="px-5 py-4">
+                            <div className="flex items-center gap-4">
+                              {member.avatar_url ? (
+                                <img
+                                  src={member.avatar_url}
+                                  alt={member.full_name}
+                                  className="w-14 h-14 rounded-full object-cover border border-gray-200"
+                                />
+                              ) : (
+                                <div className="w-14 h-14 rounded-full bg-gray-100 text-gray-700 text-lg font-bold flex items-center justify-center border border-gray-200">
+                                  {member.full_name.charAt(0).toUpperCase()}
+                                </div>
+                              )}
+                              <div className="text-xs text-gray-600 space-y-1">
+                                <p>
+                                  <span className="font-medium text-gray-800">Job Title:</span>{" "}
+                                  {member.job_title || "Not set"}
+                                </p>
+                                <p>
+                                  <span className="font-medium text-gray-800">Phone:</span>{" "}
+                                  {member.phone || "Not set"}
+                                </p>
+                                <p>
+                                  <span className="font-medium text-gray-800">Joined:</span>{" "}
+                                  {new Date(member.created_at).toLocaleDateString()}
+                                </p>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                        )}
+                      </React.Fragment>
                     );
                   })}
                 </tbody>
               </table>
             </div>
           </div>
+        </div>
+
+        <div className="mt-10 mb-10 max-w-md">
+          <h2 className="text-lg font-medium mb-4">My Profile</h2>
+          <form onSubmit={handleSaveProfile} className="space-y-3">
+            <div>
+              <label className="block text-sm font-medium mb-1">Profile Photo</label>
+              {myAvatarUrl && !avatarFile && (
+                <img
+                  src={myAvatarUrl}
+                  alt="Current avatar"
+                  className="w-16 h-16 rounded-full object-cover mb-2 border border-gray-200"
+                />
+              )}
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                onChange={(e) => setAvatarFile(e.target.files?.[0] ?? null)}
+                className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-1">Full Name</label>
+              <input
+                type="text"
+                required
+                value={myFullName}
+                onChange={(e) => setMyFullName(e.target.value)}
+                className="w-full border border-gray-300 rounded px-3 py-2"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-1">Job Title</label>
+              <input
+                type="text"
+                value={myJobTitle}
+                onChange={(e) => setMyJobTitle(e.target.value)}
+                placeholder="e.g. Program Coordinator"
+                className="w-full border border-gray-300 rounded px-3 py-2"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-1">Phone</label>
+              <input
+                type="tel"
+                value={myPhone}
+                onChange={(e) => setMyPhone(e.target.value)}
+                className="w-full border border-gray-300 rounded px-3 py-2"
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={savingProfile}
+              className="bg-black text-white px-6 py-2.5 rounded hover:opacity-90 disabled:opacity-50"
+            >
+              {savingProfile ? "Saving..." : "Save Profile"}
+            </button>
+            {profileError && <p className="text-red-600 text-sm">{profileError}</p>}
+            {profileSuccess && <p className="text-green-700 text-sm">{profileSuccess}</p>}
+          </form>
         </div>
 
         <div className="mt-10 mb-10 max-w-md">

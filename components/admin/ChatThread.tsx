@@ -13,7 +13,8 @@ type Message = {
   created_at: string;
 };
 
-type SenderMap = Record<string, string>;
+type SenderInfo = { full_name: string; avatar_url: string | null };
+type SenderMap = Record<string, SenderInfo>;
 
 function isImageFile(fileName: string | null): boolean {
   if (!fileName) return false;
@@ -60,12 +61,12 @@ export default function ChatThread({
       if (senderIds.length > 0) {
         const { data: senders } = await supabase
           .from("admin_users")
-          .select("id, full_name")
+          .select("id, full_name, avatar_url")
           .in("id", senderIds);
 
         const map: SenderMap = {};
         (senders ?? []).forEach((s) => {
-          map[s.id] = s.full_name;
+          map[s.id] = { full_name: s.full_name, avatar_url: s.avatar_url };
         });
         if (active) setSenderNames(map);
       }
@@ -91,14 +92,14 @@ export default function ChatThread({
             if (prev[newMsg.sender_id]) return prev;
             supabase
               .from("admin_users")
-              .select("full_name")
+              .select("full_name, avatar_url")
               .eq("id", newMsg.sender_id)
               .single()
               .then(({ data }) => {
                 if (data) {
                   setSenderNames((current) => ({
                     ...current,
-                    [newMsg.sender_id]: data.full_name,
+                    [newMsg.sender_id]: { full_name: data.full_name, avatar_url: data.avatar_url },
                   }));
                 }
               });
@@ -228,7 +229,8 @@ export default function ChatThread({
           const normalizedFileName = (msg.file_name ?? "").toLowerCase();
           const isVoiceNote = !!msg.file_url && normalizedFileName.includes("voice-note");
           const isImageAttachment = !!msg.file_url && isImageFile(msg.file_name);
-          const senderName = senderNames[msg.sender_id] ?? "Team Member";
+          const senderInfo = senderNames[msg.sender_id];
+          const senderName = senderInfo?.full_name ?? "Team Member";
 
           return (
             <div
@@ -238,9 +240,17 @@ export default function ChatThread({
               }`}
             >
               {!isMe && (
-                <div className="chat-thread__avatar">
-                  {senderName.charAt(0).toUpperCase()}
-                </div>
+                senderInfo?.avatar_url ? (
+                  <img
+                    src={senderInfo.avatar_url}
+                    alt={senderName}
+                    className="chat-thread__avatar-img"
+                  />
+                ) : (
+                  <div className="chat-thread__avatar">
+                    {senderName.charAt(0).toUpperCase()}
+                  </div>
+                )
               )}
 
               <div

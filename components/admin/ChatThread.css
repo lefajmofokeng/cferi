@@ -68,6 +68,15 @@
   margin-bottom: 0.25rem;
 }
 
+.chat-thread__avatar-img {
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 9999px;
+  object-fit: cover;
+  flex-shrink: 0;
+  margin-bottom: 0.25rem;
+}
+
 /* Bubbles */
 .chat-thread__bubble {
   max-width: 28rem;
