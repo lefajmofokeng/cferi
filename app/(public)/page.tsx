@@ -4,6 +4,7 @@ import { getEventStatus, eventStatusStyles, eventStatusLabels } from "@/lib/even
 import CronosScrollSection from "@/components/public/CronosScrollSection/CronosScrollSection";
 import FeedbackWidget from "@/components/public/FeedbackWidget/Feedbackwidget";
 import EcosystemStackSection from "@/components/public/EcosystemStackSection/EcosystemStackSection";
+import HeroSection from "@/components/public/HeroSection/HeroSection";
 
 export default async function Home() {
   const supabase = await createClient();
@@ -43,6 +44,8 @@ export default async function Home() {
           </Link>
         </div>
       </section>
+
+      <HeroSection />
 
       {/* Interactive Expandable Video Component */}
       <section id="support">

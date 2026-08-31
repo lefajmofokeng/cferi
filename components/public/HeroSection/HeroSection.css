@@ -1,0 +1,349 @@
+/* Hero Section Container */
+.ouaken-hero {
+  position: relative;
+  width: 100%;
+  min-height: 85vh;
+  min-height: 640px;
+  scroll-margin-top: 80px;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+  background-color: #f3ede7;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  color: #1a1a1a;
+  box-sizing: border-box;
+}
+
+/* Background & Ambient Overlay */
+.ouaken-hero-bg-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.ouaken-hero-bg-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.ouaken-hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.1) 0%,
+    rgba(0, 0, 0, 0.25) 60%,
+    rgba(0, 0, 0, 0.45) 100%
+  );
+}
+
+/* Main Layout Grid */
+.ouaken-hero-container {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 48px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 32px;
+  box-sizing: border-box;
+}
+
+/* Left Hero Content */
+.ouaken-hero-left {
+  flex: 1;
+  max-width: 480px;
+  color: #ffffff;
+}
+
+.ouaken-hero-title {
+  font-size: clamp(2.2rem, 4.5vw, 3.5rem);
+  font-weight: 500;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  margin: 0 0 20px 0;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.ouaken-hero-description {
+  font-size: 1rem;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0 0 32px 0;
+  max-width: 420px;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Hero CTA Group */
+.ouaken-hero-cta-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ouaken-hero-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 48px;
+  padding: 0 28px;
+  background-color: #ffffff;
+  color: #0f0f0f;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-radius: 9999px;
+  text-decoration: none;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.ouaken-hero-btn-primary:hover {
+  background-color: #f5f5f7;
+  transform: translateY(-1px);
+}
+
+.ouaken-hero-btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background-color: #ffffff;
+  color: #0f0f0f;
+  border-radius: 50%;
+  text-decoration: none;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.ouaken-hero-btn-icon:hover {
+  background-color: #f5f5f7;
+  transform: translateY(-1px);
+}
+
+/* Right Side Floating Cards */
+.ouaken-hero-right {
+  flex-shrink: 0;
+  width: 440px;
+  max-width: 100%;
+}
+
+.ouaken-hero-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+/* Base Floating Card Styling */
+.ouaken-card {
+  background-color: #ffffff;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.12);
+  box-sizing: border-box;
+}
+
+/* Promo Card (Top Spanning Card) */
+.ouaken-card-promo {
+  grid-column: span 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 22px;
+}
+
+.ouaken-card-promo-info {
+  flex: 1;
+}
+
+.ouaken-card-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1.25;
+  color: #111111;
+  margin: 0 0 8px 0;
+  letter-spacing: -0.01em;
+}
+
+.ouaken-card-subtitle {
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: #666666;
+  margin: 0 0 18px 0;
+}
+
+.ouaken-card-cta-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #000000;
+  border-radius: 9999px;
+  padding: 4px 6px 4px 16px;
+}
+
+.ouaken-card-btn {
+  color: #ffffff;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.ouaken-card-btn-arrow {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: #333333;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ouaken-card-promo-media {
+  width: 130px;
+  height: 115px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.ouaken-card-appliance-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Bottom Left Card: 27/4 Delivery */
+.ouaken-card-stat {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 115px;
+  overflow: hidden;
+}
+
+.ouaken-card-map-pattern {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.7;
+}
+
+.ouaken-map-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.ouaken-card-stat-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.ouaken-card-big-num {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #111111;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.ouaken-card-label {
+  font-size: 0.75rem;
+  color: #888888;
+  font-weight: 500;
+}
+
+/* Bottom Right Card: User Avatars */
+.ouaken-card-users {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 115px;
+}
+
+.ouaken-card-divider {
+  width: 100%;
+  height: 1px;
+  background-color: #e5e7eb;
+  margin: 10px 0;
+}
+
+.ouaken-card-avatars {
+  display: flex;
+  align-items: center;
+}
+
+.ouaken-avatar-img {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #ffffff;
+  margin-left: -8px;
+}
+
+.ouaken-avatar-img:first-child {
+  margin-left: 0;
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 992px) {
+  .ouaken-hero-container {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-end;
+    padding: 32px 24px;
+    gap: 40px;
+  }
+
+  .ouaken-hero-left {
+    max-width: 100%;
+  }
+
+  .ouaken-hero-right {
+    width: 100%;
+  }
+}
+
+@media (max-width: 576px) {
+  .ouaken-hero {
+    min-height: 700px;
+  }
+
+  .ouaken-hero-title {
+    font-size: 2.2rem;
+  }
+
+  .ouaken-hero-cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ouaken-card-promo {
+    grid-column: span 1;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .ouaken-card-promo-media {
+    width: 100%;
+    height: 140px;
+  }
+}
