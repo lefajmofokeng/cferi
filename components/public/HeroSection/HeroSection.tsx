@@ -10,7 +10,7 @@ export default function HeroSection({ id = "hero-section" }: HeroSectionProps) {
       {/* Background Image Container */}
       <div className="ouaken-hero-bg-wrapper">
         <img
-          src="https://images.unsplash.com/photo-1556911220-e15b29be8c8f?q=80&w=2000&auto=format&fit=crop"
+          src="/images/team.jpg"
           alt="Modern warm kitchen background with Ouaken bin"
           className="ouaken-hero-bg-img"
         />
@@ -25,8 +25,7 @@ export default function HeroSection({ id = "hero-section" }: HeroSectionProps) {
             the smart way
           </h1>
           <p className="ouaken-hero-description">
-            With intelligent tech and a beautiful design, Mill makes compost
-            pails and garbage disposals obsolete.
+            Supporting entrepreneurs and small businesses with mentorship, resources, and a collaborative space to grow.
           </p>
           <div className="ouaken-hero-cta-group">
             <a href="#shop" className="ouaken-hero-btn-primary">
