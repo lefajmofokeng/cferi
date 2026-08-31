@@ -15,7 +15,7 @@
   height: 100vh;
   min-height: 600px;
   background-color: #f8f9fa;
-  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: inherit;
   color: #1f1f1f;
   padding: 16px 24px;
   display: flex;
@@ -108,6 +108,7 @@
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
+  padding: 2rem 0 0 0;
 }
 
 /* Search Box */
@@ -136,8 +137,8 @@
   background-color: #eaf1fb;
   border: none;
   border-radius: 24px;
-  padding: 8px 12px 8px 38px;
-  font-size: 13px;
+  padding: 7px 12px 7px 38px;
+  font-size: 14px;
   color: #1f1f1f;
   outline: none;
   transition: background-color 0.2s, box-shadow 0.2s;
@@ -149,7 +150,7 @@
 
 .google-chat-search-input:focus {
   background-color: #ffffff;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  border: 3px solid #0060dd;
 }
 
 /* Scroll Area */
@@ -212,13 +213,13 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 8px 12px;
+  padding: 7px 12px;
   border: none;
   background: transparent;
   border-radius: 20px;
   cursor: pointer;
   color: #444746;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
   text-align: left;
   transition: background-color 0.15s;
@@ -231,7 +232,7 @@
 .google-chat-item.selected {
   background-color: #c2e7ff;
   color: #001d35;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .item-icon {
@@ -284,15 +285,15 @@
 }
 
 .avatar-image {
-  width: 24px;
-  height: 24px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   object-fit: cover;
 }
 
 .avatar-placeholder {
-  width: 24px;
-  height: 24px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   background-color: #e8f0fe;
   color: #1a73e8;
@@ -368,8 +369,8 @@
 }
 
 .status-dot {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   background-color: #137333;
 }
@@ -441,7 +442,7 @@
 
 .recording-timer {
   font-size: 13px;
-  font-family: monospace;
+  font-family: inherit;
   font-weight: 700;
   color: #c5221f;
   background: rgba(217, 48, 37, 0.08);
@@ -585,7 +586,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  text-align: center;
+  text-align: center; 
 }
 
 .profile-avatar {
