@@ -16,7 +16,7 @@
 }
 .admin-sidebar__nav-container::-webkit-scrollbar-thumb {
   background-color: #d1d5db;
-  border-radius: 9999px;
+  border-radius: 9999px; display: none;
 }
 .admin-sidebar__nav-container::-webkit-scrollbar-thumb:hover,
 .admin-sidebar__nav-container::-webkit-scrollbar-thumb:active {
@@ -36,7 +36,6 @@
   color: #374151;
   font-family: inherit;
   user-select: none;
-  border-right: 1px solid #e5e7eb;
   width: 100%;
   box-sizing: border-box;
 }
