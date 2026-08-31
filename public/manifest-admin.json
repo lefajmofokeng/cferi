@@ -7,6 +7,7 @@
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#000000",
+  "font_family": "inherit",
   "icons": [
     {
       "src": "/icons/admin-icon-192.png",
