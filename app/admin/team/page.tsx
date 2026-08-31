@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import "./AdminTeamManagement.css";
 
 type AdminUser = {
   id: string;
@@ -13,7 +14,9 @@ type AdminUser = {
   avatar_url: string | null;
 };
 
-export default function AdminTeamPage() {
+export default function AdminTeamManagement({ id = "admin-team-management" }: { id?: string }) {
+  const [activeTab, setActiveTab] = useState<"team" | "profile" | "password" | "add-admin">("team");
+
   const [team, setTeam] = useState<AdminUser[]>([]);
   const [currentUserRole, setCurrentUserRole] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -47,28 +50,28 @@ export default function AdminTeamPage() {
   const [profileSuccess, setProfileSuccess] = useState("");
 
   const [expandedMemberId, setExpandedMemberId] = useState<string | null>(null);
-  
+
   async function handleResetPassword(targetUserId: string) {
-      setResetting(true);
-      setResetError("");
+    setResetting(true);
+    setResetError("");
 
-      const res = await fetch("/api/admin/reset-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ targetUserId, newPassword: resetPassword }),
-      });
+    const res = await fetch("/api/admin/reset-password", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ targetUserId, newPassword: resetPassword }),
+    });
 
-      const result = await res.json();
+    const result = await res.json();
 
-      if (!res.ok) {
-        setResetError(result.error ?? "Something went wrong.");
-      } else {
-        setResetSuccessId(targetUserId);
-        setResetPassword("");
-        setResetTargetId(null);
-      }
-      setResetting(false);
+    if (!res.ok) {
+      setResetError(result.error ?? "Something went wrong.");
+    } else {
+      setResetSuccessId(targetUserId);
+      setResetPassword("");
+      setResetTargetId(null);
     }
+    setResetting(false);
+  }
 
   async function loadTeam() {
     const supabase = createClient();
@@ -87,19 +90,19 @@ export default function AdminTeamPage() {
     }
 
     if (user) {
-        const { data: me } = await supabase
-          .from("admin_users")
-          .select("role, full_name, phone, job_title, avatar_url")
-          .eq("id", user.id)
-          .single();
-        setCurrentUserRole(me?.role ?? null);
-        if (me) {
-          setMyFullName(me.full_name ?? "");
-          setMyPhone(me.phone ?? "");
-          setMyJobTitle(me.job_title ?? "");
-          setMyAvatarUrl(me.avatar_url);
-        }
+      const { data: me } = await supabase
+        .from("admin_users")
+        .select("role, full_name, phone, job_title, avatar_url")
+        .eq("id", user.id)
+        .single();
+      setCurrentUserRole(me?.role ?? null);
+      if (me) {
+        setMyFullName(me.full_name ?? "");
+        setMyPhone(me.phone ?? "");
+        setMyJobTitle(me.job_title ?? "");
+        setMyAvatarUrl(me.avatar_url);
       }
+    }
 
     const { data } = await supabase
       .from("admin_users")
@@ -115,78 +118,78 @@ export default function AdminTeamPage() {
   }, []);
 
   async function handleSaveProfile(e: React.FormEvent) {
-      e.preventDefault();
-      setSavingProfile(true);
-      setProfileError("");
-      setProfileSuccess("");
+    e.preventDefault();
+    setSavingProfile(true);
+    setProfileError("");
+    setProfileSuccess("");
 
-      const supabase = createClient();
-      let finalAvatarUrl = myAvatarUrl;
+    const supabase = createClient();
+    let finalAvatarUrl = myAvatarUrl;
 
-      if (avatarFile) {
-        const {
-          data: { user },
-        } = await supabase.auth.getUser();
-        if (!user) return;
+    if (avatarFile) {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) return;
 
-        const filePath = `${user.id}-${Date.now()}-${avatarFile.name}`;
-        const { error: uploadError } = await supabase.storage
-          .from("avatars")
-          .upload(filePath, avatarFile);
+      const filePath = `${user.id}-${Date.now()}-${avatarFile.name}`;
+      const { error: uploadError } = await supabase.storage
+        .from("avatars")
+        .upload(filePath, avatarFile);
 
-        if (uploadError) {
-          setProfileError(`Photo upload failed: ${uploadError.message}`);
-          setSavingProfile(false);
-          return;
-        }
-
-        const { data: publicUrlData } = supabase.storage
-          .from("avatars")
-          .getPublicUrl(filePath);
-        finalAvatarUrl = publicUrlData.publicUrl;
-      }
-
-      const { error } = await supabase.rpc("update_own_profile", {
-        new_full_name: myFullName,
-        new_phone: myPhone || null,
-        new_job_title: myJobTitle || null,
-        new_avatar_url: finalAvatarUrl,
-      });
-
-      if (error) {
-        setProfileError(error.message);
-      } else {
-        setProfileSuccess("Profile updated successfully.");
-        setMyAvatarUrl(finalAvatarUrl);
-        setAvatarFile(null);
-        loadTeam();
-      }
-      setSavingProfile(false);
-    }
-
-  async function handleChangePassword(e: React.FormEvent) {
-      e.preventDefault();
-      setChangingPassword(true);
-      setPasswordError("");
-      setPasswordSuccess("");
-
-      if (newPassword.length < 6) {
-        setPasswordError("Password must be at least 6 characters.");
-        setChangingPassword(false);
+      if (uploadError) {
+        setProfileError(`Photo upload failed: ${uploadError.message}`);
+        setSavingProfile(false);
         return;
       }
 
-      const supabase = createClient();
-      const { error } = await supabase.auth.updateUser({ password: newPassword });
-
-      if (error) {
-        setPasswordError(error.message);
-      } else {
-        setPasswordSuccess("Password updated successfully.");
-        setNewPassword("");
-      }
-      setChangingPassword(false);
+      const { data: publicUrlData } = supabase.storage
+        .from("avatars")
+        .getPublicUrl(filePath);
+      finalAvatarUrl = publicUrlData.publicUrl;
     }
+
+    const { error } = await supabase.rpc("update_own_profile", {
+      new_full_name: myFullName,
+      new_phone: myPhone || null,
+      new_job_title: myJobTitle || null,
+      new_avatar_url: finalAvatarUrl,
+    });
+
+    if (error) {
+      setProfileError(error.message);
+    } else {
+      setProfileSuccess("Profile updated successfully.");
+      setMyAvatarUrl(finalAvatarUrl);
+      setAvatarFile(null);
+      loadTeam();
+    }
+    setSavingProfile(false);
+  }
+
+  async function handleChangePassword(e: React.FormEvent) {
+    e.preventDefault();
+    setChangingPassword(true);
+    setPasswordError("");
+    setPasswordSuccess("");
+
+    if (newPassword.length < 6) {
+      setPasswordError("Password must be at least 6 characters.");
+      setChangingPassword(false);
+      return;
+    }
+
+    const supabase = createClient();
+    const { error } = await supabase.auth.updateUser({ password: newPassword });
+
+    if (error) {
+      setPasswordError(error.message);
+    } else {
+      setPasswordSuccess("Password updated successfully.");
+      setNewPassword("");
+    }
+    setChangingPassword(false);
+  }
 
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
@@ -217,313 +220,351 @@ export default function AdminTeamPage() {
 
   if (loading) {
     return (
-      <main className="p-6 font-sans text-gray-800 max-w-7xl mx-auto">
-        <div className="flex items-center justify-center py-24 text-xs font-semibold text-gray-400 gap-2">
-          <svg className="w-4 h-4 animate-spin text-gray-600" fill="none" viewBox="0 0 24 24">
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+      <section id={id} className="firebase-admin-container">
+        <div className="firebase-loading-state">
+          <svg className="firebase-spinner" viewBox="0 0 24 24">
+            <circle className="firebase-spinner-track" cx="12" cy="12" r="10" strokeWidth="4" />
+            <path className="firebase-spinner-head" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
           </svg>
           <span>Loading team members...</span>
         </div>
-      </main>
+      </section>
     );
   }
 
   return (
-    <main className="p-6 font-sans text-gray-800 max-w-7xl mx-auto space-y-6">
-      {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2 text-xs text-gray-500 font-medium mb-1">
-            <span>Admin</span>
-            <span>/</span>
-            <span className="text-gray-800">Team</span>
-          </div>
-          <h1 className="text-xl font-bold text-gray-900 tracking-tight">
-            Team Management
-          </h1>
-        </div>
+    <section id={id} className="firebase-admin-container">
+      {/* Top Breadcrumb & Title Header */}
+      <header className="firebase-header">
+        <nav className="firebase-breadcrumb">
+          <span>Admin</span>
+          <span className="firebase-breadcrumb-separator">/</span>
+          <span className="firebase-breadcrumb-active">Team</span>
+        </nav>
+        <h1 className="firebase-title">Team Management</h1>
+      </header>
+
+      {/* Firebase Underline Navigation Tabs */}
+      <div className="firebase-nav-bar">
+        <button
+          type="button"
+          className={`firebase-tab ${activeTab === "team" ? "firebase-tab-active" : ""}`}
+          onClick={() => setActiveTab("team")}
+        >
+          Team Members
+        </button>
+        <button
+          type="button"
+          className={`firebase-tab ${activeTab === "profile" ? "firebase-tab-active" : ""}`}
+          onClick={() => setActiveTab("profile")}
+        >
+          My Profile
+        </button>
+        <button
+          type="button"
+          className={`firebase-tab ${activeTab === "password" ? "firebase-tab-active" : ""}`}
+          onClick={() => setActiveTab("password")}
+        >
+          Change My Password
+        </button>
+        {currentUserRole === "super_admin" && (
+          <button
+            type="button"
+            className={`firebase-tab ${activeTab === "add-admin" ? "firebase-tab-active" : ""}`}
+            onClick={() => setActiveTab("add-admin")}
+          >
+            Add New Admin
+          </button>
+        )}
       </div>
 
-      {/* Main Grid Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-        {/* Team Members List (Takes 2 Columns if Super Admin form present, or full width) */}
-        <div className={currentUserRole === "super_admin" ? "lg:col-span-2 space-y-6" : "lg:col-span-3 space-y-6"}>
-          <div className="bg-white rounded-[15px] border border-gray-200/80 shadow-xs overflow-hidden">
-            <div className="px-5 py-3.5 border-b border-gray-100 flex items-center justify-between bg-gray-50/40">
-              <span className="text-xs font-semibold text-gray-600">
-                Team Members ({team.length})
-              </span>
-            </div>
+      {/* Main Tab Views */}
+      <div className="firebase-content-body">
+        {/* TAB 1: Team Members List */}
+        {activeTab === "team" && (
+          <div className="firebase-section">
+            <div className="firebase-card">
+              <div className="firebase-card-header">
+                <h2 className="firebase-card-title">Team Members ({team.length})</h2>
+              </div>
 
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs border-collapse">
-                <thead className="bg-gray-50 text-gray-600">
-                  <tr className="text-left border-b border-gray-200 text-gray-500">
-                    <th className="py-2 pr-4">Name</th>
-                    <th className="py-2 pr-4">Role</th>
-                    <th className="py-2 pr-4">Added</th>
-                    <th className="py-2 pr-4"></th>
-                  </tr>
-                </thead>
-                {resetError && <p className="text-red-600 text-sm mt-2">{resetError}</p>}
-                <tbody className="divide-y divide-gray-100 text-gray-700">
-                  {team.map((member) => {
-                    const isSuper = member.role === "super_admin";
-                    const isAdmin = member.role === "admin";
+              {resetError && <p className="firebase-alert firebase-alert-error">{resetError}</p>}
 
-                  const isExpanded = expandedMemberId === member.id;
+              <div className="firebase-table-wrapper">
+                <table className="firebase-table">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Role</th>
+                      <th>Added</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {team.map((member) => {
+                      const isSuper = member.role === "super_admin";
+                      const isAdmin = member.role === "admin";
+                      const isExpanded = expandedMemberId === member.id;
 
-                    return (
-                    <React.Fragment key={member.id}>
-                      <tr key={member.id} className="hover:bg-gray-50/80 transition-colors">
-                        <td
-                          onClick={() =>
-                            setExpandedMemberId(isExpanded ? null : member.id)
-                          }
-                          className="py-3.5 px-5 font-semibold text-gray-900 flex items-center gap-2.5 cursor-pointer"
-                        >
-                          {member.avatar_url ? (
-                            <img
-                              src={member.avatar_url}
-                              alt={member.full_name}
-                              className="w-7 h-7 rounded-full object-cover shrink-0 border border-gray-200/60"
-                            />
-                          ) : (
-                            <span className="w-7 h-7 rounded-full bg-gray-100 text-gray-700 text-xs font-bold flex items-center justify-center shrink-0 border border-gray-200/60">
-                              {member.full_name.charAt(0).toUpperCase()}
-                            </span>
-                          )}
-                          <span>{member.full_name}</span>
-                        </td>
-                        <td className="py-3.5 px-4">
-                          <span
-                            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium capitalize ${
-                              isSuper
-                                ? "bg-purple-50 text-purple-700 border border-purple-200/60"
-                                : isAdmin
-                                ? "bg-blue-50 text-blue-700 border border-blue-200/60"
-                                : "bg-gray-100 text-gray-600 border border-gray-200/60"
-                            }`}
-                          >
-                            <span
-                              className={`h-1.5 w-1.5 rounded-full ${
-                                isSuper ? "bg-purple-500" : isAdmin ? "bg-blue-500" : "bg-gray-400"
-                              }`}
-                            />
-                            {member.role.replace("_", " ")}
-                          </span>
-                        </td>
-                        <td className="py-3.5 px-5 text-gray-500 font-mono text-[11px]">
-                          {new Date(member.created_at).toLocaleDateString()}
-                        </td>
-                        <td className="py-3.5 px-4">
-                          {currentUserRole === "super_admin" && (
-                            <>
-                              {resetTargetId === member.id ? (
-                                <div className="flex items-center gap-2">
-                                  <input
-                                    type="password"
-                                    placeholder="New password"
-                                    value={resetPassword}
-                                    onChange={(e) => setResetPassword(e.target.value)}
-                                    className="border border-gray-300 rounded px-2 py-1 text-sm w-32"
-                                  />
-                                  <button
-                                    onClick={() => handleResetPassword(member.id)}
-                                    disabled={resetting || resetPassword.length < 6}
-                                    className="text-xs bg-black text-white px-3 py-1 rounded hover:opacity-90 disabled:opacity-50"
-                                  >
-                                    {resetting ? "..." : "Confirm"}
-                                  </button>
-                                  <button
-                                    onClick={() => {
-                                      setResetTargetId(null);
-                                      setResetPassword("");
-                                    }}
-                                    className="text-xs text-gray-400"
-                                  >
-                                    Cancel
-                                  </button>
-                                </div>
-                              ) : (
-                                <button
-                                  onClick={() => setResetTargetId(member.id)}
-                                  className="text-xs text-blue-600 hover:underline"
-                                >
-                                  Reset Password
-                                </button>
-                              )}
-                              {resetSuccessId === member.id && (
-                                <p className="text-xs text-green-700 mt-1">Password reset successfully.</p>
-                              )}
-                            </>
-                          )}
-                        </td>
-                      </tr>
-                      {isExpanded && (
-                        <tr key={`${member.id}-details`} className="bg-gray-50/60">
-                          <td colSpan={4} className="px-5 py-4">
-                            <div className="flex items-center gap-4">
+                      return (
+                        <React.Fragment key={member.id}>
+                          <tr className="firebase-table-row">
+                            <td
+                              className="firebase-user-cell"
+                              onClick={() => setExpandedMemberId(isExpanded ? null : member.id)}
+                            >
                               {member.avatar_url ? (
                                 <img
                                   src={member.avatar_url}
                                   alt={member.full_name}
-                                  className="w-14 h-14 rounded-full object-cover border border-gray-200"
+                                  className="firebase-avatar"
                                 />
                               ) : (
-                                <div className="w-14 h-14 rounded-full bg-gray-100 text-gray-700 text-lg font-bold flex items-center justify-center border border-gray-200">
+                                <span className="firebase-avatar-fallback">
                                   {member.full_name.charAt(0).toUpperCase()}
-                                </div>
+                                </span>
                               )}
-                              <div className="text-xs text-gray-600 space-y-1">
-                                <p>
-                                  <span className="font-medium text-gray-800">Job Title:</span>{" "}
-                                  {member.job_title || "Not set"}
-                                </p>
-                                <p>
-                                  <span className="font-medium text-gray-800">Phone:</span>{" "}
-                                  {member.phone || "Not set"}
-                                </p>
-                                <p>
-                                  <span className="font-medium text-gray-800">Joined:</span>{" "}
-                                  {new Date(member.created_at).toLocaleDateString()}
-                                </p>
-                              </div>
-                            </div>
-                          </td>
-                        </tr>
-                        )}
-                      </React.Fragment>
-                    );
-                  })}
-                </tbody>
-              </table>
+                              <span>{member.full_name}</span>
+                            </td>
+                            <td>
+                              <span
+                                className={`firebase-badge ${
+                                  isSuper
+                                    ? "firebase-badge-purple"
+                                    : isAdmin
+                                    ? "firebase-badge-blue"
+                                    : "firebase-badge-gray"
+                                }`}
+                              >
+                                {member.role.replace("_", " ")}
+                              </span>
+                            </td>
+                            <td className="firebase-date-cell">
+                              {new Date(member.created_at).toLocaleDateString()}
+                            </td>
+                            <td>
+                              {currentUserRole === "super_admin" && (
+                                <>
+                                  {resetTargetId === member.id ? (
+                                    <div className="firebase-reset-inline">
+                                      <input
+                                        type="password"
+                                        placeholder="New password"
+                                        value={resetPassword}
+                                        onChange={(e) => setResetPassword(e.target.value)}
+                                        className="firebase-input firebase-input-sm"
+                                      />
+                                      <button
+                                        type="button"
+                                        onClick={() => handleResetPassword(member.id)}
+                                        disabled={resetting || resetPassword.length < 6}
+                                        className="firebase-btn firebase-btn-primary firebase-btn-sm"
+                                      >
+                                        {resetting ? "..." : "Confirm"}
+                                      </button>
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          setResetTargetId(null);
+                                          setResetPassword("");
+                                        }}
+                                        className="firebase-btn-text"
+                                      >
+                                        Cancel
+                                      </button>
+                                    </div>
+                                  ) : (
+                                    <button
+                                      type="button"
+                                      onClick={() => setResetTargetId(member.id)}
+                                      className="firebase-link-btn"
+                                    >
+                                      Reset Password
+                                    </button>
+                                  )}
+                                  {resetSuccessId === member.id && (
+                                    <p className="firebase-text-success">Password reset successfully.</p>
+                                  )}
+                                </>
+                              )}
+                            </td>
+                          </tr>
+                          {isExpanded && (
+                            <tr className="firebase-table-details-row">
+                              <td colSpan={4}>
+                                <div className="firebase-details-box">
+                                  {member.avatar_url ? (
+                                    <img
+                                      src={member.avatar_url}
+                                      alt={member.full_name}
+                                      className="firebase-avatar-lg"
+                                    />
+                                  ) : (
+                                    <div className="firebase-avatar-fallback-lg">
+                                      {member.full_name.charAt(0).toUpperCase()}
+                                    </div>
+                                  )}
+                                  <div className="firebase-details-list">
+                                    <p>
+                                      <strong>Job Title:</strong> {member.job_title || "Not set"}
+                                    </p>
+                                    <p>
+                                      <strong>Phone:</strong> {member.phone || "Not set"}
+                                    </p>
+                                    <p>
+                                      <strong>Joined:</strong>{" "}
+                                      {new Date(member.created_at).toLocaleDateString()}
+                                    </p>
+                                  </div>
+                                </div>
+                              </td>
+                            </tr>
+                          )}
+                        </React.Fragment>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
-        <div className="mt-10 mb-10 max-w-md">
-          <h2 className="text-lg font-medium mb-4">My Profile</h2>
-          <form onSubmit={handleSaveProfile} className="space-y-3">
-            <div>
-              <label className="block text-sm font-medium mb-1">Profile Photo</label>
-              {myAvatarUrl && !avatarFile && (
-                <img
-                  src={myAvatarUrl}
-                  alt="Current avatar"
-                  className="w-16 h-16 rounded-full object-cover mb-2 border border-gray-200"
-                />
-              )}
-              <input
-                type="file"
-                accept="image/jpeg,image/png,image/webp"
-                onChange={(e) => setAvatarFile(e.target.files?.[0] ?? null)}
-                className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
-              />
+        {/* TAB 2: My Profile */}
+        {activeTab === "profile" && (
+          <div className="firebase-section firebase-section-narrow">
+            <div className="firebase-card">
+              <div className="firebase-card-header">
+                <h2 className="firebase-card-title">My Profile</h2>
+              </div>
+
+              <form onSubmit={handleSaveProfile} className="firebase-form">
+                <div className="firebase-field">
+                  <label className="firebase-label">Profile Photo</label>
+                  {myAvatarUrl && !avatarFile && (
+                    <img
+                      src={myAvatarUrl}
+                      alt="Current avatar"
+                      className="firebase-avatar-lg"
+                    />
+                  )}
+                  <input
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    onChange={(e) => setAvatarFile(e.target.files?.[0] ?? null)}
+                    className="firebase-file-input"
+                  />
+                </div>
+
+                <div className="firebase-field">
+                  <label className="firebase-label">Full Name</label>
+                  <input
+                    type="text"
+                    required
+                    value={myFullName}
+                    onChange={(e) => setMyFullName(e.target.value)}
+                    className="firebase-input"
+                  />
+                </div>
+
+                <div className="firebase-field">
+                  <label className="firebase-label">Job Title</label>
+                  <input
+                    type="text"
+                    value={myJobTitle}
+                    onChange={(e) => setMyJobTitle(e.target.value)}
+                    placeholder="e.g. Program Coordinator"
+                    className="firebase-input"
+                  />
+                </div>
+
+                <div className="firebase-field">
+                  <label className="firebase-label">Phone</label>
+                  <input
+                    type="tel"
+                    value={myPhone}
+                    onChange={(e) => setMyPhone(e.target.value)}
+                    className="firebase-input"
+                  />
+                </div>
+
+                <div className="firebase-form-actions">
+                  <button
+                    type="submit"
+                    disabled={savingProfile}
+                    className="firebase-btn firebase-btn-primary"
+                  >
+                    {savingProfile ? "Saving..." : "Save Profile"}
+                  </button>
+                </div>
+                {profileError && <p className="firebase-alert firebase-alert-error">{profileError}</p>}
+                {profileSuccess && <p className="firebase-alert firebase-alert-success">{profileSuccess}</p>}
+              </form>
             </div>
+          </div>
+        )}
 
-            <div>
-              <label className="block text-sm font-medium mb-1">Full Name</label>
-              <input
-                type="text"
-                required
-                value={myFullName}
-                onChange={(e) => setMyFullName(e.target.value)}
-                className="w-full border border-gray-300 rounded px-3 py-2"
-              />
+        {/* TAB 3: Change Password */}
+        {activeTab === "password" && (
+          <div className="firebase-section firebase-section-narrow">
+            <div className="firebase-card">
+              <div className="firebase-card-header">
+                <h2 className="firebase-card-title">Change My Password</h2>
+              </div>
+
+              <form onSubmit={handleChangePassword} className="firebase-form">
+                <div className="firebase-field">
+                  <label className="firebase-label">New Password</label>
+                  <input
+                    type="password"
+                    required
+                    minLength={6}
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    className="firebase-input"
+                  />
+                </div>
+
+                <div className="firebase-form-actions">
+                  <button
+                    type="submit"
+                    disabled={changingPassword}
+                    className="firebase-btn firebase-btn-primary"
+                  >
+                    {changingPassword ? "Updating..." : "Update Password"}
+                  </button>
+                </div>
+                {passwordError && <p className="firebase-alert firebase-alert-error">{passwordError}</p>}
+                {passwordSuccess && <p className="firebase-alert firebase-alert-success">{passwordSuccess}</p>}
+              </form>
             </div>
+          </div>
+        )}
 
-            <div>
-              <label className="block text-sm font-medium mb-1">Job Title</label>
-              <input
-                type="text"
-                value={myJobTitle}
-                onChange={(e) => setMyJobTitle(e.target.value)}
-                placeholder="e.g. Program Coordinator"
-                className="w-full border border-gray-300 rounded px-3 py-2"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-1">Phone</label>
-              <input
-                type="tel"
-                value={myPhone}
-                onChange={(e) => setMyPhone(e.target.value)}
-                className="w-full border border-gray-300 rounded px-3 py-2"
-              />
-            </div>
-
-            <button
-              type="submit"
-              disabled={savingProfile}
-              className="bg-black text-white px-6 py-2.5 rounded hover:opacity-90 disabled:opacity-50"
-            >
-              {savingProfile ? "Saving..." : "Save Profile"}
-            </button>
-            {profileError && <p className="text-red-600 text-sm">{profileError}</p>}
-            {profileSuccess && <p className="text-green-700 text-sm">{profileSuccess}</p>}
-          </form>
-        </div>
-
-        <div className="mt-10 mb-10 max-w-md">
-          <h2 className="text-lg font-medium mb-4">Change My Password</h2>
-          <form onSubmit={handleChangePassword} className="space-y-3">
-            <div>
-              <label className="block text-sm font-medium mb-1">New Password</label>
-              <input
-                type="password"
-                required
-                minLength={6}
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                className="w-full border border-gray-300 rounded px-3 py-2"
-              />
-            </div>
-            <button
-              type="submit"
-              disabled={changingPassword}
-              className="bg-black text-white px-6 py-2.5 rounded hover:opacity-90 disabled:opacity-50"
-            >
-              {changingPassword ? "Updating..." : "Update Password"}
-            </button>
-            {passwordError && <p className="text-red-600 text-sm">{passwordError}</p>}
-            {passwordSuccess && <p className="text-green-700 text-sm">{passwordSuccess}</p>}
-          </form>
-        </div>
-
-        {/* Right Sidebar: Add Admin Form or Restricted Notice */}
-        <div className="space-y-6">
-          {currentUserRole === "super_admin" ? (
-            <div className="bg-white rounded-[15px] border border-gray-200/80 p-5 shadow-xs space-y-4">
-              <h2 className="text-xs font-bold text-gray-400 uppercase tracking-wider pb-1 border-b border-gray-100">
-                Add New Admin
-              </h2>
+        {/* TAB 4: Add New Admin */}
+        {activeTab === "add-admin" && currentUserRole === "super_admin" && (
+          <div className="firebase-section firebase-section-narrow">
+            <div className="firebase-card">
+              <div className="firebase-card-header">
+                <h2 className="firebase-card-title">Add New Admin</h2>
+              </div>
 
               {error && (
-                <div className="bg-red-50 border border-red-200 rounded-[12px] p-3 text-xs text-red-600 flex items-center gap-2">
-                  <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
+                <div className="firebase-alert firebase-alert-error">
                   <span>{error}</span>
                 </div>
               )}
 
               {success && (
-                <div className="bg-emerald-50 border border-emerald-200 rounded-[12px] p-3 text-xs text-emerald-700 flex items-center gap-2">
-                  <svg className="w-4 h-4 shrink-0 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
+                <div className="firebase-alert firebase-alert-success">
                   <span>{success}</span>
                 </div>
               )}
 
-              <form onSubmit={handleCreate} className="space-y-4">
-                {/* Full Name */}
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-1.5">
-                    Full Name <span className="text-red-500">*</span>
+              <form onSubmit={handleCreate} className="firebase-form">
+                <div className="firebase-field">
+                  <label className="firebase-label">
+                    Full Name <span className="firebase-text-required">*</span>
                   </label>
                   <input
                     type="text"
@@ -531,14 +572,13 @@ export default function AdminTeamPage() {
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     placeholder="Jane Doe"
-                    className="w-full bg-white border border-gray-200 rounded-lg px-3.5 py-2 text-xs font-medium focus:outline-hidden focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all placeholder:text-gray-400"
+                    className="firebase-input"
                   />
                 </div>
 
-                {/* Email */}
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-1.5">
-                    Email Address <span className="text-red-500">*</span>
+                <div className="firebase-field">
+                  <label className="firebase-label">
+                    Email Address <span className="firebase-text-required">*</span>
                   </label>
                   <input
                     type="email"
@@ -546,14 +586,13 @@ export default function AdminTeamPage() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="jane@example.com"
-                    className="w-full bg-white border border-gray-200 rounded-lg px-3.5 py-2 text-xs font-medium focus:outline-hidden focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all placeholder:text-gray-400"
+                    className="firebase-input"
                   />
                 </div>
 
-                {/* Password */}
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-1.5">
-                    Temporary Password <span className="text-red-500">*</span>
+                <div className="firebase-field">
+                  <label className="firebase-label">
+                    Temporary Password <span className="firebase-text-required">*</span>
                   </label>
                   <input
                     type="text"
@@ -562,22 +601,19 @@ export default function AdminTeamPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full bg-white border border-gray-200 rounded-lg px-3.5 py-2 text-xs font-mono focus:outline-hidden focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all placeholder:text-gray-300"
+                    className="firebase-input firebase-font-mono"
                   />
-                  <p className="text-[11px] text-gray-400 mt-1">
+                  <p className="firebase-field-hint">
                     Share this with them directly — they can change it after logging in.
                   </p>
                 </div>
 
-                {/* Role */}
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-1.5">
-                    Role
-                  </label>
+                <div className="firebase-field">
+                  <label className="firebase-label">Role</label>
                   <select
                     value={role}
                     onChange={(e) => setRole(e.target.value)}
-                    className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-xs font-medium focus:outline-hidden focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all"
+                    className="firebase-select"
                   >
                     <option value="editor">Editor</option>
                     <option value="admin">Admin</option>
@@ -585,38 +621,20 @@ export default function AdminTeamPage() {
                   </select>
                 </div>
 
-                <button
-                  type="submit"
-                  disabled={creating}
-                  className="w-full inline-flex items-center justify-center gap-2 bg-gray-900 hover:bg-gray-800 text-white font-medium text-xs px-5 py-2.5 rounded-full shadow-xs transition-colors disabled:opacity-50 mt-2"
-                >
-                  {creating ? (
-                    <>
-                      <svg className="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                      </svg>
-                      <span>Creating...</span>
-                    </>
-                  ) : (
-                    <span>Add Admin Member</span>
-                  )}
-                </button>
+                <div className="firebase-form-actions">
+                  <button
+                    type="submit"
+                    disabled={creating}
+                    className="firebase-btn firebase-btn-primary"
+                  >
+                    {creating ? "Creating..." : "Add Admin Member"}
+                  </button>
+                </div>
               </form>
             </div>
-          ) : (
-            <div className="bg-gray-50 rounded-[15px] border border-gray-200/80 p-5 text-center">
-              <svg className="w-8 h-8 text-gray-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-              </svg>
-              <p className="text-xs font-semibold text-gray-700">Access Restricted</p>
-              <p className="text-[11px] text-gray-400 mt-1">
-                Only super admins can add or configure new team members.
-              </p>
-            </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
-    </main>
+    </section>
   );
 }

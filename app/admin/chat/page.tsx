@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import ChatThread from "@/components/admin/ChatThread";
 import ConfirmDialog from "@/components/admin/ConfirmDialog";
+import "./AdminChatPage.css";
 
 type Conversation = {
   id: string;
@@ -21,7 +22,11 @@ type AdminUser = {
   phone: string | null;
 };
 
-export default function AdminChatPage() {
+interface AdminChatPageProps {
+  id?: string;
+}
+
+export default function AdminChatPage({ id = "admin-chat-page" }: AdminChatPageProps) {
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [teammates, setTeammates] = useState<AdminUser[]>([]);
@@ -147,15 +152,12 @@ export default function AdminChatPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-[#F8F9FA] p-6 font-sans text-gray-700">
-        <div className="flex flex-col items-center justify-center py-32 text-xs font-medium text-gray-500 gap-3">
-          <svg className="w-5 h-5 animate-spin text-[#1A73E8]" fill="none" viewBox="0 0 24 24">
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
-            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-          </svg>
+      <section id={id} className="google-chat-page">
+        <div className="google-chat-loading">
+          <div className="google-chat-spinner"></div>
           <span>Loading project messages...</span>
         </div>
-      </main>
+      </section>
     );
   }
 
@@ -170,97 +172,57 @@ export default function AdminChatPage() {
     .filter((c) => c.displayName.toLowerCase().includes(searchQuery.toLowerCase()));
 
   return (
-    <main className="h-screen bg-[#F8F9FA] font-sans text-gray-800 p-6 flex flex-col space-y-4 overflow-hidden">
-      {/* Embedded CSS for seamless Firebase-style scrollbar */}
-      <style jsx global>{`
-        .firebase-scrollbar::-webkit-scrollbar {
-          width: 5px;
-        }
-        .firebase-scrollbar::-webkit-scrollbar-button {
-          display: none;
-          width: 0;
-          height: 0;
-        }
-        .firebase-scrollbar::-webkit-scrollbar-track {
-          background: transparent;
-        }
-        .firebase-scrollbar::-webkit-scrollbar-thumb {
-          background-color: #dadce0;
-          border-radius: 4px;
-        }
-        .firebase-scrollbar::-webkit-scrollbar-thumb:hover {
-          background-color: #bdc1c6;
-        }
-        .firebase-scrollbar {
-          scrollbar-width: thin;
-          scrollbar-color: #dadce0 transparent;
-        }
-      `}</style>
-
-      {/* Firebase Header */}
-      <div className="flex items-center justify-between shrink-0 px-1">
-        <div>
-          <div className="flex items-center gap-1.5 text-xs text-gray-500 font-normal mb-0.5">
-            <span>Project</span>
-            <span>/</span>
-            <span className="text-gray-900 font-medium">Realtime Messaging</span>
-          </div>
-          <h1 className="text-xl font-normal text-gray-900 tracking-tight">
-            In-App Messaging
-          </h1>
+    <section id={id} className="google-chat-page">
+      {/* Header */}
+      <header className="google-chat-header">
+        <div className="google-chat-breadcrumb">
+          <span>Project</span>
+          <span className="breadcrumb-separator">/</span>
+          <span className="breadcrumb-current">Realtime Messaging</span>
         </div>
-      </div>
+        <h1 className="google-chat-title">
+          <span className="google-icon text-icon-color">chat_bubble</span>
+          In-App Messaging
+        </h1>
+      </header>
 
-      {/* Firebase Main Card View */}
-      <div className="flex-1 bg-white rounded-lg border border-gray-200 shadow-xs overflow-hidden flex min-h-0">
-        
-        {/* Left Navigation Panel */}
-        <aside className="w-80 border-r border-gray-200 bg-[#FFFFFF] flex flex-col shrink-0">
-          
+      {/* Main App Workspace */}
+      <div className="google-chat-card">
+        {/* Navigation Sidebar */}
+        <aside className="google-chat-sidebar">
           {/* Search Box */}
-          <div className="p-3 border-b border-gray-100">
-            <div className="relative">
+          <div className="google-chat-search-container">
+            <div className="google-chat-search-wrapper">
+              <span className="google-icon search-icon">search</span>
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Filter channels or people..."
-                className="w-full bg-[#F1F3F4] border-none rounded-md pl-9 pr-3 py-1.5 text-xs text-gray-800 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#1A73E8]"
+                placeholder="Search Chat"
+                className="google-chat-search-input"
               />
-              <svg className="w-4 h-4 text-gray-500 absolute left-2.5 top-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
             </div>
           </div>
 
-          {/* Navigation Items Container */}
-          <div className="p-2 overflow-y-auto space-y-4 flex-1 firebase-scrollbar">
-            
+          {/* Navigation Items */}
+          <div className="google-chat-nav-scroll custom-scrollbar">
             {/* Channels */}
-            <div>
-              <div className="px-3 py-1 flex items-center justify-between">
-                <span className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider">
-                  Channels
-                </span>
-                <span className="text-[11px] font-medium text-gray-500 bg-gray-100 px-1.5 py-0.2 rounded-full">
-                  {filteredChannels.length}
-                </span>
+            <div className="google-chat-section">
+              <div className="google-chat-section-header">
+                <span className="section-title">Space Channels</span>
+                <span className="section-badge">{filteredChannels.length}</span>
               </div>
-              <div className="space-y-0.5 mt-1">
+              <div className="google-chat-list">
                 {filteredChannels.map((c) => {
                   const isSelected = selectedConversationId === c.id;
                   return (
                     <button
                       key={c.id}
                       onClick={() => setSelectedConversationId(c.id)}
-                      className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-md text-xs transition-colors ${
-                        isSelected
-                          ? "bg-[#E8F0FE] text-[#1A73E8] font-semibold"
-                          : "text-gray-700 hover:bg-gray-100 font-normal"
-                      }`}
+                      className={`google-chat-item ${isSelected ? "selected" : ""}`}
                     >
-                      <span className={isSelected ? "text-[#1A73E8]" : "text-gray-400"}>#</span>
-                      <span className="truncate">{c.displayName}</span>
+                      <span className="google-icon item-icon">tag</span>
+                      <span className="item-label">{c.displayName}</span>
                     </button>
                   );
                 })}
@@ -268,17 +230,13 @@ export default function AdminChatPage() {
             </div>
 
             {/* Direct Messages */}
-            <div>
-              <div className="px-3 py-1 flex items-center justify-between">
-                <span className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider">
-                  Direct Messages
-                </span>
-                <span className="text-[11px] font-medium text-gray-500 bg-gray-100 px-1.5 py-0.2 rounded-full">
-                  {filteredDMs.length}
-                </span>
+            <div className="google-chat-section">
+              <div className="google-chat-section-header">
+                <span className="section-title">Direct Messages</span>
+                <span className="section-badge">{filteredDMs.length}</span>
               </div>
 
-              <div className="space-y-0.5 mt-1">
+              <div className="google-chat-list">
                 {filteredDMs.map((c) => {
                   const isSelected = selectedConversationId === c.id;
                   const otherMember = teammates.find((t) => t.id === c.otherUserId);
@@ -286,61 +244,54 @@ export default function AdminChatPage() {
                     <button
                       key={c.id}
                       onClick={() => setSelectedConversationId(c.id)}
-                      className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-md text-xs transition-colors ${
-                        isSelected
-                          ? "bg-[#E8F0FE] text-[#1A73E8] font-semibold"
-                          : "text-gray-700 hover:bg-gray-100 font-normal"
-                      }`}
+                      className={`google-chat-item ${isSelected ? "selected" : ""}`}
                     >
                       <span
                         onClick={(e) => {
                           e.stopPropagation();
                           if (c.otherUserId) setProfilePanelUserId(c.otherUserId);
                         }}
-                        className="shrink-0"
+                        className="avatar-wrapper"
                       >
                         {otherMember?.avatar_url ? (
                           <img
                             src={otherMember.avatar_url}
                             alt={c.displayName}
-                            className="w-5 h-5 rounded-full object-cover hover:ring-2 hover:ring-[#1A73E8] transition-all"
+                            className="avatar-image"
                           />
                         ) : (
-                          <span className="w-5 h-5 rounded-full bg-gray-200 text-gray-700 text-[9px] font-semibold flex items-center justify-center hover:ring-2 hover:ring-[#1A73E8] transition-all">
+                          <span className="avatar-placeholder">
                             {c.displayName.charAt(0).toUpperCase()}
                           </span>
                         )}
+                        <span className="status-indicator online"></span>
                       </span>
-                      <span className="truncate">{c.displayName}</span>
+                      <span className="item-label">{c.displayName}</span>
                     </button>
                   );
                 })}
               </div>
             </div>
 
-            {/* Start New Chat (Teammates) */}
-            <div>
-              <div className="px-3 py-1 flex items-center justify-between">
-                <span className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider">
-                  Teammates
-                </span>
+            {/* Teammates */}
+            <div className="google-chat-section">
+              <div className="google-chat-section-header">
+                <span className="section-title">Teammates</span>
               </div>
-              <div className="space-y-0.5 mt-1">
+              <div className="google-chat-list">
                 {teammates.map((t) => (
                   <button
                     key={t.id}
                     onClick={() => startOrOpenDM(t.id)}
-                    className="w-full flex items-center justify-between px-3 py-1.5 rounded-md text-xs font-normal text-gray-600 hover:bg-gray-100 transition-colors group"
+                    className="google-chat-item teammate-item"
                   >
-                    <div className="flex items-center gap-2.5 truncate">
-                      <span className="w-6 h-6 rounded-full bg-gray-200 text-gray-700 text-[11px] font-semibold flex items-center justify-center shrink-0">
+                    <div className="teammate-info">
+                      <span className="avatar-placeholder">
                         {t.full_name.charAt(0).toUpperCase()}
                       </span>
-                      <span className="truncate">{t.full_name}</span>
+                      <span className="item-label">{t.full_name}</span>
                     </div>
-                    <svg className="w-4 h-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                    </svg>
+                    <span className="google-icon add-icon">add</span>
                   </button>
                 ))}
               </div>
@@ -348,31 +299,36 @@ export default function AdminChatPage() {
           </div>
         </aside>
 
-        {/* Central Chat Thread View */}
-        <section className="flex-1 flex flex-col min-w-0 bg-white">
+        {/* Central Chat Thread */}
+        <section className="google-chat-main">
           {selectedConversationId && currentUserId ? (
             <>
               {/* Header Bar */}
-              <div className="h-14 px-6 border-b border-gray-200 flex items-center justify-between bg-white shrink-0">
-                <div className="flex items-center gap-2.5">
-                  <span className="text-sm font-medium text-gray-900">
-                    {activeConvo?.type === "channel" ? `# ${activeConvo.displayName}` : activeConvo?.displayName}
+              <div className="google-chat-thread-header">
+                <div className="thread-title-area">
+                  <span className="google-icon thread-type-icon">
+                    {activeConvo?.type === "channel" ? "tag" : "person"}
                   </span>
-                  <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-50 text-[11px] font-medium text-emerald-700 border border-emerald-200">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                  <span className="thread-title">
+                    {activeConvo?.displayName}
+                  </span>
+                  <span className="status-badge">
+                    <span className="status-dot"></span>
                     Active
                   </span>
                 </div>
                 <button
                   onClick={() => setShowClearConfirm(true)}
-                  className="px-3 py-1 text-xs font-medium text-red-600 hover:bg-red-50 rounded transition-colors"
+                  className="btn-clear-thread"
+                  title="Clear history"
                 >
+                  <span className="google-icon">delete_outline</span>
                   Clear Thread
                 </button>
               </div>
 
-              {/* Chat Thread Component */}
-              <div className="flex-1 min-h-0">
+              {/* Chat Thread Area */}
+              <div className="google-chat-thread-body">
                 <ChatThread
                   conversationId={selectedConversationId}
                   currentUserId={currentUserId}
@@ -380,52 +336,55 @@ export default function AdminChatPage() {
               </div>
             </>
           ) : (
-            <div className="h-full flex flex-col items-center justify-center text-center p-8 bg-[#F8F9FA]/40">
-              <div className="w-12 h-12 rounded-full bg-blue-50 text-[#1A73E8] flex items-center justify-center mb-3 border border-blue-100">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                </svg>
+            <div className="google-chat-empty-state">
+              <div className="empty-icon-container">
+                <span className="google-icon empty-icon">forum</span>
               </div>
-              <p className="text-sm font-medium text-gray-900 mb-1">Select a conversation</p>
-              <p className="text-xs text-gray-500 max-w-xs">
-                Pick a channel or a team member from the list on the left to display the message logs.
+              <p className="empty-title">Select a conversation</p>
+              <p className="empty-description">
+                Pick a space or a team member from the list on the left to display current message logs.
               </p>
             </div>
           )}
-                </section>
+        </section>
 
+        {/* Profile Sidebar */}
         {profilePanelUserId && (() => {
           const member = teammates.find((t) => t.id === profilePanelUserId);
           if (!member) return null;
           return (
-            <aside className="w-72 border-l border-gray-200 bg-white flex flex-col shrink-0">
-              <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
-                <span className="text-sm font-medium text-gray-900">Profile</span>
+            <aside className="google-chat-profile-panel">
+              <div className="profile-header">
+                <span className="profile-title">Contact info</span>
                 <button
                   onClick={() => setProfilePanelUserId(null)}
-                  className="text-gray-400 hover:text-gray-700 text-sm"
+                  className="profile-close-btn"
+                  aria-label="Close Profile"
                 >
-                  ✕
+                  <span className="google-icon">close</span>
                 </button>
               </div>
-              <div className="p-5 flex flex-col items-center text-center">
+              <div className="profile-body">
                 {member.avatar_url ? (
                   <img
                     src={member.avatar_url}
                     alt={member.full_name}
-                    className="w-20 h-20 rounded-full object-cover mb-3"
+                    className="profile-avatar"
                   />
                 ) : (
-                  <div className="w-20 h-20 rounded-full bg-gray-200 text-gray-700 text-2xl font-bold flex items-center justify-center mb-3">
+                  <div className="profile-avatar-placeholder">
                     {member.full_name.charAt(0).toUpperCase()}
                   </div>
                 )}
-                <p className="text-sm font-semibold text-gray-900">{member.full_name}</p>
+                <p className="profile-name">{member.full_name}</p>
                 {member.job_title && (
-                  <p className="text-xs text-gray-500 mt-0.5">{member.job_title}</p>
+                  <p className="profile-role">{member.job_title}</p>
                 )}
                 {member.phone && (
-                  <p className="text-xs text-gray-600 mt-3">📞 {member.phone}</p>
+                  <div className="profile-contact-row">
+                    <span className="google-icon">call</span>
+                    <span>{member.phone}</span>
+                  </div>
                 )}
               </div>
             </aside>
@@ -441,6 +400,6 @@ export default function AdminChatPage() {
         onConfirm={handleClearConversation}
         onCancel={() => setShowClearConfirm(false)}
       />
-    </main>
+    </section>
   );
 }

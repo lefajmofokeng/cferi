@@ -1,0 +1,474 @@
+/* Base Container & Google/Firebase Typography */
+.firebase-admin-container {
+  font-family: inherit;
+  color: #1f1f1f;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+  padding: 24px 1.5rem;
+  box-sizing: border-box;
+  scroll-margin-top: 80px;
+}
+
+/* Header & Breadcrumb */
+.firebase-header {
+  margin-bottom: 16px;
+}
+
+.firebase-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #5f6368;
+  margin-bottom: 6px;
+}
+
+.firebase-breadcrumb-separator {
+  color: #bdc1c6;
+}
+
+.firebase-breadcrumb-active {
+  color: #202124;
+  font-weight: 500;
+}
+
+.firebase-title {
+  font-size: 28px;
+  font-weight: 400;
+  color: #202124;
+  margin: 0;
+  letter-spacing: -0.2px;
+}
+
+/* Firebase Underline Navigation Bar */
+.firebase-nav-bar {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  border-bottom: 2px solid #cbcbcb;
+  margin-bottom: 24px;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.firebase-tab {
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  color: #5f6368;
+  padding: 12px 0;
+  cursor: pointer;
+  position: relative;
+  transition: color 0.15s ease;
+}
+
+.firebase-tab:hover {
+  color: #1a73e8;
+}
+
+.firebase-tab-active {
+  color: #1a73e8;
+  font-weight: 600;
+}
+
+.firebase-tab-active::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background-color: #1a73e8;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+}
+
+/* Body Content Structures */
+.firebase-content-body {
+  width: 100%;
+}
+
+.firebase-section {
+  width: 100%;
+}
+
+.firebase-section-narrow {
+  max-width: 560px;
+}
+
+/* Material Style Cards */
+.firebase-card {
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px 0 rgba(60, 64, 67, 0.585);
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.firebase-card-header {
+  margin-bottom: 20px;
+}
+
+.firebase-card-title {
+  font-size: 18px;
+  font-weight: 500;
+  color: #202124;
+  margin: 0;
+}
+
+/* Data Tables */
+.firebase-table-wrapper {
+  overflow-x: auto;
+  width: 100%;
+}
+
+.firebase-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 13px;
+}
+
+.firebase-table th {
+  padding: 12px 16px;
+  color: #5f6368;
+  font-weight: 500;
+  border-bottom: 1px solid #e0e0e0;
+  background-color: #fafafa;
+}
+
+.firebase-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #f1f3f4;
+  color: #3c4043;
+}
+
+.firebase-table-row:hover {
+  background-color: #f8f9fa;
+}
+
+.firebase-user-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  font-weight: 500;
+  color: #202124;
+}
+
+.firebase-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid #e0e0e0;
+  aspect-ratio: 1 / 1;
+}
+
+.firebase-avatar-fallback {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #e8f0fe;
+  color: #1a73e8;
+  font-weight: 600;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1 / 1;
+}
+
+/* Badges */
+.firebase-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.firebase-badge-purple {
+  background-color: #f3e8ff;
+  color: #6b21a8;
+}
+
+.firebase-badge-blue {
+  background-color: #e8f0fe;
+  color: #1a73e8;
+}
+
+.firebase-badge-gray {
+  background-color: #f1f3f4;
+  color: #5f6368;
+}
+
+.firebase-date-cell {
+  font-family: monospace;
+  color: #5f6368;
+  font-size: 12px;
+}
+
+/* Detailed Expanded Table Section */
+.firebase-table-details-row {
+  background-color: #f8f9fa;
+}
+
+.firebase-details-box {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 12px;
+}
+
+.firebase-details-list p {
+  margin: 3px 0;
+  font-size: 12px;
+  color: #3c4043;
+}
+
+/* Forms & Inputs */
+.firebase-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.firebase-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.firebase-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #3c4043;
+}
+
+.firebase-input,
+.firebase-select {
+  width: 100%;
+  height: 40px;
+  padding: 8px 12px;
+  border: 1px solid #dadce0;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #202124;
+  background-color: #ffffff;
+  box-sizing: border-box;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.firebase-input:focus,
+.firebase-select:focus {
+  outline: none;
+  border-color: #1a73e8;
+  box-shadow: 0 0 0 1px #1a73e8;
+}
+
+.firebase-font-mono {
+  font-family: monospace;
+}
+
+.firebase-field-hint {
+  font-size: 11px;
+  color: #70757a;
+  margin: 0;
+}
+
+.firebase-text-required {
+  color: #d93025;
+}
+
+.firebase-avatar-lg {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid #dadce0;
+  margin-bottom: 8px;
+  aspect-ratio: 1 / 1;
+}
+
+.firebase-avatar-fallback-lg {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background-color: #e8f0fe;
+  color: #1a73e8;
+  font-size: 20px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1 / 1;
+}
+
+.firebase-file-input {
+  font-size: 12px;
+  color: #5f6368;
+}
+
+/* Action Buttons */
+.firebase-form-actions {
+  margin-top: 8px;
+  display: flex;
+}
+
+.firebase-btn {
+  height: 36px;
+  padding: 0 24px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.firebase-btn-primary {
+  background-color: #1a73e8;
+  color: #ffffff;
+}
+
+.firebase-btn-primary:hover {
+  background-color: #1557b0;
+  box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.3);
+}
+
+.firebase-btn-primary:disabled {
+  background-color: #8ab4f8;
+  cursor: not-allowed;
+}
+
+.firebase-btn-sm {
+  height: 28px;
+  padding: 0 10px;
+  font-size: 12px;
+}
+
+.firebase-btn-text {
+  background: none;
+  border: none;
+  color: #5f6368;
+  font-size: 12px;
+  cursor: pointer;
+  margin-left: 6px;
+}
+
+.firebase-btn-text:hover {
+  color: #202124;
+}
+
+.firebase-link-btn {
+  background: none;
+  border: none;
+  color: #1a73e8;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0;
+}
+
+.firebase-link-btn:hover {
+  text-decoration: underline;
+}
+
+/* Inline Reset Controls */
+.firebase-reset-inline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.firebase-input-sm {
+  width: 130px;
+  height: 28px;
+  font-size: 12px;
+}
+
+/* Alerts */
+.firebase-alert {
+  padding: 10px 14px;
+  border-radius: 4px;
+  font-size: 13px;
+  margin-top: 12px;
+  margin-bottom: 12px;
+}
+
+.firebase-alert-error {
+  background-color: #fce8e6;
+  color: #c5221f;
+  border: 1px solid #fad2cf;
+}
+
+.firebase-alert-success {
+  background-color: #e6f4ea;
+  color: #137333;
+  border: 1px solid #ceead6;
+}
+
+.firebase-text-success {
+  font-size: 11px;
+  color: #137333;
+  margin: 4px 0 0 0;
+}
+
+/* Loading State */
+.firebase-loading-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 64px 0;
+  color: #5f6368;
+  font-size: 13px;
+}
+
+.firebase-spinner {
+  width: 20px;
+  height: 20px;
+  animation: firebase-spin 1s linear infinite;
+  color: #1a73e8;
+}
+
+.firebase-spinner-track {
+  opacity: 0.2;
+}
+
+.firebase-spinner-head {
+  opacity: 0.8;
+}
+
+@keyframes firebase-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 640px) {
+  .firebase-admin-container {
+    padding: 16px;
+  }
+
+  .firebase-nav-bar {
+    gap: 16px;
+  }
+
+  .firebase-card {
+    padding: 16px;
+  }
+
+  .firebase-reset-inline {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
