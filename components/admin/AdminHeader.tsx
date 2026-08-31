@@ -8,10 +8,8 @@ import "./AdminHeader.css";
 export default function AdminHeader() {
   const [fullName, setFullName] = useState("");
   const [role, setRole] = useState("");
-  const pathname = usePathname();
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
-
-  if (pathname === "/admin/login") return null;
+  const pathname = usePathname();
 
   useEffect(() => {
     async function loadUser() {
@@ -35,6 +33,8 @@ export default function AdminHeader() {
     }
     loadUser();
   }, []);
+
+    if (pathname === "/admin/login") return null;
 
   return (
     <header className="admin-header">
