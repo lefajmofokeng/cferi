@@ -36,6 +36,12 @@ export default function AdminChatPage({ id = "admin-chat-page" }: AdminChatPageP
   const [searchQuery, setSearchQuery] = useState("");
   const [profilePanelUserId, setProfilePanelUserId] = useState<string | null>(null);
 
+  // Real Web MediaRecorder State & References
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordingTime, setRecordingTime] = useState(0);
+  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
+  const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
+
   async function loadEverything() {
     const supabase = createClient();
 
@@ -95,6 +101,56 @@ export default function AdminChatPage({ id = "admin-chat-page" }: AdminChatPageP
   useEffect(() => {
     loadEverything();
   }, []);
+
+  // Timer logic during active voice recording
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isRecording) {
+      interval = setInterval(() => {
+        setRecordingTime((prev) => prev + 1);
+      }, 1000);
+    } else {
+      setRecordingTime(0);
+    }
+    return () => clearInterval(interval);
+  }, [isRecording]);
+
+  // Handle actual browser MediaRecorder audio stream
+  async function handleToggleRecording() {
+    if (isRecording) {
+      if (mediaRecorder && mediaRecorder.state !== "inactive") {
+        mediaRecorder.stop();
+      }
+      setIsRecording(false);
+    } else {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const recorder = new MediaRecorder(stream);
+        const chunks: Blob[] = [];
+
+        recorder.ondataavailable = (e) => {
+          if (e.data.size > 0) chunks.push(e.data);
+        };
+
+        recorder.onstop = () => {
+          setAudioChunks(chunks);
+          stream.getTracks().forEach((track) => track.stop());
+        };
+
+        recorder.start();
+        setMediaRecorder(recorder);
+        setIsRecording(true);
+      } catch (err) {
+        console.error("Microphone access denied or unmounted:", err);
+      }
+    }
+  }
+
+  function formatTime(seconds: number) {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
+  }
 
   async function startOrOpenDM(teammateId: string) {
     const supabase = createClient();
@@ -181,7 +237,9 @@ export default function AdminChatPage({ id = "admin-chat-page" }: AdminChatPageP
           <span className="breadcrumb-current">Realtime Messaging</span>
         </div>
         <h1 className="google-chat-title">
-          <span className="google-icon text-icon-color">chat_bubble</span>
+          <svg className="svg-icon text-icon-color" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z" />
+          </svg>
           In-App Messaging
         </h1>
       </header>
@@ -193,7 +251,9 @@ export default function AdminChatPage({ id = "admin-chat-page" }: AdminChatPageP
           {/* Search Box */}
           <div className="google-chat-search-container">
             <div className="google-chat-search-wrapper">
-              <span className="google-icon search-icon">search</span>
+              <svg className="svg-icon search-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+              </svg>
               <input
                 type="text"
                 value={searchQuery}
@@ -221,7 +281,9 @@ export default function AdminChatPage({ id = "admin-chat-page" }: AdminChatPageP
                       onClick={() => setSelectedConversationId(c.id)}
                       className={`google-chat-item ${isSelected ? "selected" : ""}`}
                     >
-                      <span className="google-icon item-icon">tag</span>
+                      <svg className="svg-icon item-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M20 10V8h-4V4h-2v4h-4V4H8v4H4v2h4v4H4v2h4v4h2v-4h4v4h2v-4h4v-2h-4v-4h4zm-6 4h-4v-4h4v4z" />
+                      </svg>
                       <span className="item-label">{c.displayName}</span>
                     </button>
                   );
@@ -291,7 +353,9 @@ export default function AdminChatPage({ id = "admin-chat-page" }: AdminChatPageP
                       </span>
                       <span className="item-label">{t.full_name}</span>
                     </div>
-                    <span className="google-icon add-icon">add</span>
+                    <svg className="svg-icon add-icon" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+                    </svg>
                   </button>
                 ))}
               </div>
@@ -306,9 +370,13 @@ export default function AdminChatPage({ id = "admin-chat-page" }: AdminChatPageP
               {/* Header Bar */}
               <div className="google-chat-thread-header">
                 <div className="thread-title-area">
-                  <span className="google-icon thread-type-icon">
-                    {activeConvo?.type === "channel" ? "tag" : "person"}
-                  </span>
+                  <svg className="svg-icon thread-type-icon" viewBox="0 0 24 24" fill="currentColor">
+                    {activeConvo?.type === "channel" ? (
+                      <path d="M20 10V8h-4V4h-2v4h-4V4H8v4H4v2h4v4H4v2h4v4h2v-4h4v4h2v-4h4v-2h-4v-4h4zm-6 4h-4v-4h4v4z" />
+                    ) : (
+                      <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                    )}
+                  </svg>
                   <span className="thread-title">
                     {activeConvo?.displayName}
                   </span>
@@ -322,10 +390,36 @@ export default function AdminChatPage({ id = "admin-chat-page" }: AdminChatPageP
                   className="btn-clear-thread"
                   title="Clear history"
                 >
-                  <span className="google-icon">delete_outline</span>
+                  <svg className="svg-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+                  </svg>
                   Clear Thread
                 </button>
               </div>
+
+              {/* Live Voice Recording Status Bar overlay */}
+              {isRecording && (
+                <div className="voice-recording-overlay">
+                  <div className="recording-status">
+                    <span className="recording-dot"></span>
+                    <span className="recording-label">Recording audio message...</span>
+                    <span className="recording-timer">{formatTime(recordingTime)}</span>
+                  </div>
+                  <div className="recording-wave">
+                    <span className="bar"></span>
+                    <span className="bar"></span>
+                    <span className="bar"></span>
+                    <span className="bar"></span>
+                  </div>
+                  <button
+                    className="recording-stop-btn"
+                    onClick={handleToggleRecording}
+                    type="button"
+                  >
+                    Done
+                  </button>
+                </div>
+              )}
 
               {/* Chat Thread Area */}
               <div className="google-chat-thread-body">
@@ -338,7 +432,9 @@ export default function AdminChatPage({ id = "admin-chat-page" }: AdminChatPageP
           ) : (
             <div className="google-chat-empty-state">
               <div className="empty-icon-container">
-                <span className="google-icon empty-icon">forum</span>
+                <svg className="svg-icon empty-icon" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 7V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h11c.55 0 1-.45 1-1z" />
+                </svg>
               </div>
               <p className="empty-title">Select a conversation</p>
               <p className="empty-description">
@@ -361,7 +457,9 @@ export default function AdminChatPage({ id = "admin-chat-page" }: AdminChatPageP
                   className="profile-close-btn"
                   aria-label="Close Profile"
                 >
-                  <span className="google-icon">close</span>
+                  <svg className="svg-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                  </svg>
                 </button>
               </div>
               <div className="profile-body">
@@ -382,7 +480,9 @@ export default function AdminChatPage({ id = "admin-chat-page" }: AdminChatPageP
                 )}
                 {member.phone && (
                   <div className="profile-contact-row">
-                    <span className="google-icon">call</span>
+                    <svg className="svg-icon" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
+                    </svg>
                     <span>{member.phone}</span>
                   </div>
                 )}
