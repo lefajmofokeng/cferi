@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import "./ChatThread.css";
+import { forwardRef, useImperativeHandle } from "react";
 
 type Message = {
   id: string;
@@ -20,18 +21,21 @@ function isImageFile(fileName: string | null): boolean {
   if (!fileName) return false;
   return /\.(png|jpe?g|gif|webp|svg)$/i.test(fileName);
 }
-
 interface ChatThreadProps {
   conversationId: string;
   currentUserId: string;
   id?: string;
+  onRecordingChange?: (isRecording: boolean) => void;
 }
 
-export default function ChatThread({
-  conversationId,
-  currentUserId,
-  id = "chat-thread",
-}: ChatThreadProps) {
+export interface ChatThreadHandle {
+  stopRecording: () => void;
+}
+
+const ChatThread = forwardRef<ChatThreadHandle, ChatThreadProps>(function ChatThread(
+  { conversationId, currentUserId, id = "chat-thread", onRecordingChange },
+  ref
+) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [senderNames, setSenderNames] = useState<SenderMap>({});
   const [text, setText] = useState("");
@@ -119,7 +123,7 @@ export default function ChatThread({
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  async function startRecording() {
+      async function startRecording() {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const recorder = new MediaRecorder(stream);
@@ -138,6 +142,7 @@ export default function ChatThread({
       recorder.start();
       mediaRecorderRef.current = recorder;
       setIsRecording(true);
+      onRecordingChange?.(true);
     } catch {
       alert("Microphone access is required to record a voice note.");
     }
@@ -146,7 +151,12 @@ export default function ChatThread({
   function stopRecording() {
     mediaRecorderRef.current?.stop();
     setIsRecording(false);
+    onRecordingChange?.(false);
   }
+
+  useImperativeHandle(ref, () => ({
+    stopRecording,
+  }));
 
   async function sendVoiceNote(audioBlob: Blob) {
     setSending(true);
@@ -376,7 +386,9 @@ export default function ChatThread({
             </svg>
           </button>
         </div>
-      </form>
+            </form>
     </section>
   );
-}
+});
+
+export default ChatThread;

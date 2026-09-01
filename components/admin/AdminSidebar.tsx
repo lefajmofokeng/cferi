@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 import { useEffect, useState } from "react";
 import "./AdminSidebar.css";
 
+
 const navigationCategories = [
   {
     title: "Core",
@@ -155,6 +156,7 @@ export default function AdminSidebar({ id = "admin-sidebar" }: AdminSidebarProps
   const router = useRouter();
   const [userName, setUserName] = useState("");
   const [role, setRole] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [unreadMessages, setUnreadMessages] = useState(0);
   const [newApplications, setNewApplications] = useState(0);
@@ -167,12 +169,13 @@ export default function AdminSidebar({ id = "admin-sidebar" }: AdminSidebarProps
       if (user) {
         const { data } = await supabase
           .from("admin_users")
-          .select("full_name, role")
+          .select("full_name, role, avatar_url")
           .eq("id", user.id)
           .single();
         if (data) {
           setUserName(data.full_name);
           setRole(data.role);
+          setAvatarUrl(data.avatar_url);
         }
       }
     }
@@ -247,7 +250,7 @@ export default function AdminSidebar({ id = "admin-sidebar" }: AdminSidebarProps
       {/* Header */}
       <div className="admin-sidebar__header">
         <div className="admin-sidebar__logo">
-          LOGO
+          <img src="/images/logo.png" alt="Maluti Incubation Logo" width={40} height={40} />
         </div>
         <div className="admin-sidebar__brand">
           <span className="admin-sidebar__brand-title">
@@ -309,9 +312,13 @@ export default function AdminSidebar({ id = "admin-sidebar" }: AdminSidebarProps
         <div className="admin-sidebar__profile">
           <div className="admin-sidebar__user-info">
             <div className="admin-sidebar__user-info">
-              <div className="admin-sidebar__avatar">
-                {(userName || "Admin").charAt(0).toUpperCase()}
-              </div>
+              {avatarUrl ? (
+                  <img src={avatarUrl} alt={userName} className="admin-sidebar__avatar admin-sidebar__avatar--img" />
+                ) : (
+                  <div className="admin-sidebar__avatar">
+                    {(userName || "Admin").charAt(0).toUpperCase()}
+                  </div>
+                )}
             </div>
           </div>
           <button
@@ -340,7 +347,7 @@ export default function AdminSidebar({ id = "admin-sidebar" }: AdminSidebarProps
           <div className="admin-sidebar__mobile-bar-inner">
             <div className="admin-sidebar__mobile-brand">
               <div className="admin-sidebar__mobile-logo">
-                LOGO
+                <img src="/images/logo.png" alt="Maluti Incubation Logo" width={40} height={40} />
               </div>
               <span className="admin-sidebar__mobile-title">
                 Maluti Console
@@ -349,9 +356,13 @@ export default function AdminSidebar({ id = "admin-sidebar" }: AdminSidebarProps
 
             <div className="admin-sidebar__mobile-right">
               <div className="admin-sidebar__mobile-profile">
-                <div className="admin-sidebar__mobile-avatar">
-                  {(userName || "Admin").charAt(0).toUpperCase()}
-                </div>
+                {avatarUrl ? (
+                    <img src={avatarUrl} alt={userName} className="admin-sidebar__mobile-avatar admin-sidebar__mobile-avatar--img" />
+                  ) : (
+                    <div className="admin-sidebar__mobile-avatar">
+                      {(userName || "Admin").charAt(0).toUpperCase()}
+                    </div>
+                  )}
                 <div className="admin-sidebar__mobile-user-details">
                   <span className="admin-sidebar__mobile-user-name">
                     {userName || "Admin"}

@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/client";
 import ChatThread from "@/components/admin/ChatThread";
 import ConfirmDialog from "@/components/admin/ConfirmDialog";
 import "./AdminChatPage.css";
+import { useRef } from "react";
 
 type Conversation = {
   id: string;
@@ -36,11 +37,11 @@ export default function AdminChatPage({ id = "admin-chat-page" }: AdminChatPageP
   const [searchQuery, setSearchQuery] = useState("");
   const [profilePanelUserId, setProfilePanelUserId] = useState<string | null>(null);
 
-  // Real Web MediaRecorder State & References
+  // Recording state is now driven by ChatThread itself (the component that
+  // actually has microphone access), passed up via onRecordingChange.
   const [isRecording, setIsRecording] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
-  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
-  const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
+  const chatThreadRef = useRef<{ stopRecording: () => void } | null>(null);
 
   async function loadEverything() {
     const supabase = createClient();
@@ -115,35 +116,8 @@ export default function AdminChatPage({ id = "admin-chat-page" }: AdminChatPageP
     return () => clearInterval(interval);
   }, [isRecording]);
 
-  // Handle actual browser MediaRecorder audio stream
-  async function handleToggleRecording() {
-    if (isRecording) {
-      if (mediaRecorder && mediaRecorder.state !== "inactive") {
-        mediaRecorder.stop();
-      }
-      setIsRecording(false);
-    } else {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        const recorder = new MediaRecorder(stream);
-        const chunks: Blob[] = [];
-
-        recorder.ondataavailable = (e) => {
-          if (e.data.size > 0) chunks.push(e.data);
-        };
-
-        recorder.onstop = () => {
-          setAudioChunks(chunks);
-          stream.getTracks().forEach((track) => track.stop());
-        };
-
-        recorder.start();
-        setMediaRecorder(recorder);
-        setIsRecording(true);
-      } catch (err) {
-        console.error("Microphone access denied or unmounted:", err);
-      }
-    }
+    function handleToggleRecording() {
+    chatThreadRef.current?.stopRecording();
   }
 
   function formatTime(seconds: number) {
@@ -164,6 +138,7 @@ export default function AdminChatPage({ id = "admin-chat-page" }: AdminChatPageP
         const ids = (participants ?? []).map((p) => p.admin_id);
         if (ids.includes(teammateId) && currentUserId && ids.includes(currentUserId)) {
           setSelectedConversationId(convo.id);
+          setProfilePanelUserId(teammateId);
           return;
         }
       }
@@ -188,8 +163,9 @@ export default function AdminChatPage({ id = "admin-chat-page" }: AdminChatPageP
 
     if (participantsError) return;
 
-    await loadEverything();
+  await loadEverything();
     setSelectedConversationId(newConversationId);
+    setProfilePanelUserId(teammateId);
   }
 
   async function handleClearConversation() {
@@ -278,7 +254,10 @@ export default function AdminChatPage({ id = "admin-chat-page" }: AdminChatPageP
                   return (
                     <button
                       key={c.id}
-                      onClick={() => setSelectedConversationId(c.id)}
+                      onClick={() => {
+                        setSelectedConversationId(c.id);
+                        setProfilePanelUserId(null);
+                      }}
                       className={`google-chat-item ${isSelected ? "selected" : ""}`}
                     >
                       <svg className="svg-icon item-icon" viewBox="0 0 24 24" fill="currentColor">
@@ -305,7 +284,10 @@ export default function AdminChatPage({ id = "admin-chat-page" }: AdminChatPageP
                   return (
                     <button
                       key={c.id}
-                      onClick={() => setSelectedConversationId(c.id)}
+                      onClick={() => {
+                        setSelectedConversationId(c.id);
+                        if (c.otherUserId) setProfilePanelUserId(c.otherUserId);
+                      }}
                       className={`google-chat-item ${isSelected ? "selected" : ""}`}
                     >
                       <span
@@ -424,8 +406,10 @@ export default function AdminChatPage({ id = "admin-chat-page" }: AdminChatPageP
               {/* Chat Thread Area */}
               <div className="google-chat-thread-body">
                 <ChatThread
+                  ref={chatThreadRef}
                   conversationId={selectedConversationId}
                   currentUserId={currentUserId}
+                  onRecordingChange={setIsRecording}
                 />
               </div>
             </>
@@ -444,52 +428,71 @@ export default function AdminChatPage({ id = "admin-chat-page" }: AdminChatPageP
           )}
         </section>
 
-        {/* Profile Sidebar */}
-        {profilePanelUserId && (() => {
-          const member = teammates.find((t) => t.id === profilePanelUserId);
-          if (!member) return null;
-          return (
-            <aside className="google-chat-profile-panel">
-              <div className="profile-header">
-                <span className="profile-title">Contact info</span>
-                <button
-                  onClick={() => setProfilePanelUserId(null)}
-                  className="profile-close-btn"
-                  aria-label="Close Profile"
-                >
-                  <svg className="svg-icon" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
-                  </svg>
-                </button>
+                {activeConvo?.type === "channel" ? (
+          <aside className="google-chat-profile-panel">
+            <div className="profile-header">
+              <span className="profile-title">Channel info</span>
+            </div>
+            <div className="profile-body">
+              <div className="profile-avatar-placeholder">
+                <svg className="svg-icon" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M20 10V8h-4V4h-2v4h-4V4H8v4H4v2h4v4H4v2h4v4h2v-4h4v4h2v-4h4v-2h-4v-4h4zm-6 4h-4v-4h4v4z" />
+                </svg>
               </div>
-              <div className="profile-body">
-                {member.avatar_url ? (
-                  <img
-                    src={member.avatar_url}
-                    alt={member.full_name}
-                    className="profile-avatar"
-                  />
-                ) : (
-                  <div className="profile-avatar-placeholder">
-                    {member.full_name.charAt(0).toUpperCase()}
-                  </div>
-                )}
-                <p className="profile-name">{member.full_name}</p>
-                {member.job_title && (
-                  <p className="profile-role">{member.job_title}</p>
-                )}
-                {member.phone && (
-                  <div className="profile-contact-row">
+              <p className="profile-name">{activeConvo.displayName}</p>
+              <p className="profile-role">
+                Team-wide channel for group messages. This conversation cannot be removed.
+              </p>
+            </div>
+          </aside>
+        ) : (
+          profilePanelUserId &&
+          (() => {
+            const member = teammates.find((t) => t.id === profilePanelUserId);
+            if (!member) return null;
+            return (
+              <aside className="google-chat-profile-panel">
+                <div className="profile-header">
+                  <span className="profile-title">Contact info</span>
+                  <button
+                    onClick={() => setProfilePanelUserId(null)}
+                    className="profile-close-btn"
+                    aria-label="Close Profile"
+                  >
                     <svg className="svg-icon" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
+                      <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
                     </svg>
-                    <span>{member.phone}</span>
-                  </div>
-                )}
-              </div>
-            </aside>
-          );
-        })()}
+                  </button>
+                </div>
+                <div className="profile-body">
+                  {member.avatar_url ? (
+                    <img
+                      src={member.avatar_url}
+                      alt={member.full_name}
+                      className="profile-avatar"
+                    />
+                  ) : (
+                    <div className="profile-avatar-placeholder">
+                      {member.full_name.charAt(0).toUpperCase()}
+                    </div>
+                  )}
+                  <p className="profile-name">{member.full_name}</p>
+                  {member.job_title && (
+                    <p className="profile-role">{member.job_title}</p>
+                  )}
+                  {member.phone && (
+                    <div className="profile-contact-row">
+                      <svg className="svg-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
+                      </svg>
+                      <span>{member.phone}</span>
+                    </div>
+                  )}
+                </div>
+              </aside>
+            );
+          })()
+        )}
       </div>
 
       <ConfirmDialog
