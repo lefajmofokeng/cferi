@@ -1,0 +1,335 @@
+/* Container & Base Setup */
+.mtc-incubation-container {
+  width: 100%;
+  background-color: #0a0a0a;
+  color: #ffffff;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.mtc-incubation-container *,
+.mtc-incubation-container *::before,
+.mtc-incubation-container *::after {
+  box-sizing: border-box;
+}
+
+/* 1. Full Hero Video Section */
+.mtc-hero-video-section {
+  width: 100%;
+  height: 100vh;
+  min-height: 480px;
+  position: relative;
+  overflow: hidden;
+  background-color: #000000;
+  display: flex;
+  align-items: flex-end;
+}
+
+.mtc-hero-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+
+.mtc-hero-video-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(10, 10, 10, 0.4) 0%,
+    rgba(10, 10, 10, 0.24) 60%,
+    #0a0a0a 100%
+  );
+  z-index: 2;
+}
+
+/* Top-Right Pure CSS Toggle Switch */
+.mtc-video-toggle-checkbox {
+  display: none;
+}
+
+.mtc-video-control-btn {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  z-index: 10;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.mtc-video-control-btn:hover {
+  background: rgba(0, 85, 255, 0.85);
+  border-color: #0055ff;
+  transform: scale(1.05);
+}
+
+.mtc-video-control-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+.icon-play {
+  display: none;
+}
+
+.icon-pause {
+  display: block;
+}
+
+.mtc-video-toggle-checkbox:not(:checked) ~ .mtc-video-control-btn .icon-pause {
+  display: none;
+}
+
+.mtc-video-toggle-checkbox:not(:checked) ~ .mtc-video-control-btn .icon-play {
+  display: block;
+}
+
+/* Hero Content Overlay */
+.mtc-hero-video-content {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px 48px 20px;
+}
+
+.mtc-hero-video-title {
+  font-size: clamp(2.2rem, 6vw, 3.8rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  margin: 0 0 12px 0;
+  color: #ffffff;
+}
+
+.mtc-hero-video-subtitle {
+  font-size: clamp(1rem, 2.5vw, 1.25rem);
+  color: #d1d5db;
+  margin: 0;
+}
+
+/* 2. Interactive Roadmap Section */
+.mtc-roadmap-section {
+  width: 100%;
+  padding: 60px 20px 80px 20px;
+  margin-top: 5rem;
+}
+
+.mtc-tab-radio {
+  display: none;
+}
+
+.mtc-roadmap-header {
+  max-width: 760px;
+  margin: 0 auto 36px auto;
+  text-align: center;
+}
+
+.mtc-roadmap-title {
+  font-size: clamp(2rem, 5vw, 2.75rem);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  margin: 0 0 16px 0;
+  color: #ffffff;
+}
+
+.mtc-roadmap-subtitle {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #d1d5db;
+  margin: 0;
+}
+
+/* Navigation Tabs */
+.mtc-tabs-wrapper {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto 48px auto;
+  position: relative;
+}
+
+.mtc-tabs-container {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 24px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding: 0 8px;
+}
+
+.mtc-tabs-container::-webkit-scrollbar {
+  display: none;
+}
+
+.mtc-tab-label {
+  color: #9ca3af;
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 10px 4px 16px 4px;
+  cursor: pointer;
+  white-space: nowrap;
+  position: relative;
+  transition: color 0.2s ease;
+  display: inline-block;
+  user-select: none;
+}
+
+.mtc-tab-label:hover {
+  color: #ffffff;
+}
+
+/* Tab Checked States */
+#era-1:checked ~ .mtc-tabs-wrapper .mtc-tab-label.era-1,
+#era-2:checked ~ .mtc-tabs-wrapper .mtc-tab-label.era-2,
+#era-3:checked ~ .mtc-tabs-wrapper .mtc-tab-label.era-3,
+#era-4:checked ~ .mtc-tabs-wrapper .mtc-tab-label.era-4 {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+#era-1:checked ~ .mtc-tabs-wrapper .mtc-tab-label.era-1::after,
+#era-2:checked ~ .mtc-tabs-wrapper .mtc-tab-label.era-2::after,
+#era-3:checked ~ .mtc-tabs-wrapper .mtc-tab-label.era-3::after,
+#era-4:checked ~ .mtc-tabs-wrapper .mtc-tab-label.era-4::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background-color: #0055ff;
+  border-radius: 2px 2px 0 0;
+  z-index: 2;
+}
+
+.mtc-tabs-divider {
+  width: 100%;
+  height: 1px;
+  background-color: #262626;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  z-index: 1;
+}
+
+/* Content Panel Visibility */
+.mtc-roadmap-content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.mtc-events-grid {
+  display: none;
+  grid-template-columns: 1fr;
+  gap: 36px 28px;
+  animation: mtcFadeIn 0.25s ease-in-out;
+}
+
+#era-1:checked ~ .mtc-roadmap-content .mtc-panel-era-1,
+#era-2:checked ~ .mtc-roadmap-content .mtc-panel-era-2,
+#era-3:checked ~ .mtc-roadmap-content .mtc-panel-era-3,
+#era-4:checked ~ .mtc-roadmap-content .mtc-panel-era-4 {
+  display: grid;
+}
+
+.mtc-event-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.mtc-event-period {
+  font-size: 2.25rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  margin-bottom: 8px;
+  color: #ffffff;
+}
+
+.mtc-event-heading {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #60a5fa;
+  margin: 0 0 10px 0;
+}
+
+.mtc-event-desc {
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: #d1d5db;
+  margin: 0;
+}
+
+@keyframes mtcFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Desktop Responsive Layout */
+@media (min-width: 640px) {
+  .mtc-events-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 960px) {
+  .mtc-hero-video-section {
+    height: 80vh;
+    min-height: 560px;
+  }
+
+  .mtc-video-control-btn {
+    top: 32px;
+    right: 32px;
+    width: 48px;
+    height: 48px;
+  }
+
+  .mtc-hero-video-content {
+    padding-bottom: 64px;
+  }
+
+  .mtc-roadmap-section {
+    padding: 80px 32px 100px 32px;
+  }
+
+  .mtc-roadmap-subtitle {
+    font-size: 1.05rem;
+  }
+
+  .mtc-tabs-container {
+    justify-content: center;
+    gap: 40px;
+  }
+
+  .mtc-events-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 52px 48px;
+  }
+}

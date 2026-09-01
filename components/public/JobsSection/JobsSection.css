@@ -1,0 +1,426 @@
+/* Page Reset & Base Setup */
+.mtc-incubator-page {
+  width: 100%;
+  background-color: #ffffff;
+  color: #111111;
+  font-family: inherit;
+  box-sizing: border-box;
+  scroll-margin-top: 80px;
+}
+
+.mtc-incubator-page *,
+.mtc-incubator-page *::before,
+.mtc-incubator-page *::after {
+  box-sizing: border-box;
+}
+
+/* Base Button Styles (Mobile-First) */
+.mtc-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 14px 28px;
+  border-radius: 9999px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border: none;
+  text-align: center;
+}
+
+.mtc-btn-blue {
+  background-color: #0055ff;
+  color: #ffffff;
+}
+
+.mtc-btn-blue:hover {
+  background-color: #0044cd;
+}
+
+.mtc-btn-outline {
+  background-color: transparent;
+  border: 1px solid #111111;
+  color: #111111;
+}
+
+.mtc-btn-outline:hover {
+  background-color: #111111;
+  color: #ffffff;
+}
+
+.mtc-btn-white-outline {
+  background-color: transparent;
+  border: 1px solid #ffffff;
+  color: #ffffff;
+}
+
+.mtc-btn-white-outline:hover {
+  background-color: #ffffff;
+  color: #eb1000;
+}
+
+/* 1. Hero Section (Mobile-First Base) */
+.mtc-hero-section {
+  width: 100%;
+  background-color: #0a0a0a;
+  color: #ffffff;
+  overflow: hidden;
+}
+
+.mtc-hero-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.mtc-hero-content {
+  width: 100%;
+  padding: 48px 20px 36px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.mtc-hero-title {
+  font-size: clamp(2.1rem, 6vw, 3.6rem);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  margin: 0 0 16px 0;
+}
+
+.mtc-hero-desc {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #d1d5db;
+  margin: 0 0 28px 0;
+}
+
+.mtc-hero-media {
+  width: 100%;
+  height: 280px;
+  position: relative;
+  overflow: hidden;
+}
+
+.mtc-hero-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+/* 2. Intro Section */
+.mtc-intro-section {
+  width: 100%;
+  padding: 56px 20px;
+  text-align: center;
+  background-color: #ffffff;
+}
+
+.mtc-intro-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.mtc-intro-title {
+  font-size: clamp(1.75rem, 5vw, 2.6rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0 0 16px 0;
+  line-height: 1.25;
+  max-width: 720px;
+}
+
+.mtc-intro-desc {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #4b5563;
+  margin: 0 0 24px 0;
+  max-width: 720px;
+}
+
+/* 3. Feature Cards (Mobile-First with Spacing Below) */
+.mtc-features-section {
+  width: 100%;
+  background-color: #ffffff;
+  padding: 0 20px 64px 20px;
+}
+
+.mtc-features-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  margin-bottom: 24px;
+}
+
+.mtc-feature-row {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  padding-bottom: 32px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.mtc-feature-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.mtc-feature-media {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06);
+}
+
+.mtc-feature-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.mtc-feature-content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.mtc-feature-title {
+  font-size: clamp(1.4rem, 4vw, 2.2rem);
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  margin: 0 0 12px 0;
+  color: #0f172a;
+}
+
+.mtc-feature-desc {
+  font-size: 1rem;
+  line-height: 1.65;
+  color: #4b5563;
+  margin: 0 0 16px 0;
+}
+
+.mtc-feature-link {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #0055ff;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.mtc-feature-link:hover {
+  text-decoration: underline;
+}
+
+/* 4. Red Accent Spotlight Banner */
+.mtc-quiz-banner {
+  width: 100%;
+  background-color: #eb1000;
+  color: #ffffff;
+  padding: 56px 20px;
+}
+
+.mtc-quiz-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.mtc-quiz-content {
+  max-width: 680px;
+  text-align: center;
+}
+
+.mtc-quiz-title {
+  font-size: clamp(1.8rem, 5vw, 2.8rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0 0 16px 0;
+}
+
+.mtc-quiz-desc {
+  font-size: 1rem;
+  line-height: 1.6;
+  margin: 0 0 24px 0;
+  color: #fef2f2;
+}
+
+/* 5. Dark Call to Action */
+.mtc-dark-cta-section {
+  width: 100%;
+  background-color: #0f172a;
+  color: #ffffff;
+  padding: 56px 20px;
+}
+
+.mtc-dark-cta-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.mtc-dark-cta-title {
+  font-size: clamp(1.8rem, 5vw, 3rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0 0 12px 0;
+}
+
+.mtc-dark-cta-desc {
+  font-size: 1rem;
+  color: #94a3b8;
+  margin: 0 0 24px 0;
+}
+
+/* 6. Footer Statement */
+.mtc-equal-footer {
+  width: 100%;
+  background-color: #ffffff;
+  padding: 48px 20px 32px 20px;
+  color: #64748b;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.mtc-equal-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.mtc-equal-title {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #1e293b;
+  margin: 0 0 10px 0;
+}
+
+.mtc-equal-text {
+  max-width: 760px;
+  margin: 0 auto 12px auto;
+}
+
+.mtc-brand-tagline {
+  margin-top: 32px;
+  font-size: clamp(1.8rem, 5vw, 2.8rem);
+  font-weight: 900;
+  color: #0f172a;
+  letter-spacing: -0.03em;
+}
+
+.mtc-brand-tagline span {
+  color: #eb1000;
+}
+
+/* Desktop Styles (min-width: 960px) */
+@media (min-width: 960px) {
+  .mtc-btn {
+    width: auto;
+  }
+
+  /* Full-Bleed Right Hero with Aligned Left Content */
+  .mtc-hero-container {
+    flex-direction: row;
+    align-items: stretch;
+    min-height: 520px;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+  }
+
+  .mtc-hero-content {
+    flex: 1;
+    width: 50%;
+    max-width: 50%;
+    /* Aligns left margin with the 1200px centered page grid */
+    padding-left: max(24px, calc((100% - 1200px) / 2 + 24px));
+    padding-right: 48px;
+    padding-top: 64px;
+    padding-bottom: 64px;
+  }
+
+  .mtc-hero-desc {
+    font-size: 1.05rem;
+    margin-bottom: 32px;
+  }
+
+  .mtc-hero-media {
+    flex: 1;
+    width: 50%;
+    height: auto;
+    min-height: 100%;
+  }
+
+  .mtc-intro-section {
+    padding: 80px 24px;
+  }
+
+  .mtc-intro-desc,
+  .mtc-feature-desc,
+  .mtc-quiz-desc,
+  .mtc-dark-cta-desc {
+    font-size: 1.05rem;
+  }
+
+  /* Feature Grid Layout */
+  .mtc-features-section {
+    padding: 0 24px 80px 24px;
+  }
+
+  .mtc-features-container {
+    gap: 80px;
+    margin-bottom: 40px;
+  }
+
+  .mtc-feature-row {
+    flex-direction: row;
+    align-items: center;
+    gap: 60px;
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+
+  .mtc-feature-reverse {
+    flex-direction: row-reverse;
+  }
+
+  .mtc-feature-media {
+    flex: 1;
+    aspect-ratio: 4 / 3;
+  }
+
+  .mtc-feature-content {
+    flex: 1;
+  }
+
+  .mtc-quiz-banner,
+  .mtc-dark-cta-section {
+    padding: 80px 24px;
+  }
+
+  .mtc-equal-footer {
+    padding: 60px 24px 40px 24px;
+  }
+
+  .mtc-brand-tagline {
+    margin-top: 40px;
+  }
+}
