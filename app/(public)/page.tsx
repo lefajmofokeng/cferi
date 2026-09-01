@@ -158,7 +158,7 @@ export default async function Home() {
           </div>
           <div className="min-h-[450px]">
             <iframe
-              src="https://www.google.com/maps?q=Maluti+TVET+College&output=embed"
+              src="https://www.google.com/maps/embed?pb=!1m16!1m12!1m3!1d2870.3688578518863!2d28.829417959070017!3d-28.52537809446577!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1smaluti%20tvet%20college!5e1!3m2!1sen!2sza!4v1788269498748!5m2!1sen!2sza>"
               width="100%"
               height="100%"
               style={{ border: 0, minHeight: "450px" }}

@@ -1,11 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import ChatThread from "@/components/admin/ChatThread";
 import ConfirmDialog from "@/components/admin/ConfirmDialog";
 import "./AdminChatPage.css";
-import { useRef } from "react";
 
 type Conversation = {
   id: string;
@@ -37,8 +36,11 @@ export default function AdminChatPage({ id = "admin-chat-page" }: AdminChatPageP
   const [searchQuery, setSearchQuery] = useState("");
   const [profilePanelUserId, setProfilePanelUserId] = useState<string | null>(null);
 
-  // Recording state is now driven by ChatThread itself (the component that
-  // actually has microphone access), passed up via onRecordingChange.
+  // Mobile Drawer Control State
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+
+  // Recording state
   const [isRecording, setIsRecording] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
   const chatThreadRef = useRef<{ stopRecording: () => void } | null>(null);
@@ -116,7 +118,7 @@ export default function AdminChatPage({ id = "admin-chat-page" }: AdminChatPageP
     return () => clearInterval(interval);
   }, [isRecording]);
 
-    function handleToggleRecording() {
+  function handleToggleRecording() {
     chatThreadRef.current?.stopRecording();
   }
 
@@ -139,6 +141,7 @@ export default function AdminChatPage({ id = "admin-chat-page" }: AdminChatPageP
         if (ids.includes(teammateId) && currentUserId && ids.includes(currentUserId)) {
           setSelectedConversationId(convo.id);
           setProfilePanelUserId(teammateId);
+          setIsSidebarOpen(false);
           return;
         }
       }
@@ -163,9 +166,10 @@ export default function AdminChatPage({ id = "admin-chat-page" }: AdminChatPageP
 
     if (participantsError) return;
 
-  await loadEverything();
+    await loadEverything();
     setSelectedConversationId(newConversationId);
     setProfilePanelUserId(teammateId);
+    setIsSidebarOpen(false);
   }
 
   async function handleClearConversation() {
@@ -222,8 +226,32 @@ export default function AdminChatPage({ id = "admin-chat-page" }: AdminChatPageP
 
       {/* Main App Workspace */}
       <div className="google-chat-card">
-        {/* Navigation Sidebar */}
-        <aside className="google-chat-sidebar">
+        {/* Backdrop for mobile overlays */}
+        {(isSidebarOpen || isProfileOpen) && (
+          <div
+            className="mobile-overlay-backdrop"
+            onClick={() => {
+              setIsSidebarOpen(false);
+              setIsProfileOpen(false);
+            }}
+          />
+        )}
+
+        {/* Navigation Sidebar Drawer */}
+        <aside className={`google-chat-sidebar ${isSidebarOpen ? "drawer-open" : ""}`}>
+          <div className="sidebar-drawer-header">
+            <span className="drawer-title">Conversations</span>
+            <button
+              className="drawer-close-btn"
+              onClick={() => setIsSidebarOpen(false)}
+              aria-label="Close navigation"
+            >
+              <svg className="svg-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+              </svg>
+            </button>
+          </div>
+
           {/* Search Box */}
           <div className="google-chat-search-container">
             <div className="google-chat-search-wrapper">
@@ -257,6 +285,7 @@ export default function AdminChatPage({ id = "admin-chat-page" }: AdminChatPageP
                       onClick={() => {
                         setSelectedConversationId(c.id);
                         setProfilePanelUserId(null);
+                        setIsSidebarOpen(false);
                       }}
                       className={`google-chat-item ${isSelected ? "selected" : ""}`}
                     >
@@ -287,6 +316,7 @@ export default function AdminChatPage({ id = "admin-chat-page" }: AdminChatPageP
                       onClick={() => {
                         setSelectedConversationId(c.id);
                         if (c.otherUserId) setProfilePanelUserId(c.otherUserId);
+                        setIsSidebarOpen(false);
                       }}
                       className={`google-chat-item ${isSelected ? "selected" : ""}`}
                     >
@@ -352,6 +382,15 @@ export default function AdminChatPage({ id = "admin-chat-page" }: AdminChatPageP
               {/* Header Bar */}
               <div className="google-chat-thread-header">
                 <div className="thread-title-area">
+                  <button
+                    className="mobile-nav-toggle"
+                    onClick={() => setIsSidebarOpen(true)}
+                    aria-label="Open sidebar menu"
+                  >
+                    <svg className="svg-icon" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
+                    </svg>
+                  </button>
                   <svg className="svg-icon thread-type-icon" viewBox="0 0 24 24" fill="currentColor">
                     {activeConvo?.type === "channel" ? (
                       <path d="M20 10V8h-4V4h-2v4h-4V4H8v4H4v2h4v4H4v2h4v4h2v-4h4v4h2v-4h4v-2h-4v-4h4zm-6 4h-4v-4h4v4z" />
@@ -359,24 +398,35 @@ export default function AdminChatPage({ id = "admin-chat-page" }: AdminChatPageP
                       <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
                     )}
                   </svg>
-                  <span className="thread-title">
-                    {activeConvo?.displayName}
-                  </span>
+                  <span className="thread-title">{activeConvo?.displayName}</span>
                   <span className="status-badge">
                     <span className="status-dot"></span>
                     Active
                   </span>
                 </div>
-                <button
-                  onClick={() => setShowClearConfirm(true)}
-                  className="btn-clear-thread"
-                  title="Clear history"
-                >
-                  <svg className="svg-icon" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
-                  </svg>
-                  Clear Thread
-                </button>
+
+                <div className="thread-actions">
+                  <button
+                    className="btn-icon-action mobile-info-toggle"
+                    onClick={() => setIsProfileOpen(true)}
+                    title="View details"
+                    aria-label="View Contact Information"
+                  >
+                    <svg className="svg-icon" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
+                    </svg>
+                  </button>
+                  <button
+                    onClick={() => setShowClearConfirm(true)}
+                    className="btn-clear-thread"
+                    title="Clear history"
+                  >
+                    <svg className="svg-icon" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+                    </svg>
+                    <span className="clear-btn-text">Clear Thread</span>
+                  </button>
+                </div>
               </div>
 
               {/* Live Voice Recording Status Bar overlay */}
@@ -415,6 +465,16 @@ export default function AdminChatPage({ id = "admin-chat-page" }: AdminChatPageP
             </>
           ) : (
             <div className="google-chat-empty-state">
+              <button
+                className="mobile-nav-toggle empty-nav-toggle"
+                onClick={() => setIsSidebarOpen(true)}
+                aria-label="Open sidebar menu"
+              >
+                <svg className="svg-icon" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
+                </svg>
+                <span>Open Conversations</span>
+              </button>
               <div className="empty-icon-container">
                 <svg className="svg-icon empty-icon" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 7V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h11c.55 0 1-.45 1-1z" />
@@ -422,16 +482,26 @@ export default function AdminChatPage({ id = "admin-chat-page" }: AdminChatPageP
               </div>
               <p className="empty-title">Select a conversation</p>
               <p className="empty-description">
-                Pick a space or a team member from the list on the left to display current message logs.
+                Pick a space or a team member from the menu to display active message logs.
               </p>
             </div>
           )}
         </section>
 
-                {activeConvo?.type === "channel" ? (
-          <aside className="google-chat-profile-panel">
+        {/* Profile/Contact Information Side Panel */}
+        {activeConvo?.type === "channel" ? (
+          <aside className={`google-chat-profile-panel ${isProfileOpen ? "panel-open" : ""}`}>
             <div className="profile-header">
               <span className="profile-title">Channel info</span>
+              <button
+                onClick={() => setIsProfileOpen(false)}
+                className="profile-close-btn"
+                aria-label="Close Channel Info"
+              >
+                <svg className="svg-icon" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                </svg>
+              </button>
             </div>
             <div className="profile-body">
               <div className="profile-avatar-placeholder">
@@ -451,11 +521,14 @@ export default function AdminChatPage({ id = "admin-chat-page" }: AdminChatPageP
             const member = teammates.find((t) => t.id === profilePanelUserId);
             if (!member) return null;
             return (
-              <aside className="google-chat-profile-panel">
+              <aside className={`google-chat-profile-panel ${isProfileOpen ? "panel-open" : ""}`}>
                 <div className="profile-header">
                   <span className="profile-title">Contact info</span>
                   <button
-                    onClick={() => setProfilePanelUserId(null)}
+                    onClick={() => {
+                      setProfilePanelUserId(null);
+                      setIsProfileOpen(false);
+                    }}
                     className="profile-close-btn"
                     aria-label="Close Profile"
                   >
