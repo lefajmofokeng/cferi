@@ -198,14 +198,15 @@ export default function AdminChatPage({ id = "admin-chat-page" }: AdminChatPageP
   }
 
   const activeConvo = conversations.find((c) => c.id === selectedConversationId);
+  const activeOtherUser = teammates.find((t) => t.id === activeConvo?.otherUserId);
 
   const filteredChannels = conversations
     .filter((c) => c.type === "channel")
     .filter((c) => c.displayName.toLowerCase().includes(searchQuery.toLowerCase()));
 
-  const filteredDMs = conversations
-    .filter((c) => c.type === "dm")
-    .filter((c) => c.displayName.toLowerCase().includes(searchQuery.toLowerCase()));
+  const filteredTeammates = teammates.filter((t) =>
+    t.full_name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <section id={id} className="google-chat-page">
@@ -225,7 +226,11 @@ export default function AdminChatPage({ id = "admin-chat-page" }: AdminChatPageP
       </header>
 
       {/* Main App Workspace */}
-      <div className="google-chat-card">
+      <div
+        className={`google-chat-card ${
+          selectedConversationId ? "mobile-thread-active" : "mobile-list-active"
+        }`}
+      >
         {/* Backdrop for mobile overlays */}
         {(isSidebarOpen || isProfileOpen) && (
           <div
@@ -270,7 +275,7 @@ export default function AdminChatPage({ id = "admin-chat-page" }: AdminChatPageP
 
           {/* Navigation Items */}
           <div className="google-chat-nav-scroll custom-scrollbar">
-            {/* Channels */}
+            {/* Space Channels */}
             <div className="google-chat-section">
               <div className="google-chat-section-header">
                 <span className="section-title">Space Channels</span>
@@ -299,77 +304,45 @@ export default function AdminChatPage({ id = "admin-chat-page" }: AdminChatPageP
               </div>
             </div>
 
-            {/* Direct Messages */}
+            {/* Direct Messages (All Members Unified) */}
             <div className="google-chat-section">
               <div className="google-chat-section-header">
                 <span className="section-title">Direct Messages</span>
-                <span className="section-badge">{filteredDMs.length}</span>
+                <span className="section-badge">{filteredTeammates.length}</span>
               </div>
 
               <div className="google-chat-list">
-                {filteredDMs.map((c) => {
-                  const isSelected = selectedConversationId === c.id;
-                  const otherMember = teammates.find((t) => t.id === c.otherUserId);
+                {filteredTeammates.map((member) => {
+                  const activeDM = conversations.find(
+                    (c) => c.type === "dm" && c.otherUserId === member.id
+                  );
+                  const isSelected =
+                    activeDM && selectedConversationId === activeDM.id;
+
                   return (
                     <button
-                      key={c.id}
-                      onClick={() => {
-                        setSelectedConversationId(c.id);
-                        if (c.otherUserId) setProfilePanelUserId(c.otherUserId);
-                        setIsSidebarOpen(false);
-                      }}
+                      key={member.id}
+                      onClick={() => startOrOpenDM(member.id)}
                       className={`google-chat-item ${isSelected ? "selected" : ""}`}
                     >
-                      <span
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          if (c.otherUserId) setProfilePanelUserId(c.otherUserId);
-                        }}
-                        className="avatar-wrapper"
-                      >
-                        {otherMember?.avatar_url ? (
+                      <span className="avatar-wrapper">
+                        {member.avatar_url ? (
                           <img
-                            src={otherMember.avatar_url}
-                            alt={c.displayName}
+                            src={member.avatar_url}
+                            alt={member.full_name}
                             className="avatar-image"
                           />
                         ) : (
                           <span className="avatar-placeholder">
-                            {c.displayName.charAt(0).toUpperCase()}
+                            {member.full_name.charAt(0).toUpperCase()}
                           </span>
                         )}
                         <span className="status-indicator online"></span>
                       </span>
-                      <span className="item-label">{c.displayName}</span>
+                      <span className="item-label">{member.full_name}</span>
                     </button>
                   );
                 })}
-              </div>
-            </div>
-
-            {/* Teammates */}
-            <div className="google-chat-section">
-              <div className="google-chat-section-header">
-                <span className="section-title">Teammates</span>
-              </div>
-              <div className="google-chat-list">
-                {teammates.map((t) => (
-                  <button
-                    key={t.id}
-                    onClick={() => startOrOpenDM(t.id)}
-                    className="google-chat-item teammate-item"
-                  >
-                    <div className="teammate-info">
-                      <span className="avatar-placeholder">
-                        {t.full_name.charAt(0).toUpperCase()}
-                      </span>
-                      <span className="item-label">{t.full_name}</span>
-                    </div>
-                    <svg className="svg-icon add-icon" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
-                    </svg>
-                  </button>
-                ))}
               </div>
             </div>
           </div>
@@ -381,6 +354,16 @@ export default function AdminChatPage({ id = "admin-chat-page" }: AdminChatPageP
             <>
               {/* Header Bar */}
               <div className="google-chat-thread-header">
+                <button
+                  className="mobile-back-button"
+                  onClick={() => setSelectedConversationId(null)}
+                  aria-label="Back to contacts list"
+                >
+                  <svg className="svg-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
+                  </svg>
+                </button>
+
                 <div className="thread-title-area">
                   <button
                     className="mobile-nav-toggle"
@@ -402,6 +385,26 @@ export default function AdminChatPage({ id = "admin-chat-page" }: AdminChatPageP
                   <span className="status-badge">
                     <span className="status-dot"></span>
                     Active
+                  </span>
+                </div>
+
+                {/* Mobile Floating Center Pill */}
+                <div className="mobile-floating-contact-pill">
+                  {activeConvo?.type === "channel" ? (
+                    <div className="mobile-floating-avatar-placeholder">#</div>
+                  ) : activeOtherUser?.avatar_url ? (
+                    <img
+                      src={activeOtherUser.avatar_url}
+                      alt={activeConvo?.displayName || "Contact"}
+                      className="mobile-floating-avatar"
+                    />
+                  ) : (
+                    <div className="mobile-floating-avatar-placeholder">
+                      {activeConvo?.displayName?.charAt(0).toUpperCase() || "C"}
+                    </div>
+                  )}
+                  <span className="mobile-floating-name">
+                    {activeConvo?.displayName}
                   </span>
                 </div>
 

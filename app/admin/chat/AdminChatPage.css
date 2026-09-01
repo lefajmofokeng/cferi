@@ -1,6 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
 
-/* Google SVG Icon Styling */
+/* Height offset for your global sticky admin header */
+:root {
+  --admin-global-header-height: 65px;
+}
+
+/* SVG Icon Helper */
 .svg-icon {
   width: 20px;
   height: 20px;
@@ -11,8 +16,8 @@
 
 /* Page Root */
 .google-chat-page {
-  scroll-margin-top: 80px;
-  height: 100vh;
+  margin-top: var(--admin-global-header-height);
+  height: calc(100vh - var(--admin-global-header-height));
   min-height: 500px;
   background-color: #f8f9fa;
   font-family: inherit;
@@ -25,7 +30,7 @@
   position: relative;
 }
 
-/* Spinner & Loading */
+/* Loading Spinner State */
 .google-chat-loading {
   display: flex;
   flex-direction: column;
@@ -52,7 +57,7 @@
   }
 }
 
-/* Header */
+/* Desktop Top Breadcrumbs Header */
 .google-chat-header {
   flex-shrink: 0;
   margin-bottom: 12px;
@@ -140,7 +145,7 @@
   justify-content: center;
 }
 
-/* Search Box */
+/* Sidebar Search Box */
 .google-chat-search-container {
   padding: 12px;
   border-bottom: 1px solid #f1f3f4;
@@ -182,7 +187,7 @@
   box-shadow: inset 0 0 0 2px #0060dd;
 }
 
-/* Scroll Area */
+/* Sidebar Scroll Area */
 .google-chat-nav-scroll {
   padding: 8px 12px;
   flex: 1;
@@ -202,7 +207,7 @@
   background-color: #bdc1c6;
 }
 
-/* List Sections */
+/* Channel & Message Sections */
 .google-chat-section {
   margin-bottom: 16px;
 }
@@ -281,29 +286,6 @@
   flex: 1;
 }
 
-.teammate-item {
-  justify-content: space-between;
-}
-
-.teammate-info {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  overflow: hidden;
-}
-
-.add-icon {
-  width: 18px;
-  height: 18px;
-  color: #5f6368;
-  opacity: 0;
-  transition: opacity 0.15s;
-}
-
-.teammate-item:hover .add-icon {
-  opacity: 1;
-}
-
 /* Avatars */
 .avatar-wrapper {
   position: relative;
@@ -348,7 +330,7 @@
   background-color: #1e8e3e;
 }
 
-/* Main View Thread */
+/* Main Active Thread View */
 .google-chat-main {
   flex: 1;
   display: flex;
@@ -368,6 +350,9 @@
   justify-content: space-between;
   flex-shrink: 0;
   background-color: #ffffff;
+  position: relative;
+  z-index: 5;
+  overflow: visible;
 }
 
 .thread-title-area {
@@ -386,6 +371,23 @@
   cursor: pointer;
   border-radius: 50%;
   margin-right: 4px;
+}
+
+.mobile-back-button {
+  display: none;
+  background: transparent;
+  border: none;
+  color: #5f6368;
+  padding: 6px;
+  cursor: pointer;
+  border-radius: 50%;
+  margin-right: 4px;
+  align-items: center;
+  justify-content: center;
+}
+
+.mobile-floating-contact-pill {
+  display: none;
 }
 
 .thread-type-icon {
@@ -426,6 +428,7 @@
   display: flex;
   align-items: center;
   gap: 4px;
+  z-index: 10;
 }
 
 .btn-icon-action {
@@ -467,103 +470,7 @@
   background-color: #fce8e6;
 }
 
-/* Realtime Active Voice Recording Overlay */
-.voice-recording-overlay {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background-color: #fce8e6;
-  border-bottom: 1px solid #fad2cf;
-  padding: 10px 18px;
-  flex-shrink: 0;
-}
-
-.recording-status {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.recording-dot {
-  width: 10px;
-  height: 10px;
-  background-color: #d93025;
-  border-radius: 50%;
-  animation: pulse-recording 1.2s infinite;
-}
-
-@keyframes pulse-recording {
-  0% {
-    transform: scale(0.95);
-    box-shadow: 0 0 0 0 rgba(217, 48, 37, 0.7);
-  }
-  70% {
-    transform: scale(1);
-    box-shadow: 0 0 0 6px rgba(217, 48, 37, 0);
-  }
-  100% {
-    transform: scale(0.95);
-    box-shadow: 0 0 0 0 rgba(217, 48, 37, 0);
-  }
-}
-
-.recording-label {
-  font-size: 13px;
-  font-weight: 500;
-  color: #c5221f;
-}
-
-.recording-timer {
-  font-size: 13px;
-  font-family: inherit;
-  font-weight: 700;
-  color: #c5221f;
-  background: rgba(217, 48, 37, 0.08);
-  padding: 2px 6px;
-  border-radius: 4px;
-}
-
-.recording-wave {
-  display: flex;
-  align-items: center;
-  gap: 3px;
-  height: 16px;
-}
-
-.recording-wave .bar {
-  width: 3px;
-  height: 100%;
-  background-color: #d93025;
-  border-radius: 2px;
-  animation: soundwave-bounce 0.8s ease-in-out infinite alternate;
-}
-
-.recording-wave .bar:nth-child(1) { animation-delay: 0.1s; }
-.recording-wave .bar:nth-child(2) { animation-delay: 0.3s; }
-.recording-wave .bar:nth-child(3) { animation-delay: 0.2s; }
-.recording-wave .bar:nth-child(4) { animation-delay: 0.4s; }
-
-@keyframes soundwave-bounce {
-  0% { height: 4px; }
-  100% { height: 16px; }
-}
-
-.recording-stop-btn {
-  background-color: #d93025;
-  border: none;
-  color: #ffffff;
-  font-size: 12px;
-  font-weight: 500;
-  padding: 4px 12px;
-  border-radius: 14px;
-  cursor: pointer;
-  transition: background-color 0.15s;
-}
-
-.recording-stop-btn:hover {
-  background-color: #b31412;
-}
-
+/* Thread Body & Empty States */
 .google-chat-thread-body {
   flex: 1;
   min-height: 0;
@@ -571,7 +478,6 @@
   flex-direction: column;
 }
 
-/* Empty Thread Container */
 .google-chat-empty-state {
   height: 100%;
   display: flex;
@@ -675,7 +581,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  text-align: center; 
+  text-align: center;
 }
 
 .profile-avatar {
@@ -735,7 +641,8 @@
 @media (max-width: 768px) {
   .google-chat-page {
     padding: 0;
-    height: 100dvh;
+    margin-top: var(--admin-global-header-height);
+    height: calc(100dvh - var(--admin-global-header-height));
   }
 
   .google-chat-header {
@@ -746,9 +653,99 @@
     border-radius: 0;
     border: none;
     box-shadow: none;
+    width: 100%;
+    height: 100%;
   }
 
-  .mobile-nav-toggle,
+  /* List vs Thread View Logic on Mobile */
+  .google-chat-card.mobile-list-active .google-chat-sidebar {
+    width: 100%;
+    transform: translateX(0);
+    position: relative;
+    box-shadow: none;
+  }
+
+  .google-chat-card.mobile-list-active .google-chat-main {
+    display: none;
+  }
+
+  .google-chat-card.mobile-thread-active .google-chat-sidebar {
+    display: none;
+  }
+
+  .google-chat-card.mobile-thread-active .google-chat-main {
+    width: 100%;
+    display: flex;
+  }
+
+  .mobile-nav-toggle {
+    display: none;
+  }
+
+  .mobile-back-button {
+    display: flex;
+    z-index: 10;
+  }
+
+  .thread-title-area {
+    display: none;
+  }
+
+  /* Floating top middle pill header */
+  .mobile-floating-contact-pill {
+    display: flex !important;
+    align-items: center;
+    gap: 8px;
+    background-color: #f1f3f4;
+    border: 1px solid #e0e0e0;
+    border-radius: 9999px;
+    padding: 4px 12px 4px 6px;
+    max-width: 60%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 99;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
+  }
+
+  /* Auto-hide floating contact pill on focus while typing on mobile */
+  .google-chat-main:focus-within .mobile-floating-contact-pill {
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, -180%);
+  }
+
+  .mobile-floating-avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .mobile-floating-avatar-placeholder {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-color: #e8f0fe;
+    color: #1a73e8;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .mobile-floating-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: #1f1f1f;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
   .mobile-info-toggle {
     display: flex;
   }
@@ -770,28 +767,7 @@
     z-index: 100;
   }
 
-  /* Navigation Sidebar Drawer Transformation */
-  .google-chat-sidebar {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    width: 280px;
-    z-index: 101;
-    transform: translateX(-100%);
-    box-shadow: 2px 0 12px rgba(0, 0, 0, 0.15);
-    padding-top: 0;
-  }
-
-  .sidebar-drawer-header {
-    display: flex;
-  }
-
-  .google-chat-sidebar.drawer-open {
-    transform: translateX(0);
-  }
-
-  /* Contact Information Slide-over Panel */
+  /* Profile Side Panel Overlay */
   .google-chat-profile-panel {
     position: absolute;
     top: 0;

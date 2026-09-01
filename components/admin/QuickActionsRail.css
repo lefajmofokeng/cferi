@@ -17,6 +17,19 @@
   font-family: inherit;
 }
 
+.quick-actions-rail__tools {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* Hide toggle handle and inline 'Hide' button on desktop */
+.quick-actions-rail__toggle-handle,
+.quick-actions-rail__hide-btn {
+  display: none;
+}
+
 .quick-actions-rail__button {
   position: relative;
   width: 2.5rem;
@@ -212,19 +225,74 @@
 @media (max-width: 768px) {
   .quick-actions-rail {
     position: fixed;
-    bottom: 1.25rem;
-    left: 50%;
-    transform: translateX(-50%);
-    top: auto;
+    right: 0;
+    left: auto;
+    top: 50%;
+    transform: translateY(-50%);
+    bottom: auto;
     height: auto;
     width: auto;
-    flex-direction: row;
-    padding: 0.5rem 0.75rem;
-    gap: 1rem;
-    border-radius: 9999px;
+    flex-direction: column;
+    padding: 0.5rem;
+    gap: 0;
+    border-radius: 1.25rem 0 0 1.25rem;
     border: 1px solid rgba(0, 0, 0, 0.08);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    border-right: none;
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.12);
     z-index: 45;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .quick-actions-rail__tools {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  /* Inline "Hide" button inside the rail */
+  .quick-actions-rail__hide-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    height: 2.25rem;
+    padding: 0 0.5rem;
+    border-radius: 9999px;
+    border: none;
+    background-color: #f1f3f4;
+    color: #5f6368;
+    cursor: pointer;
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+
+  /* Hidden state: Arrow pull-tab appears on the edge */
+  .quick-actions-rail__toggle-handle {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    left: -1.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1.75rem;
+    height: 2.75rem;
+    background-color: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-right: none;
+    border-radius: 0.75rem 0 0 0.75rem;
+    color: #444746;
+    box-shadow: -4px 0 10px rgba(0, 0, 0, 0.08);
+    cursor: pointer;
+    pointer-events: auto;
+  }
+
+  /* When collapsed, slide the rail off screen and display ONLY the pull handle */
+  .quick-actions-rail--collapsed {
+    transform: translate(100%, -50%);
+  }
+
+  .quick-actions-rail--collapsed .quick-actions-rail__toggle-handle {
+    display: flex;
   }
 
   /* Hide hover tooltips on touch devices */

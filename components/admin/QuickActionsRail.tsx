@@ -63,6 +63,7 @@ interface QuickActionsRailProps {
 export default function QuickActionsRail({ id = "quick-actions-rail" }: QuickActionsRailProps) {
   const [openTool, setOpenTool] = useState<ToolKey>(null);
   const [dueTaskCount, setDueTaskCount] = useState(0);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   useEffect(() => {
     const supabase = createClient();
@@ -107,27 +108,58 @@ export default function QuickActionsRail({ id = "quick-actions-rail" }: QuickAct
 
   return (
     <>
-      <aside id={id} className="quick-actions-rail">
-        {tools.map((tool) => {
-          const isActive = openTool === tool.key;
-          return (
-            <button
-              key={tool.key}
-              onClick={() => setOpenTool(isActive ? null : tool.key)}
-              title={tool.label}
-              className={`quick-actions-rail__button ${
-                isActive ? "quick-actions-rail__button--active" : ""
-              }`}
-            >
-              {tool.icon}
-              {tool.key === "tasks" && dueTaskCount > 0 && (
-                <span className="quick-actions-rail__badge">
-                  {dueTaskCount > 9 ? "9+" : dueTaskCount}
-                </span>
-              )}
-            </button>
-          );
-        })}
+      <aside
+        id={id}
+        className={`quick-actions-rail ${
+          isCollapsed ? "quick-actions-rail--collapsed" : ""
+        }`}
+      >
+        <button
+          type="button"
+          onClick={() => setIsCollapsed(false)}
+          className="quick-actions-rail__toggle-handle"
+          aria-label="Expand actions rail"
+        >
+          <svg className="quick-actions-rail__icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
+          </svg>
+        </button>
+
+        <div className="quick-actions-rail__tools">
+          {tools.map((tool) => {
+            const isActive = openTool === tool.key;
+            return (
+              <button
+                key={tool.key}
+                onClick={() => setOpenTool(isActive ? null : tool.key)}
+                title={tool.label}
+                className={`quick-actions-rail__button ${
+                  isActive ? "quick-actions-rail__button--active" : ""
+                }`}
+              >
+                {tool.icon}
+                {tool.key === "tasks" && dueTaskCount > 0 && (
+                  <span className="quick-actions-rail__badge">
+                    {dueTaskCount > 9 ? "9+" : dueTaskCount}
+                  </span>
+                )}
+              </button>
+            );
+          })}
+
+          <button
+            type="button"
+            onClick={() => setIsCollapsed(true)}
+            className="quick-actions-rail__hide-btn"
+            aria-label="Hide toolbar"
+          >
+            <svg className="quick-actions-rail__icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" />
+              <path d="M2 2l20 20-1.41 1.41L1.59 3.41z" />
+            </svg>
+            <span className="quick-actions-rail__hide-label">Hide</span>
+          </button>
+        </div>
       </aside>
 
       {openTool && (
