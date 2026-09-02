@@ -21,34 +21,15 @@ export default function HeroSection({ id = "hero-section" }: HeroSectionProps) {
         {/* Left Headline & Action Group */}
         <div className="ouaken-hero-left">
           <h1 className="ouaken-hero-title">
-            Prevent food waste <br />
-            the smart way
+            The bar? <br />
+            We raise that.
           </h1>
           <p className="ouaken-hero-description">
-            Supporting entrepreneurs and small businesses with mentorship, resources, and a collaborative space to grow.
+            We obsess over every. little. detail. In everything we do, we hold ourselves to the very highest of standards.
           </p>
           <div className="ouaken-hero-cta-group">
-            <a href="#shop" className="ouaken-hero-btn-primary">
-              Shop Ouaken
-            </a>
-            <a
-              href="#explore"
-              className="ouaken-hero-btn-icon"
-              aria-label="Explore details"
-            >
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <line x1="7" y1="17" x2="17" y2="7" />
-                <polyline points="7 7 17 7 17 17" />
-              </svg>
+            <a href="/about" className="ouaken-hero-btn-primary">
+              Learn more about Maluti CFERI
             </a>
           </div>
         </div>
@@ -121,15 +102,15 @@ export default function HeroSection({ id = "hero-section" }: HeroSectionProps) {
                 </svg>
               </div>
               <div className="ouaken-card-stat-content">
-                <span className="ouaken-card-big-num">27/4</span>
-                <span className="ouaken-card-label">Home Delivery Service</span>
+                <span className="ouaken-card-big-num">100%</span>
+                <span className="ouaken-card-label">Mentorship</span>
               </div>
             </div>
 
             {/* Bottom Right Card: Customer Social Proof */}
             <div className="ouaken-card ouaken-card-users">
               <div className="ouaken-card-users-top">
-                <span className="ouaken-card-big-num">120K+</span>
+                <span className="ouaken-card-big-num">250+ students supported</span>
               </div>
               <div className="ouaken-card-divider" />
               <div className="ouaken-card-avatars">

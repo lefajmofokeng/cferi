@@ -13,7 +13,7 @@ export default function ExploreFeature({
         {/* Top Header */}
         <header className="explore-feature-header">
           <span className="explore-feature-eyebrow">Features and Releases</span>
-          <h2 className="explore-feature-title">Explore what's new.</h2>
+          <h2 className="explore-feature-title">Explore our gallery</h2>
           <p className="explore-feature-subtitle">
             Discover the latest product features from Adobe.
           </p>

@@ -37,12 +37,8 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    180deg,
-    rgba(0, 0, 0, 0.1) 0%,
-    rgba(0, 0, 0, 0.25) 60%,
-    rgba(0, 0, 0, 0.45) 100%
-  );
+  background: linear-gradient(to top, #020617 0%, rgba(2, 6, 23, 0.233) 50%, rgba(2, 6, 23, 0.5) 100%);
+  pointer-events: none;
 }
 
 /* Main Layout Grid */
@@ -69,7 +65,7 @@
 
 .ouaken-hero-title {
   font-size: clamp(2.2rem, 4.5vw, 3.5rem);
-  font-weight: 500;
+  font-weight: 600;
   line-height: 1.08;
   letter-spacing: -0.03em;
   margin: 0 0 20px 0;
@@ -97,11 +93,11 @@
   align-items: center;
   justify-content: center;
   height: 48px;
-  padding: 0 28px;
+  padding: 9px 28px;
   background-color: #ffffff;
   color: #0f0f0f;
   font-size: 0.95rem;
-  font-weight: 600;
+  font-weight: 500;
   border-radius: 9999px;
   text-decoration: none;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
@@ -109,25 +105,6 @@
 }
 
 .ouaken-hero-btn-primary:hover {
-  background-color: #f5f5f7;
-  transform: translateY(-1px);
-}
-
-.ouaken-hero-btn-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 48px;
-  height: 48px;
-  background-color: #ffffff;
-  color: #0f0f0f;
-  border-radius: 50%;
-  text-decoration: none;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
-  transition: transform 0.2s ease, background-color 0.2s ease;
-}
-
-.ouaken-hero-btn-icon:hover {
   background-color: #f5f5f7;
   transform: translateY(-1px);
 }

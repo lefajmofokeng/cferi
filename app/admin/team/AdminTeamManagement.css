@@ -1,17 +1,24 @@
 /* Base Container & Google/Firebase Typography */
 .firebase-admin-container {
-  font-family: inherit;
+  font-family: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
   color: #1f1f1f;
   background-color: #f8f9fa;
   min-height: 100vh;
   padding: 24px 1.5rem;
   box-sizing: border-box;
-  scroll-margin-top: 80px;
+  scroll-margin-top: 80px; 
+}
+
+/* Centered Layout Wrapper */
+.firebase-centered-layout {
+  max-width: 100%;
+  margin: 0 auto;
+  width: 100%;
 }
 
 /* Header & Breadcrumb */
 .firebase-header {
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }
 
 .firebase-breadcrumb {
@@ -20,7 +27,7 @@
   gap: 6px;
   font-size: 13px;
   color: #5f6368;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 }
 
 .firebase-breadcrumb-separator {
@@ -32,6 +39,13 @@
   font-weight: 500;
 }
 
+.firebase-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
 .firebase-title {
   font-size: 28px;
   font-weight: 400;
@@ -40,12 +54,96 @@
   letter-spacing: -0.2px;
 }
 
+.firebase-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Information Banner (Attached Screenshot Style) */
+.firebase-info-banner {
+  background-color: #e8f0fe;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border: 1px solid #d2e3fc;
+}
+
+.firebase-info-banner-card {
+  margin-bottom: 12px;
+  margin-top: 4px;
+}
+
+.firebase-info-banner-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.firebase-info-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  background-color: #1a73e8;
+  color: #ffffff;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: bold;
+  font-family: monospace;
+  flex-shrink: 0;
+}
+
+.firebase-info-text {
+  font-size: 13px;
+  color: #174ea6;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.firebase-info-link {
+  color: #1a73e8;
+  font-weight: 500;
+  margin-left: 6px;
+  text-decoration: underline;
+}
+
+.firebase-info-link:hover {
+  color: #1557b0;
+}
+
+.firebase-info-dismiss {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  color: #174ea6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+}
+
+.firebase-info-dismiss:hover {
+  background-color: rgba(26, 115, 232, 0.1);
+}
+
+.firebase-dismiss-icon {
+  width: 16px;
+  height: 16px;
+}
+
 /* Firebase Underline Navigation Bar */
 .firebase-nav-bar {
   display: flex;
   align-items: center;
   gap: 32px;
-  border-bottom: 2px solid #cbcbcb;
+  border-bottom: 1px solid #dadce0;
   margin-bottom: 24px;
   overflow-x: auto;
   white-space: nowrap;
@@ -88,6 +186,8 @@
 /* Body Content Structures */
 .firebase-content-body {
   width: 100%;
+  display: flex;
+  justify-content: center;
 }
 
 .firebase-section {
@@ -95,14 +195,16 @@
 }
 
 .firebase-section-narrow {
-  max-width: 560px;
+  max-width: 580px;
+  width: 100%;
 }
 
 /* Material Style Cards */
 .firebase-card {
   background: #ffffff;
   border-radius: 8px;
-  box-shadow: 0 1px 3px 0 rgba(60, 64, 67, 0.585);
+  border: 1px solid #dadce0;
+  box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.1), 0 1px 3px 1px rgba(60, 64, 67, 0.05);
   padding: 24px;
   box-sizing: border-box;
 }
@@ -111,11 +213,54 @@
   margin-bottom: 20px;
 }
 
+.firebase-card-header-flex {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
 .firebase-card-title {
   font-size: 18px;
   font-weight: 500;
   color: #202124;
   margin: 0;
+}
+
+.firebase-card-subtitle {
+  font-size: 12px;
+  color: #5f6368;
+  margin: 4px 0 0 0;
+}
+
+/* Filter & Search Controls */
+.firebase-table-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.firebase-search-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.firebase-search-icon {
+  position: absolute;
+  left: 10px;
+  width: 16px;
+  height: 16px;
+  color: #5f6368;
+  pointer-events: none;
+}
+
+.firebase-search-input {
+  padding-left: 32px !important;
+  width: 220px !important;
+  height: 36px !important;
+  font-size: 13px !important;
 }
 
 /* Data Tables */
@@ -143,10 +288,17 @@
   padding: 14px 16px;
   border-bottom: 1px solid #f1f3f4;
   color: #3c4043;
+  vertical-align: middle;
 }
 
 .firebase-table-row:hover {
   background-color: #f8f9fa;
+}
+
+.firebase-table-empty {
+  text-align: center;
+  padding: 32px !important;
+  color: #70757a;
 }
 
 .firebase-user-cell {
@@ -154,8 +306,21 @@
   align-items: center;
   gap: 12px;
   cursor: pointer;
+}
+
+.firebase-user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.firebase-user-name {
   font-weight: 500;
   color: #202124;
+}
+
+.firebase-user-title {
+  font-size: 11px;
+  color: #70757a;
 }
 
 .firebase-avatar {
@@ -207,7 +372,6 @@
 }
 
 .firebase-date-cell {
-  font-family: monospace;
   color: #5f6368;
   font-size: 12px;
 }
@@ -219,22 +383,30 @@
 
 .firebase-details-box {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 16px;
-  padding: 8px 12px;
+  padding: 12px 16px;
 }
 
 .firebase-details-list p {
-  margin: 3px 0;
+  margin: 4px 0;
   font-size: 12px;
   color: #3c4043;
+}
+
+.firebase-code-inline {
+  background-color: #e8eaed;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 11px;
 }
 
 /* Forms & Inputs */
 .firebase-form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 18px;
 }
 
 .firebase-field {
@@ -270,6 +442,32 @@
   box-shadow: 0 0 0 1px #1a73e8;
 }
 
+.firebase-password-input-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.firebase-password-input {
+  padding-right: 56px;
+}
+
+.firebase-toggle-password-btn {
+  position: absolute;
+  right: 8px;
+  background: none;
+  border: none;
+  color: #1a73e8;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
+.firebase-toggle-password-btn:hover {
+  text-decoration: underline;
+}
+
 .firebase-font-mono {
   font-family: monospace;
 }
@@ -280,8 +478,30 @@
   margin: 0;
 }
 
+.firebase-field-banner {
+  background-color: #f1f3f4;
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 12px;
+  color: #5f6368;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.firebase-field-banner-icon {
+  font-weight: bold;
+  font-family: monospace;
+}
+
 .firebase-text-required {
   color: #d93025;
+}
+
+.firebase-avatar-upload-box {
+  display: flex;
+  align-items: center;
+  gap: 16px;
 }
 
 .firebase-avatar-lg {
@@ -290,7 +510,6 @@
   border-radius: 50%;
   object-fit: cover;
   border: 1px solid #dadce0;
-  margin-bottom: 8px;
   aspect-ratio: 1 / 1;
 }
 
@@ -327,6 +546,10 @@
   font-weight: 500;
   cursor: pointer;
   border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   transition: background-color 0.15s ease, box-shadow 0.15s ease;
 }
 
@@ -343,6 +566,23 @@
 .firebase-btn-primary:disabled {
   background-color: #8ab4f8;
   cursor: not-allowed;
+}
+
+.firebase-btn-secondary {
+  background-color: #ffffff;
+  color: #3c4043;
+  border: 1px solid #dadce0;
+}
+
+.firebase-btn-secondary:hover {
+  background-color: #f8f9fa;
+  border-color: #d2e3fc;
+  color: #1a73e8;
+}
+
+.firebase-btn-icon {
+  width: 14px;
+  height: 14px;
 }
 
 .firebase-btn-sm {
@@ -382,6 +622,7 @@
 .firebase-reset-inline {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: 8px;
 }
 
@@ -456,7 +697,7 @@
 /* Mobile Responsiveness */
 @media (max-width: 640px) {
   .firebase-admin-container {
-    padding: 16px;
+    padding: 16px 1rem;
   }
 
   .firebase-nav-bar {
@@ -467,7 +708,21 @@
     padding: 16px;
   }
 
+  .firebase-card-header-flex {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .firebase-search-input {
+    width: 100% !important;
+  }
+
   .firebase-reset-inline {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .firebase-info-banner {
     flex-direction: column;
     align-items: flex-start;
   }
