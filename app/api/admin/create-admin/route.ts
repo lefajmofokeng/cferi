@@ -58,5 +58,21 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: insertError.message }, { status: 400 });
   }
 
+  // Step 4: add them to the Team Channel so they can see it immediately.
+  const { data: teamChannel } = await adminClient
+    .from("conversations")
+    .select("id")
+    .eq("type", "channel")
+    .eq("name", "Team Channel")
+    .limit(1)
+    .single();
+
+  if (teamChannel) {
+    await adminClient.from("conversation_participants").insert({
+      conversation_id: teamChannel.id,
+      admin_id: newUser.user.id,
+    });
+  }
+
   return NextResponse.json({ success: true });
 }

@@ -318,3 +318,19 @@
   height: 1rem;
   transform: rotate(90deg);
 }
+
+.chat-thread__date-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0.5rem 0;
+}
+
+.chat-thread__date-divider span {
+  background-color: #f1f3f4;
+  color: #5f6368;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+}

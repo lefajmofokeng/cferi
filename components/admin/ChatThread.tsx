@@ -21,6 +21,29 @@ function isImageFile(fileName: string | null): boolean {
   if (!fileName) return false;
   return /\.(png|jpe?g|gif|webp|svg)$/i.test(fileName);
 }
+
+function formatDateDivider(dateString: string): string {
+  const date = new Date(dateString);
+  const today = new Date();
+  const yesterday = new Date();
+  yesterday.setDate(today.getDate() - 1);
+
+  const isSameDay = (a: Date, b: Date) =>
+    a.getFullYear() === b.getFullYear() &&
+    a.getMonth() === b.getMonth() &&
+    a.getDate() === b.getDate();
+
+  if (isSameDay(date, today)) return "Today";
+  if (isSameDay(date, yesterday)) return "Yesterday";
+
+  return date.toLocaleDateString(undefined, {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+
 interface ChatThreadProps {
   conversationId: string;
   currentUserId: string;
@@ -234,7 +257,7 @@ const ChatThread = forwardRef<ChatThreadHandle, ChatThreadProps>(function ChatTh
     <section id={id} className="chat-thread">
       {/* Message Feed Area */}
       <div className="chat-thread__messages">
-        {messages.map((msg) => {
+                {messages.map((msg, index) => {
           const isMe = msg.sender_id === currentUserId;
           const normalizedFileName = (msg.file_name ?? "").toLowerCase();
           const isVoiceNote = !!msg.file_url && normalizedFileName.includes("voice-note");
@@ -242,13 +265,24 @@ const ChatThread = forwardRef<ChatThreadHandle, ChatThreadProps>(function ChatTh
           const senderInfo = senderNames[msg.sender_id];
           const senderName = senderInfo?.full_name ?? "Team Member";
 
+          const prevMsg = messages[index - 1];
+          const showDateDivider =
+            !prevMsg ||
+            new Date(prevMsg.created_at).toDateString() !==
+              new Date(msg.created_at).toDateString();
+
           return (
-            <div
-              key={msg.id}
-              className={`chat-thread__message-row ${
-                isMe ? "chat-thread__message-row--me" : "chat-thread__message-row--other"
-              }`}
-            >
+            <div key={msg.id}>
+              {showDateDivider && (
+                <div className="chat-thread__date-divider">
+                  <span>{formatDateDivider(msg.created_at)}</span>
+                </div>
+              )}
+              <div
+                className={`chat-thread__message-row ${
+                  isMe ? "chat-thread__message-row--me" : "chat-thread__message-row--other"
+                }`}
+              >
               {!isMe && (
                 senderInfo?.avatar_url ? (
                   <img
@@ -312,8 +346,9 @@ const ChatThread = forwardRef<ChatThreadHandle, ChatThreadProps>(function ChatTh
                     minute: "2-digit",
                   })}
                 </p>
-              </div>
+                </div>
             </div>
+          </div>
           );
         })}
         <div ref={bottomRef} />
