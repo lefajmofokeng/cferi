@@ -59,7 +59,7 @@ const columns = [
 
 export default function Footer() {
   return (
-    <footer className="border-t border-gray-200 mt-16 bg-grey">
+    <footer className="border-t border-gray-200 mt-16 bg-gray-100">
       <div className="mx-auto max-w-6xl px-6 py-12 grid grid-cols-2 md:grid-cols-4 gap-8">
         {columns.map((column) => (
           <div key={column.heading}>
@@ -67,7 +67,7 @@ export default function Footer() {
             <ul className="space-y-2">
               {column.links.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className="text-sm text-gray-600 hover:text-gray-900">
+                  <Link href={link.href} className="text-md text-gray-600 hover:text-gray-900">
                     {link.label}
                   </Link>
                 </li>
