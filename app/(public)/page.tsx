@@ -6,6 +6,7 @@ import FeedbackWidget from "@/components/public/FeedbackWidget/Feedbackwidget";
 import EcosystemStackSection from "@/components/public/EcosystemStackSection/EcosystemStackSection";
 import HeroSection from "@/components/public/HeroSection/HeroSection";
 import ExploreFeature from "@/components/public/ExploreFeature/ExploreFeature";
+import Chatbot from "@/components/public/Chatbot/Chatbot";
 
 export default async function Home() {
   const supabase = await createClient();
@@ -173,6 +174,7 @@ export default async function Home() {
       <section className="max-w-6xl mx-auto px-6 mt-16 mb-16">
         <FeedbackWidget />
       </section>
+      <Chatbot />
     </>
   );
 }
