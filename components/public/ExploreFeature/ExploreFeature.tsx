@@ -22,7 +22,7 @@ export default function ExploreFeature({
         {/* Feature Image Card Container */}
         <div className="explore-feature-card">
           <img
-            src="/images/lyk.jpg"
+            src="/images/cferi.jpg"
             alt="Feature preview showcase"
             className="explore-feature-card-img"
           />

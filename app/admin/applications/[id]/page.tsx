@@ -15,6 +15,10 @@ type Application = {
   status: string;
   reviewer_notes: string | null;
   submitted_at: string;
+  is_thabo_mofutsanyana_resident: boolean | null;
+  applicant_categories: string[] | null;
+  cipc_registered: string | null;
+  tax_compliant: string | null;
 };
 
 export default function ApplicationDetailPage() {
@@ -34,7 +38,7 @@ export default function ApplicationDetailPage() {
       const { data, error } = await supabase
         .from("incubation_applications")
         .select(
-          "full_name, email, phone, business_name, business_stage, business_description, pitch_document_url, status, reviewer_notes, submitted_at"
+          "full_name, email, phone, business_name, business_stage, business_description, pitch_document_url, status, reviewer_notes, submitted_at, is_thabo_mofutsanyana_resident, applicant_categories, cipc_registered, tax_compliant"
         )
         .eq("id", params.id)
         .single();
@@ -99,21 +103,43 @@ export default function ApplicationDetailPage() {
       <h1 className="text-2xl font-semibold mb-6">{application.full_name}</h1>
 
       <div className="space-y-1 mb-6 text-sm text-gray-700">
-        <p><strong>Email:</strong> {application.email}</p>
-        {application.phone && <p><strong>Phone:</strong> {application.phone}</p>}
-        {application.business_name && (
-          <p><strong>Business:</strong> {application.business_name}</p>
-        )}
-        {application.business_stage && (
-          <p className="capitalize">
-            <strong>Stage:</strong> {application.business_stage.replace("_", " ")}
-          </p>
-        )}
-        <p>
-          <strong>Submitted:</strong>{" "}
-          {new Date(application.submitted_at).toLocaleString()}
-        </p>
-      </div>
+  <p><strong>Email:</strong> {application.email}</p>
+  {application.phone && <p><strong>Phone:</strong> {application.phone}</p>}
+  {application.is_thabo_mofutsanyana_resident !== null && (
+    <p>
+      <strong>Thabo Mofutsanyana Resident:</strong>{" "}
+      {application.is_thabo_mofutsanyana_resident ? "Yes" : "No"}
+    </p>
+  )}
+  {application.applicant_categories && application.applicant_categories.length > 0 && (
+    <p className="capitalize">
+      <strong>Applicant Category:</strong>{" "}
+      {application.applicant_categories.map((c) => c.replace(/_/g, " ")).join(", ")}
+    </p>
+  )}
+  {application.business_name && (
+    <p><strong>Business:</strong> {application.business_name}</p>
+  )}
+  {application.business_stage && (
+    <p className="capitalize">
+      <strong>Stage:</strong> {application.business_stage.replace("_", " ")}
+    </p>
+  )}
+  {application.cipc_registered && (
+    <p className="capitalize">
+      <strong>CIPC Registered:</strong> {application.cipc_registered.replace("_", " ")}
+    </p>
+  )}
+  {application.tax_compliant && (
+    <p className="capitalize">
+      <strong>Tax Compliant:</strong> {application.tax_compliant.replace("_", " ")}
+    </p>
+  )}
+  <p>
+    <strong>Submitted:</strong>{" "}
+    {new Date(application.submitted_at).toLocaleString()}
+  </p>
+</div>
 
       <div className="mb-6">
         <h2 className="text-sm font-medium mb-1">Business Description</h2>

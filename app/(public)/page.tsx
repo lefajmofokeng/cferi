@@ -41,9 +41,9 @@ export default async function Home() {
       <EcosystemStackSection />
 
       {/* Main Content Area */}
-      <main className="mx-auto w-full max-w-[1200px] px-6 py-16 space-y-16">
+      <main className="mx-auto w-full max-w-[1200px] px-6 py-25 space-y-16">
         {/* News Section */}
-        <section>
+        <section >
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-3xl font-bold text-gray-900">Latest News</h2>
             <Link href="/news" className="text-sm font-medium text-blue-600 hover:underline flex items-center gap-1">

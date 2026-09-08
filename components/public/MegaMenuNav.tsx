@@ -351,7 +351,7 @@ export default function MegaMenuNav({
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Ask about research"
+                    placeholder="Search Maluti"
                     className="search-input-field"
                     autoFocus
                   />

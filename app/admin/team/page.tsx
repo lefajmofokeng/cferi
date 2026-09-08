@@ -54,6 +54,9 @@ export default function AdminTeamManagement({ id = "admin-team-management" }: { 
   const [searchQuery, setSearchQuery] = useState("");
   const [bannerDismissed, setBannerDismissed] = useState(false);
 
+  const [applicationsOpen, setApplicationsOpen] = useState(true);
+  const [togglingApplications, setTogglingApplications] = useState(false);
+
   async function handleResetPassword(targetUserId: string) {
     setResetting(true);
     setResetError("");
@@ -78,6 +81,13 @@ export default function AdminTeamManagement({ id = "admin-team-management" }: { 
 
   async function loadTeam() {
     const supabase = createClient();
+
+    const { data: settingData } = await supabase
+      .from("site_settings")
+      .select("value")
+      .eq("key", "applications_open")
+      .single();
+    if (settingData) setApplicationsOpen(settingData.value);
 
     const {
       data: { user },
@@ -110,6 +120,20 @@ export default function AdminTeamManagement({ id = "admin-team-management" }: { 
   useEffect(() => {
     loadTeam();
   }, []);
+
+  async function handleToggleApplications() {
+      setTogglingApplications(true);
+      const supabase = createClient();
+      const newValue = !applicationsOpen;
+
+      const { error } = await supabase
+        .from("site_settings")
+        .update({ value: newValue })
+        .eq("key", "applications_open");
+
+      if (!error) setApplicationsOpen(newValue);
+      setTogglingApplications(false);
+    }
 
   async function handleSaveProfile(e: React.FormEvent) {
     e.preventDefault();
@@ -245,6 +269,33 @@ export default function AdminTeamManagement({ id = "admin-team-management" }: { 
           </nav>
           <div className="firebase-title-row">
             <h1 className="firebase-title">Team Management</h1>
+
+            <div className="mb-8 flex items-center justify-between bg-gray-50 border border-gray-200 rounded p-4 max-w-md">
+  <div>
+    <p className="text-sm font-medium text-gray-900">Incubation Applications</p>
+    <p className="text-xs text-gray-500">
+      {applicationsOpen
+        ? "Currently accepting applications"
+        : "Currently closed to new applications"}
+    </p>
+  </div>
+  <button
+    onClick={handleToggleApplications}
+    disabled={togglingApplications}
+    className={`px-4 py-2 rounded text-sm font-medium disabled:opacity-50 ${
+      applicationsOpen
+        ? "bg-red-50 text-red-700 hover:bg-red-100"
+        : "bg-green-50 text-green-700 hover:bg-green-100"
+    }`}
+  >
+    {togglingApplications
+      ? "Updating..."
+      : applicationsOpen
+      ? "Close Applications"
+      : "Open Applications"}
+  </button>
+</div>
+
             <div className="firebase-header-actions">
               <button
                 type="button"
