@@ -59,7 +59,7 @@ const columns = [
 
 export default function Footer() {
   return (
-    <footer className="border-t border-gray-200 mt-16 bg-gray-100">
+    <footer className="border-t border-gray-200 bg-gray-100">
       <div className="mx-auto max-w-6xl px-6 py-12 grid grid-cols-2 md:grid-cols-4 gap-8">
         {columns.map((column) => (
           <div key={column.heading}>

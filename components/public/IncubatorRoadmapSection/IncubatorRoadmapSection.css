@@ -3,7 +3,7 @@
   width: 100%;
   background-color: #0a0a0a;
   color: #ffffff;
-  font-family: inherit;
+  font-family:'Google Sans Flex','Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   box-sizing: border-box;
 }
 
@@ -128,7 +128,7 @@
 /* 2. Interactive Roadmap Section */
 .mtc-roadmap-section {
   width: 100%;
-  padding: 60px 20px 80px 20px;
+  padding: 60px 20px 200px 20px;
   margin-top: 5rem;
 }
 

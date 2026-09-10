@@ -97,6 +97,12 @@ const ROADMAP_DATA = [
           "Launched dedicated incubation pathways focusing on renewable energy, sustainable agriculture, and smart tech.",
       },
       {
+        period: "September 2026",
+        title: "Maluti Cferi Website",
+        description:
+          "Maluti Incubation Center goes live. Launches their website.",
+      },
+      {
         period: "Future",
         title: "Free State Innovation Network",
         description:

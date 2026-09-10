@@ -9,6 +9,7 @@
   width: 100%;
   box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.488);
   background-color: #ffffff;
+  font-family:'Google Sans Flex','Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .header-container {
