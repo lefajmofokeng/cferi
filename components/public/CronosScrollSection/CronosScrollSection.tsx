@@ -32,24 +32,28 @@ export default function CronosScrollSection() {
       )
         return;
 
+      // Handle Mobile Responsive View (No scroll scaling/positioning logic)
       if (window.innerWidth <= 768) {
         contentGridRef.current.removeAttribute("style");
-        darkenerRef.current.style.opacity = "0";
+        darkenerRef.current.removeAttribute("style");
         overlayRef.current.removeAttribute("style");
 
         if (mobileSlotRef.current) {
-            const slotRect = mobileSlotRef.current.getBoundingClientRect();
-            const sideSpacing = 20; // px of spacing on each side
-
-            videoWrapperRef.current.style.position = "absolute";
-            videoWrapperRef.current.style.left = `${slotRect.left + sideSpacing}px`;
-            videoWrapperRef.current.style.top = `${slotRect.top}px`;
-            videoWrapperRef.current.style.width = `${slotRect.width - sideSpacing * 2}px`;
-            videoWrapperRef.current.style.height = `${slotRect.height}px`;
-            videoWrapperRef.current.style.borderRadius = "12px";
+          // Mount video wrapper inline inside the mobile slot
+          if (videoWrapperRef.current.parentElement !== mobileSlotRef.current) {
+            mobileSlotRef.current.appendChild(videoWrapperRef.current);
+          }
+          videoWrapperRef.current.removeAttribute("style");
         }
         return;
-        }
+      }
+
+      // Re-attach video wrapper back to viewport container on Desktop
+      if (
+        videoWrapperRef.current.parentElement !== trackRef.current?.firstElementChild
+      ) {
+        trackRef.current?.firstElementChild?.appendChild(videoWrapperRef.current);
+      }
 
       const trackRect = trackRef.current.getBoundingClientRect();
       const anchorRect = anchorRef.current.getBoundingClientRect();
@@ -74,6 +78,7 @@ export default function CronosScrollSection() {
       const currentHeight = startHeight + (endHeight - startHeight) * progress;
       const borderRadius = 6 * (1 - progress);
 
+      videoWrapperRef.current.style.position = "absolute";
       videoWrapperRef.current.style.left = `${currentLeft}px`;
       videoWrapperRef.current.style.top = `${currentTop}px`;
       videoWrapperRef.current.style.width = `${currentWidth}px`;

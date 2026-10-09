@@ -220,8 +220,8 @@
   .cronos-mobile-video-slot {
     display: block !important;
     width: 100% !important;
-    aspect-ratio: 16 / 9;
-    }
+    margin: 0.5rem 0; 
+  }
   .cronos-video-container-wrapper {
     position: relative !important;
     top: auto !important;
@@ -234,7 +234,7 @@
     border-radius: 12px !important;
     pointer-events: auto !important;
     margin: 0 !important;
-    z-index: 1 !important;
+    z-index: 1 !important; 
   }
   .cronos-video-darkener,
   .cronos-fullscreen-overlay {
