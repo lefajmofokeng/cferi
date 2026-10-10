@@ -228,10 +228,10 @@
     left: auto !important;
     width: 100% !important;
     height: auto !important;
-    aspect-ratio: 16 / 9 !important;
+    aspect-ratio: 16 / 11 !important;
     transform: none !important;
     box-shadow: none !important;
-    border-radius: 12px !important;
+    border-radius: 7px !important;
     pointer-events: auto !important;
     margin: 0 !important;
     z-index: 1 !important; 

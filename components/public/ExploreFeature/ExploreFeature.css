@@ -2,7 +2,7 @@
 .explore-feature-section {
   width: 100%;
   background-color: #ffffff;
-  padding: 150px 24px;
+  padding: 150px 20px;
   scroll-margin-top: 80px;
   font-family: inherit;
   color: #111111;
@@ -14,7 +14,7 @@
   max-width: 1200px;
   margin: 0 auto;
   width: 100%;
-  display: flex; padding: 0 24px;
+  display: flex;
   flex-direction: column;
 }
 
@@ -24,17 +24,9 @@
   margin-bottom: 36px;
 }
 
-.explore-feature-eyebrow {
-  display: block;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #555555;
-  margin-bottom: 8px;
-}
-
 .explore-feature-title {
   font-size: clamp(2.2rem, 4.5vw, 3.4rem);
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: -0.03em;
   color: #000000;
   margin: 0 0 10px 0;
@@ -53,7 +45,7 @@
   width: 100%;
   aspect-ratio: 12 / 6;
   min-height: 340px;
-  border-radius: 15px;
+  border-radius: 7px;
   overflow: hidden;
   background-color: #0f172a;
   box-shadow: 0 12px 36px rgba(0, 0, 0, 0.08);

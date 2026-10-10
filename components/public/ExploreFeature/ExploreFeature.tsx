@@ -12,8 +12,7 @@ export default function ExploreFeature({
       <div className="explore-feature-container">
         {/* Top Header */}
         <header className="explore-feature-header">
-          <span className="explore-feature-eyebrow">Features and Releases</span>
-          <h2 className="explore-feature-title">Explore our gallery</h2>
+          <h2 className="explore-feature-title">Maluti Incubation on the rise</h2>
           <p className="explore-feature-subtitle">
             Discover the latest product features from Adobe.
           </p>
