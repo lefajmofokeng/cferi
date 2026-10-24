@@ -25,22 +25,77 @@ const menus = {
       {
         heading: "Incubation",
         links: [
-          { href: "/business-incubation-programme", label: "Business Incubation", desc: "Lean startup methodologies, business management development, pitching practices, and masterclasses." },
-          { href: "/entrepreneurship-training", label: "Entrepreneurship Training", desc: "Intensive operational training modules focused on local scalable frameworks for emerging SMMEs." },
+          {
+            href: "/business-incubation-programme",
+            label: "Business Incubation",
+            desc: "Lean startup methodologies, business management development, pitching practices, and masterclasses.",
+            icon: (
+              <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+            ),
+          },
+          {
+            href: "/entrepreneurship-training",
+            label: "Entrepreneurship Training",
+            desc: "Intensive operational training modules focused on local scalable frameworks for emerging SMMEs.",
+            icon: (
+              <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" d="M12 14l9-5-9-5-9 5 9 5z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0112 20.055a11.952 11.952 0 01-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
+              </svg>
+            ),
+          },
         ],
       },
       {
         heading: "Scaling",
         links: [
-          { href: "/mentorship-programme", label: "Mentorship Program", desc: "Direct deployment of expert corporate mentors to work directly on your unique scaling blockages." },
-          { href: "/admin-compliance-support", label: "Admin & Compliance", desc: "Fast-tracked business registrations through CIPC, SARS tax compliance, and robust financial framework setups." },
+          {
+            href: "/mentorship-programme",
+            label: "Mentorship Program",
+            desc: "Direct deployment of expert corporate mentors to work directly on your unique scaling blockages.",
+            icon: (
+              <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+              </svg>
+            ),
+          },
+          {
+            href: "/admin-compliance-support",
+            label: "Admin & Compliance",
+            desc: "Fast-tracked business registrations through CIPC, SARS tax compliance, and robust financial framework setups.",
+            icon: (
+              <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
+            ),
+          },
         ],
       },
       {
         heading: "Support",
         links: [
-          { href: "/help-center", label: "Help Center", desc: "FAQs and platform support." },
-          { href: "/contact", label: "Contact Operations", desc: "Get in touch with our operations team." },
+          {
+            href: "/help-center",
+            label: "Help Center",
+            desc: "FAQs and platform support.",
+            icon: (
+              <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
+              </svg>
+            ),
+          },
+          {
+            href: "/contact",
+            label: "Contact Operations",
+            desc: "Get in touch with our operations team.",
+            icon: (
+              <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+            ),
+          },
         ],
       },
     ],
@@ -51,16 +106,62 @@ const menus = {
       {
         heading: "Organization",
         links: [
-          { href: "/about", label: "About Us", desc: "Learn about our mission statement, vision and team." },
-          { href: "/corporate-office", label: "Corporate Office", desc: "Headquarters location and facilities." },
-          { href: "/leadership", label: "Leadership", desc: "Meet the team leading our platform." },
+          {
+            href: "/about",
+            label: "About Us",
+            desc: "Learn about our mission statement, vision and team.",
+            icon: (
+              <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5m0 0h5m0 0v-5a2 2 0 012-2h2a2 2 0 012 2v5m-14 0V9a2 2 0 012-2h2a2 2 0 012 2v12" />
+              </svg>
+            ),
+          },
+          {
+            href: "/corporate-office",
+            label: "Corporate Office",
+            desc: "Headquarters location and facilities.",
+            icon: (
+              <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+            ),
+          },
+          {
+            href: "/leadership",
+            label: "Leadership",
+            desc: "Meet the team leading our platform.",
+            icon: (
+              <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+            ),
+          },
         ],
       },
       {
         heading: "Ecosystem",
         links: [
-          { href: "/jobs", label: "Job Opportunities", desc: "Join our expanding team and network." },
-          { href: "/events", label: "Events Calendar", desc: "Workshops, keynotes, and founder meetups." },
+          {
+            href: "/jobs",
+            label: "Job Opportunities",
+            desc: "Join our expanding team and network.",
+            icon: (
+              <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+            ),
+          },
+          {
+            href: "/events",
+            label: "Events Calendar",
+            desc: "Workshops, keynotes, and founder meetups.",
+            icon: (
+              <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+            ),
+          },
         ],
       },
     ],
@@ -71,19 +172,46 @@ const menus = {
       {
         heading: "Updates",
         links: [
-          { href: "/news", label: "News & Insights", desc: "Latest ecosystem updates and press." },
+          {
+            href: "/news",
+            label: "News & Insights",
+            desc: "Latest ecosystem updates and press.",
+            icon: (
+              <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+              </svg>
+            ),
+          },
         ],
       },
       {
         heading: "Notices",
         links: [
-          { href: "/announcements", label: "Announcements", desc: "Official press and platform notices." },
+          {
+            href: "/announcements",
+            label: "Announcements",
+            desc: "Official press and platform notices.",
+            icon: (
+              <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A2.5 2.5 0 013 11.2V8.8a2.5 2.5 0 012.436-2.483l5.564-.317v8.003l-5.564-.32z" />
+              </svg>
+            ),
+          },
         ],
       },
       {
         heading: "Guides",
         links: [
-          { href: "/learn", label: "Learn & Guides", desc: "In-depth guides and technical articles." },
+          {
+            href: "/learn",
+            label: "Learn & Guides",
+            desc: "In-depth guides and technical articles.",
+            icon: (
+              <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+              </svg>
+            ),
+          },
         ],
       },
     ],
@@ -94,15 +222,51 @@ const menus = {
       {
         heading: "Capital Access",
         links: [
-          { href: "/national-grant-structure", label: "National Grants", desc: "Access non-repayable grant capital through SEDA and NYDA pipelines." },
-          { href: "/corporate-procurement-connections", label: "Corporate Procurement", desc: "B-BBEE supplier development programs and private manufacturing lines." },
+          {
+            href: "/national-grant-structure",
+            label: "National Grants",
+            desc: "Access non-repayable grant capital through SEDA and NYDA pipelines.",
+            icon: (
+              <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            ),
+          },
+          {
+            href: "/corporate-procurement-connections",
+            label: "Corporate Procurement",
+            desc: "B-BBEE supplier development programs and private manufacturing lines.",
+            icon: (
+              <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+            ),
+          },
         ],
       },
       {
         heading: "Tenders & Trade",
         links: [
-          { href: "/tenders-public-sector-panels", label: "Public Sector Panels", desc: "Frameworks covering compliance and bidding accuracy." },
-          { href: "/exhibitions-commercial-trades", label: "Commercial Trade Shows", desc: "Commercial trade exhibitions and enterprise market expansion." },
+          {
+            href: "/tenders-public-sector-panels",
+            label: "Public Sector Panels",
+            desc: "Frameworks covering compliance and bidding accuracy.",
+            icon: (
+              <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            ),
+          },
+          {
+            href: "/exhibitions-commercial-trades",
+            label: "Commercial Trade Shows",
+            desc: "Commercial trade exhibitions and enterprise market expansion.",
+            icon: (
+              <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 002 2h1.5a2.5 2.5 0 002.5-2.5V11.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 5H12a2 2 0 00-2-2h-1.065z" />
+              </svg>
+            ),
+          },
         ],
       },
     ],
@@ -489,8 +653,17 @@ export default function MegaMenuNav({
                               href={link.href}
                               onClick={() => setOpenMenu(null)}
                               className="mega-link-item"
+                              style={{ display: "flex", gap: "0.75rem", alignItems: "flex-start" }}
                             >
-                              {link.label}
+                              <div style={{ flexShrink: 0, marginTop: "0.125rem" }}>{link.icon}</div>
+                              <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
+                                <span style={{ fontWeight: 600, lineHeight: "1.2" }}>{link.label}</span>
+                                {link.desc && (
+                                  <span style={{ fontSize: "0.8125rem", color: "#64748b", fontWeight: 400, lineHeight: "1.35" }}>
+                                    {link.desc}
+                                  </span>
+                                )}
+                              </div>
                             </Link>
                           </li>
                         ))}
@@ -593,16 +766,24 @@ export default function MegaMenuNav({
                               {column.heading}
                             </span>
                           )}
-                          <div>
+                          <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
                             {column.links.map((link) => (
                               <Link
                                 key={link.href}
                                 href={link.href}
                                 onClick={() => setMobileOpen(false)}
                                 className="mega-link-item"
-                                style={{ fontSize: "1.125rem", marginBottom: "0.5rem" }}
+                                style={{ display: "flex", gap: "0.75rem", alignItems: "flex-start", fontSize: "1rem", marginBottom: "0.25rem" }}
                               >
-                                {link.label}
+                                <div style={{ flexShrink: 0, marginTop: "0.125rem" }}>{link.icon}</div>
+                                <div style={{ display: "flex", flexDirection: "column", gap: "0.125rem" }}>
+                                  <span style={{ fontWeight: 600, lineHeight: "1.2" }}>{link.label}</span>
+                                  {link.desc && (
+                                    <span style={{ fontSize: "0.8125rem", color: "#64748b", fontWeight: 400, lineHeight: "1.35" }}>
+                                      {link.desc}
+                                    </span>
+                                  )}
+                                </div>
                               </Link>
                             ))}
                           </div>
